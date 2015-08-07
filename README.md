@@ -1,2 +1,1 @@
-# sdbc_linux
-Please see wiki for build instructions.
+Please see Wiki for build instructions.
