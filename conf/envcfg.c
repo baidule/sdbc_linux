@@ -1,5 +1,6 @@
 #include <strproc.h>
 #include <regex.h>
+#include <errno.h>
 
 #define REGNUM 3
 
@@ -42,13 +43,15 @@ int i;
 	}
 	return 0;
 }
+
 int envcfg(char *fname)
 {
 FILE *fd;
-int i;
+int i,err=-1;
 char buffer[1024],*cp;
 	tzset();
 	if(fname && NULL != (fd=fopen(fname,"r"))) {
+		err=0;
 		while(!ferror(fd)){
 			fgets(buffer,sizeof(buffer),fd);
 			if(feof(fd)) break;
@@ -72,11 +75,16 @@ char buffer[1024],*cp;
 		}
 		reg_free();
 		fclose(fd);
+	} else if(!fd) {
+		err=errno;
+		fprintf(stderr,"%s:open file %s err=%d,%s",__FUNCTION__,
+			err,strerror(err));
 	}
+
 	cp=getenv("GBK_FLAG");
         if(cp && *cp=='T') GBK_flag=1;
 
-	return errno;
+	return err;
 }
 
 int strcfg(char *buffer)

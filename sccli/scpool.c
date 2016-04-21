@@ -8,13 +8,19 @@
 #include <arpa/inet.h>
 #include <scry.h>
 #include <sccli.h>
-#include <scsrv.h>
 #include <scpool.h>
 #include <json_pack.h>
 
 #include <logs.tpl>
 #include <logs.stu>
 static int log_level=0;
+
+int set_SC_loglevel(int new_loglevel)
+{
+int old_level=log_level;
+	log_level=new_loglevel;
+	return old_level;
+}
 
 T_PkgType SCPOOL_tpl[]={
         {CH_INT,sizeof(int),"d_node",0,-1},
@@ -133,6 +139,7 @@ int i;
 		pl->lnk[i].cli.Errno=-1;
 		pl->lnk[i].cli.NativeError=i;
 		pl->lnk[i].cli.ctx_id=0;
+		pl->lnk[i].cli.var=NULL;
 		pl->lnk[i].pool_no=m;
 		pl->lnk[i].path_no=(pl-scp->path);
 		pl->lnk[i].timeout_deal=NULL;
@@ -154,7 +161,6 @@ int scpool_init(int ctx_flag)
 {
 int n,i,j,ret;
 char *p,buf[512],dnode_key[15];
-INT64 now;
 FILE *fd;
 JSON_OBJECT cfg,json,ajson;
 SCPOOL_stu node;
@@ -211,7 +217,6 @@ SCPOOL_stu node;
 	if(p && isdigit(*p)) log_level=atoi(p);
 
 	ShowLog(5,"cfg=%s,POOLNUM=%d",json_object_to_json_string(cfg),SCPOOLNUM);
-	now=now_usec();
 sc_path *scp=scpool;
 	for(n=0;n<SCPOOLNUM;n++,scp++) {
 		scp->path=NULL;
@@ -325,6 +330,7 @@ ShowLog(5,"%s:Tid=%lX,i=%d,next=%d,已经在队列中!",__FUNCTION__,pthread_self(),i,
 //ShowLog(5,"%s:tid=%lX,weight=%d,next=%d",__FUNCTION__,pthread_self(),pl->weight,*ip);
 }
 
+extern int usleep (__useconds_t __useconds);
 static int sc_connect(path_lnk *pl,resource *rs)
 {
 int ret=-1;
@@ -403,8 +409,11 @@ again_login:
 
 //取服务名
 	rs->cli.svc_tbl=&pl->svc_tbl;
+	pthread_mutex_lock(&pl->mut);
 	if(pl->svc_tbl.srvn == 0) {
+reload:
 		pl->svc_tbl.srvn=-1;
+		pthread_mutex_unlock(&pl->mut);
        		ret=init_svc_no(&rs->Conn);
         	if(ret) { //取服务名失败
                     ShowLog(1,"%s:HOST=%s/%s,init_svc_no error ",__FUNCTION__,
@@ -413,12 +422,15 @@ again_login:
 		    disconnect(&rs->Conn);
 			return -4;
        		}
-	
-        } else {
-                pl->svc_tbl.usage++;
-                rs->Conn.freevar=(void (*)(void *)) free_srv_list;
+	} else {
+		while(pl->svc_tbl.srvn<0) usleep(1000);
+		if(pl->svc_tbl.srvn>0) pl->svc_tbl.usage++;
+		else goto reload;
+
+		pthread_mutex_unlock(&pl->mut);
+		rs->Conn.freevar=(void (*)(void *)) free_srv_list;
 		*rs->cli.ErrMsg=0;
-        }
+	}
 	rs->cli.Errno=ret;
 	
 	return 0;
@@ -429,14 +441,13 @@ again_login:
 //在AIO开始前先解锁，完成后重新加锁
 static resource * get_SC_resource(path_lnk *pl,int flg,pthread_mutex_t *Lock)
 {
-int ret,i,num;
+int ret,i;
 resource *rs;
 
 	if(!pl->lnk) {
 		ShowLog(1,"%s:无效的连接池",__FUNCTION__);
 		return NULL;
 	}
-	num=pl->resource_num;
 	if(0!=pthread_mutex_lock(&pl->mut)) return NULL;
 	while(0>(i=get_lnk_no(pl))) {
 		if(flg) {   //flg !=0,don't wait
@@ -576,7 +587,7 @@ int bad=1;
 	}
 	clock_gettime(CLOCK_REALTIME, &tims);
 	tims.tv_sec+=6;//因为归还连接并不锁weightLock，可能丢失事件，等6秒
-	if(pthread_cond_timedwait(&scp->weightCond,&scp->weightLock,&tims)) //实在没有了，等
+	if(pthread_cond_timedwait(&scp->weightCond,&scp->weightLock,(const struct timespec *restrict )&tims )) //实在没有了，等
 		repeat--;
     } while(1);
 }
@@ -609,6 +620,7 @@ T_CLI_Var *clip;
 		ShowLog(1,"%s:,Connect is Empty!",__FUNCTION__);
 		return;
 	}
+	(*Connect)->CryptFlg &= ~UNDO_ZIP;
 	scp=&scpool[n];
 	clip=(T_CLI_Var *)((*Connect)->Var);
 	i=(*Connect)->pos >> 16;
@@ -617,7 +629,7 @@ T_CLI_Var *clip;
 		return;
 	}
 	pl=&scp->path[i];
-ShowLog(5,"%s:tid=%lX,pos=%08X,path=%d,weight=%d",__FUNCTION__,pthread_self(),(*Connect)->pos,i,pl->weight);
+//ShowLog(5,"%s:tid=%lX,pos=%08X,path=%d,weight=%d",__FUNCTION__,pthread_self(),(*Connect)->pos,i,pl->weight);
 	pthread_mutex_lock(&pl->mut);
 	i=lnk_no(pl,*Connect);
 	if(i<0) {
@@ -645,6 +657,7 @@ ShowLog(5,"%s:tid=%lX,pos=%08X,path=%d,weight=%d",__FUNCTION__,pthread_self(),(*
 
 void release_SC_resource(resource **rsp)
 {
+	if(!rsp || !*rsp) return;
 T_Connect *conn=&(*rsp)->Conn;
 	release_SC_connect(&conn,(*rsp)->pool_no);
 	*rsp=NULL;
@@ -653,7 +666,7 @@ T_Connect *conn=&(*rsp)->Conn;
 //连接池监控 
 void scpool_check()
 {
-int ret,n,j,i,num;
+int n,j,i,num;
 path_lnk *pl;
 sc_path *scp;
 resource *rs;
@@ -685,11 +698,12 @@ char buf[40];
 			int k=(now-rs->timestamp)/1000000;
 			if(rs->timeout_deal && rs->Conn.timeout>0 && k>rs->Conn.timeout) { //超时
                 		pthread_mutex_unlock(&pl->mut);
-				ret=rs->timeout_deal(rs);
+				rs->timeout_deal(rs);
                 		pthread_mutex_lock(&pl->mut);
-				if(log_level) ShowLog(log_level,"%s:scpool[%d][%d][%d],since %s",
+				if(log_level) ShowLog(log_level,"%s:scpool[%d][%d][%d],since %s,timeout=%d,k=%d",
                                         __FUNCTION__,n,j,i,
-                                        rusecstrfmt(buf,rs->timestamp,YEAR_TO_USEC));
+                                        rusecstrfmt(buf,rs->timestamp,YEAR_TO_USEC),
+					rs->Conn.timeout,k);
 			}
 		   }
 		}

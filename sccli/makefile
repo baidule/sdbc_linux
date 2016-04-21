@@ -1,10 +1,11 @@
 
 LIBDIR=$(SDBCDIR)/lib
 INCDIR=$(SDBCDIR)/include
-CFLAGS= -m64 -Wall -fPIC -I$(INCDIR) -g
-CC=cc
+CFLAGS= -m64 -Wall -fPIC -I$(INCDIR) -O3
+CC=gcc
 
-LIBOBJS= client.o getls.o sqlc.o sqlinit.o getsvc.o netconnect.o get_clikey.o scpool.o
+LIBOBJS= client.o getls.o sqlc.o sqlinit.o getsvc.o netconnect.o get_clikey.o scpool.o \
+	N_get_tpl.o
 
 $(LIBDIR)/libsc.a:$(LIBOBJS)
 	ar -rv $(LIBDIR)/libsc.a $?

@@ -78,7 +78,7 @@ char *whp=0;
 
 	if(!where) return -1;
 	if(*where && (toupper(*where)=='S' && toupper(where[1])=='E')) return 0; //如果是select,不作处理
-	if(!srmp->tp) return -1;
+	if(!srmp->tp) return FORMATERR;
 	if(*where) {
                 whp=strdup(where);
                 if(!whp) {

@@ -79,11 +79,10 @@ int i=0;
 //生成分时间段日志名 
 //8-20点6段，0-8点，20-24点各一段 
 // LOGSEG=8-20?6
-static char * psfx(int bh,int eh,int n,int now)
+static char * psfx(char *buf,int bh,int eh,int n,int now)
 {
 int j,bm,em;
 int len;
-static char buf[5];
 char *p;
 
 	if(n<1) return NULL;
@@ -106,7 +105,8 @@ static char *getsfx(int now)
 int bh,eh,m,n;
 int ret;
 int n1,n2;
-char *p;
+char *p,buf[5];
+
 
 	p=getenv("LOGSEG");
 	if(!p || !*p) return "log";
@@ -122,12 +122,12 @@ char *p;
 	}
 	switch(ret) {
 	case 1:
-		return psfx(0,24,bh,now);
+		return psfx(buf,0,24,bh,now);
 		break;
 	case 2:
 		if(bh>23) bh=23;
-		if(now/60<bh) return psfx(0,bh,1,now);
-		else return psfx(bh,24,m,now);
+		if(now/60<bh) return psfx(buf,0,bh,1,now);
+		else return psfx(buf,bh,24,m,now);
 		break;
 	case 3:
 		eh=24;
@@ -140,17 +140,17 @@ char *p;
 		n1=n-n2;
 		if(n1<1) n1=1;
 		ret=now/60;
-		if(ret<bh) return psfx(0,bh,n1,now);
-		else if(ret <eh ||eh >=24) return psfx(bh,eh,m,now);
-		else return psfx(eh,24,n2,now);
+		if(ret<bh) return psfx(buf,0,bh,n1,now);
+		else if(ret <eh ||eh >=24) return psfx(buf,bh,eh,m,now);
+		else return psfx(buf,eh,24,n2,now);
 		break;
 	case 5:
 		if(eh>24) eh=24;
 		if(bh>(eh-1)) bh=eh-1;
 		ret=now/60;
-		if(ret<bh) return psfx(0,bh,1,now);
-		else if(ret<eh || eh==24) return psfx(bh,eh,m,now);
-		else  return psfx(eh,24,1,now);
+		if(ret<bh) return psfx(buf,0,bh,1,now);
+		else if(ret<eh || eh==24) return psfx(buf,bh,eh,m,now);
+		else  return psfx(buf,eh,24,1,now);
 		break;
 	}
 	return "log";
@@ -158,7 +158,7 @@ char *p;
 
 static int setlogfile(time_t today)
 {
-struct tm *timp;
+struct tm tim;
 char *cp,*mode="a";
 struct stat sbuf;
 int ret,fd,fflag;
@@ -166,14 +166,14 @@ char *dp,*sfx;
 char fn[512];
 FILE *efd=0;
 
-	timp=localtime(&today);
+	localtime_r(&today,&tim);
 	cp=getenv("LOGFILE");
 	if(!cp || !*cp) return 0;
-	sfx=getsfx(timp->tm_hour*60+timp->tm_min);
+	sfx=getsfx(tim.tm_hour*60+tim.tm_min);
  	dp=getenv("LOGDAY");
 	if(dp&&toupper(*dp)=='D') 
-		sprintf(fn,"%s%02d.%s",cp,timp->tm_mday,sfx);
-	else sprintf(fn,"%s%d.%s",cp,timp->tm_wday,sfx);
+		sprintf(fn,"%s%02d.%s",cp,tim.tm_mday,sfx);
+	else sprintf(fn,"%s%d.%s",cp,tim.tm_wday,sfx);
 
 //printf("%s:%s\n",__FUNCTION__,fn);
 	pthread_mutex_lock(&log_mutex);

@@ -56,7 +56,7 @@ void *SRM_getP_by_index(SRM *srmp,int idx);
 
 /* 生成bind WHERE 子句 */
 char * mk_where(const char *keys,char *stmt);
-char * SRM_mk_returning(SRM *srmp,char *keys,char *stmt);
+char * SRM_mk_returning(SRM *srmp,const char *keys,char *stmt);
 int SRM_mk_select(SRM *srmp,char *DBOWN,char *where);
 int SRM_mk_delete(SRM *srmp,char *DBOWN,char *where);
 //生成半个UPDATE语句:"UPDATE DBOWN.TABNAME "

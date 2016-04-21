@@ -255,17 +255,20 @@ u_int *p;
 	}
 	return pa;
 }
+
 void numcpy(u_int n,u_int *to,u_int *from)
 {
 	while(n--) *to++ = *from++;
 }
+
 u_int *n_ff(u_int n,u_int *pa)
 {
 u_int *p;
 	p=pa;
-	while(n--) *pa++ = -1;
+	while(n--) *p++ = -1;
 	return pa;
 }
+
 u_int *n_one(u_int n,u_int *pa)
 {
 u_int *p;
@@ -275,6 +278,7 @@ u_int *p;
 	while(n--) *p++ = 0;
 	return pa;
 }
+
 u_int *n_not(u_int n,u_int *pa)
 {
 u_int *p;

@@ -131,8 +131,6 @@ svc_table *svcp;
 	if(!clip) return -1;
 	svcp=clip->svc_tbl;
 	if(!svcp) return -1;
-	svcp->srvn=0;
-	svcp->usage=-1;
 	svcp->srv_hash=0;
 	svcp->srvlist=0;
 
@@ -144,25 +142,35 @@ svc_table *svcp;
 	head.data=0;
 	head.PKG_LEN=0;
 	ret=SendPack(conn,&head);
-	if(ret<0) return ret;
+	if(ret<0) {
+		svcp->srvn=0;
+		svcp->usage=-1;
+		return ret;
+	}
 	ret=RecvPack(conn,&head);
-	if(ret<0) return(ret);
+	if(ret<0) {
+		svcp->srvn=0;
+		svcp->usage=-1;
+		return(ret);
+	}
 	if(head.ERRNO1 && head.ERRNO2) return -2;
+	svcp->usage=0;
 	svcp->srvn=head.PKG_REC_NUM;
 	svcp->srvlist=malloc(sizeof(srv_list) * clip->svc_tbl->srvn);
 	if(!svcp->srvlist) {
+		svcp->srvn=0;
+		svcp->usage=-1;
 		clip->svc_tbl=NULL;
 		return -1;
 	}
 	lp=(srv_list *)svcp->srvlist;
 	p=head.data;
-ShowLog(2,"%s:srvn=%d,data=%s",__FUNCTION__,svcp->srvn,p);
+ShowLog(5,"%s:srvn=%d,data=%s",__FUNCTION__,svcp->srvn,p);
 	for(i=0;i<svcp->srvn&&*p;i++) {
 		p+=net_dispack(lp,p,slist_tpl);
 //ShowLog(5,"src_no=%d,srv_name=%s",lp->srv_no,lp->srv_name);
 		lp++;
 	}
-	svcp->usage=0;
 	svcp->srv_hash=mk_srv_hash((srv_list *)clip->svc_tbl->srvlist,clip->svc_tbl->srvn);
 	conn->freevar=(void (*)(void *)) free_srv_list;
 	return 0;

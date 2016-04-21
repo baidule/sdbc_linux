@@ -11,8 +11,8 @@ T_PkgType *tpl=NULL;
 
 	pthread_rwlock_rdlock(&tpl_lock);
 	if(tpl_lib && NULL != (json=json_object_object_get(tpl_lib,tabname))) {
-		pthread_rwlock_unlock(&tpl_lock);
 		tpl=new_tpl_fromJSON(json);
+		pthread_rwlock_unlock(&tpl_lock);
 	} else pthread_rwlock_unlock(&tpl_lock);
 	return tpl;
 }

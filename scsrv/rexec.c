@@ -238,6 +238,7 @@ errret:
 	buffer=valloc(SDBC_BLKSZ);
 	if(!buffer) {
 		NetHead->ERRNO1=MEMERR;
+		close(fd);
 		goto errret;
 	}
      	NetHead->PKG_REC_NUM=0;
@@ -318,13 +319,12 @@ errret:
      	NetHead->D_NODE=0;
      	NetHead->O_NODE=e_node;
 	i=SendPack(connect,NetHead);
-	return 1;
+	return 0;
     } 
     if(breakflag){
 	lseek(fd,0,SEEK_END);
     	NetHead->PKG_REC_NUM = GetFileSize(fd);
-    }
-    else 
+    } else NetHead->PKG_REC_NUM=0;
 	NetHead->PROTO_NUM=PutEvent(connect,Event_no);
 	NetHead->ERRNO1=0;
 	NetHead->ERRNO2=0; 

@@ -21,6 +21,9 @@ extern u_int family[];
 srvfunc Function[]={
 	{login,"login"},			/*0*/
 	{Echo,"Echo"},
+	{dmapp,"dmapp"},
+	{dmmgr,"dmmgr"},
+//	{notify,"notify"},
 	{0,0}
 };
 static char myshowid[200];
@@ -57,6 +60,8 @@ char addr[16],*envp;
 	ShowLog(2,"连接 %s,TCB:%d,timeout=%d",addr,srvp->TCB_no,conn->timeout);
 	gp->server=NULL;
 	gp->data=NULL;
+	gp->err_json=NULL;
+	gp->conn=NULL;
 	conn->only_do=Transfer;
 	conn->freevar=freevar;
 }
@@ -67,9 +72,9 @@ int i;
 struct rlimit sLimit;
 
 //设置可以core dumpped
-        sLimit.rlim_cur = -1;
-        sLimit.rlim_max = -1;
-        i=setrlimit(RLIMIT_CORE,(const struct rlimit *)&sLimit);
+	sLimit.rlim_cur = -1;
+	sLimit.rlim_max = -1;
+	i=setrlimit(RLIMIT_CORE,(const struct rlimit *)&sLimit);
 
 	if(ac>1){
 		envcfg(av[1]);
@@ -108,8 +113,8 @@ void set_showid(void *ctx)
 {
 GDA *gp=(GDA *)ctx;
 pthread_t tid=pthread_self();
-        if(!ctx) return;
-        mthr_showid_add(tid,gp->ShowID);
+	if(!ctx) return;
+	mthr_showid_add(tid,gp->ShowID);
 }
 
 int bind_sc(int TCBno,T_Connect *conn)

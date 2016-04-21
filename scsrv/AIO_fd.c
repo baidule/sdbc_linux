@@ -1,13 +1,15 @@
 /*******************************************
  * 需要linux 2.6.22 以上版本
+ * 和libaio 3.107以上版本
+ * 如果不具备这个条件，在makefile里用SIO_fd.o
+ * 取代本模块
  *******************************************/
 
 #include <unistd.h>
-#include <libaio.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <libaio.h>
 #include <sys/eventfd.h>
+#include <libaio.h>
 
 #include <scsrv.h>
 
@@ -19,6 +21,8 @@ uint64_t finished_aio;
 struct iocb _iocb,*io=&_iocb;
 struct io_event event;
 int	efd = eventfd(0, 0);
+T_YIELD yield=get_yield();
+
 	if (efd == -1) {   
 		return flg?write(fd,buff,iosize):read(fd,buff,iosize);
 	}   
@@ -34,8 +38,10 @@ int	efd = eventfd(0, 0);
 		io_destroy(myctx);
 		return flg?write(fd,buff,iosize):read(fd,buff,iosize);
 	}
-	rc = do_event(efd,0,0);//yield to epoll
-	if(rc==0) eventfd_read(efd, &finished_aio);
+	if(yield) {
+		rc = yield(efd,0,0);
+		if(rc==0) eventfd_read(efd, &finished_aio);
+	}
 	close(efd);
 	num = io_getevents(myctx, 1, 1, &event, NULL);
 	if(num>0) {

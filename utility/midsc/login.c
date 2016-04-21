@@ -215,6 +215,27 @@ ShowLog(5,"REGISTER:%s",tmp);
     } //未注册客户端注册完成
 
 	freedw(&dw);
+	if(NetHead->D_NODE==0) { //要求本地服务
+		log_stu logret;
+		conn->only_do=NULL;
+		conn->CryptFlg &= ~UNDO_ZIP;
+//需要进一步的ctx认证？
+		strcpy(logret.DEVID,gp->devid);
+		strcpy(logret.UID,gp->operid);
+		*logret.DBUSER=0;
+		*logret.DBOWN=0;
+		*logret.DBLABEL=0;
+		rsecstrfmt(logret.Logtime,now_sec(),YEAR_TO_SEC);
+		net_pack(tmp1,&logret,log_tpl);
+
+		NetHead->ERRNO1=NetHead->ERRNO2=0;
+		NetHead->data=tmp1;
+		NetHead->PKG_LEN=strlen(NetHead->data);
+    		SendPack(conn,NetHead);
+		ShowLog(2,"%s:DEVID=%s login local succeed!",__FUNCTION__,logret.DEVID);
+		return 1;
+	}
+//配置目标路由
 	up->poolno=get_scpool_no(NetHead->D_NODE);
 	if(up->poolno<0) {
 		sprintf(tmp1,"非法的D_NODE %d",NetHead->D_NODE);
@@ -290,7 +311,7 @@ T_SRV_Var *up=(T_SRV_Var *)conn->Var;
 GDA *gp=(GDA *)up->var;
 T_CLI_Var *clip;
 char tmp[30],tmp1[256];
-int uz;
+int uz,ret;
 log_stu logret;
 
 	unset_callback(up->TCB_no);
@@ -327,7 +348,10 @@ log_stu logret;
     			SendPack(conn,NetHead);
 			return -1;
         	}
-		SendPack(gp->server,NetHead);
+		ret=SendPack(gp->server,NetHead);
+		if(ret==-1) {
+			ShowLog(1,"%s:Send to server error",__FUNCTION__);
+		}
         	return THREAD_ESCAPE;//释放本线程
 	}
 //不谋求ctx_id

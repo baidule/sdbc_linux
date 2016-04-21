@@ -16,8 +16,8 @@ crc.o:$(INCDIR)/crc.h
 crc32.o:$(INCDIR)/crc32.h
 
 #enigmaº”√‹≤‚ ‘ 
-teni: teni.o enigma1.o enigma2.o
-	$(CC) -m64 -o teni teni.o -L$(SDBCDIR)/lib -lsc -lsc
+teni: teni.o 
+	$(CC) -m64 -o teni teni.o -L$(SDBCDIR)/lib -lscbase
 
 tnum: tnum.o 
 	$(CC) -m64 -o tnum tnum.o -L$(SDBCDIR)/lib -lsc -lsc

@@ -73,7 +73,7 @@ char *cp,addr[16];
 
 /*******************************************************************/
 /*Network Disconnect                                               */
-/*Return: 0 Success !0:failt                                       */
+/*Return: 0 Success !0:fault                                       */
 /*2003.3  YuLiHua                                                  */
 /*******************************************************************/
 void disconnect(T_Connect *conn)

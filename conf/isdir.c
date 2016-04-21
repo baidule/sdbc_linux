@@ -9,7 +9,7 @@ int cc;
 	if(!cc && (buf.st_mode & S_IFDIR)) return(1);
 	return(cc);
 }
-
+//²âÊÔÎÄ¼þ¿É¶Á
 int isrfile(char *path)
 {
 struct stat buf;
@@ -20,7 +20,7 @@ int euid,egid;
 		if((buf.st_mode & S_IFMT) != S_IFREG) return 0;
 		euid=geteuid();
 		egid=getegid();
-		if(euid==0) { 
+		if(euid==0) { // if root
 			if(buf.st_mode & S_IRUSR || buf.st_mode & S_IRGRP ||
 			   buf.st_mode & S_IROTH)
 				 return 1;

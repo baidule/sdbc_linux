@@ -241,6 +241,7 @@ unsigned int t_cont;
 	if(i){
 		sprintf(tmp,"Send to %s fail ret=%d,errno=%d,%s",
 			server->Host,i,errno,strerror(errno));
+		((T_CLI_Var *)gp->server->Var)->Errno=-1;
 		release_SC_connect(&gp->server,srvp->poolno);
 		if(t_cont != PACK_NOANSER) {
 			NetHead->ERRNO1=errno;
@@ -294,10 +295,10 @@ char tmp[256];
 		if(0==ret) return do_Transfer(client,NetHead);//池已经有了，直接调用
 		if(ret==1) return THREAD_ESCAPE; //释放本线程
 		sprintf(tmp,"get connect pool fail!");
-		NetHead->ERRNO1=PACK_NOANSER;
+		NetHead->ERRNO2=PACK_NOANSER;
 	}
 
-	NetHead->ERRNO2=-1;
+	NetHead->ERRNO1=-1;
    	ShowLog(1,"%s:%s",__FUNCTION__,tmp);
 	NetHead->O_NODE=LocalAddr(client->Socket,NULL);
 	NetHead->data=tmp;

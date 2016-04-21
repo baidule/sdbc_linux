@@ -46,6 +46,7 @@ void OAD_init(OAD *oad,DAU *DP,void *recs,int max_rows_of_batch);
 void OAD_free(OAD *oad);
 int OAD_mk_ins(OAD *oad,char *stmt);
 int OAD_mk_update(OAD *oadp,char *stmt);
+int OAD_mk_del(OAD *oadp,char *where);
 int OAD_exec(OAD *oad,int begin,int rowno);
 char * OAD_pkg_dispack(OAD *oad,int n,char *buf,char delimit);
 char * OAD_pkg_pack(OAD *oad,int n,char *buf,char delimit);

@@ -36,13 +36,13 @@ char gda[Conn.SendLen+1];//本线程的全局数据区必须在此分配。
 	Conn.SendLen=0;
 	ctx.TCB_no=-1;
 	ctx.tid=pthread_self();//标志多线程服务  
-	ctx.poolno=0;
+	ctx.poolno=-1;
 	ctx.SQL_Connect=NULL;
 	Conn.Var=&ctx;
 	init=Conn.only_do;
 	Conn.only_do=0;
 //借用only_do存放函数地址 conn_init  
-	if(!Conn.only_do) for(fp=Function;fp->funcaddr!=0;fp++) svcnum++;
+	for(fp=Function;fp->funcaddr!=0;fp++) svcnum++;
 
 //	ShowLog(2,"%s:tid=%lX,sock=%d",__FUNCTION__,ctx.tid,Conn.Socket);
 // 协商密钥 
@@ -214,12 +214,6 @@ char c;
 	bind(sock,(struct sockaddr *)&sin,sizeof(sin));
 	leng=1;
 	setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&leng,sizeof(leng));
-//避免 TIME_WAIT
-	so_linger.l_onoff=1;
-	so_linger.l_linger=0;
-	ret=setsockopt(sock, SOL_SOCKET, SO_LINGER, &so_linger, sizeof so_linger);
-	if(ret) ShowLog(1,"set SO_LINGER err=%d,%s",errno,strerror(errno));
-
 
 	leng=sizeof(cin);
 	int repeat=0;
@@ -241,8 +235,8 @@ char c;
 		do {
 			FD_ZERO(&efds);
 			FD_SET(sock, &efds);
-//健康检查周期5分钟 
-			tm.tv_sec=300;
+//健康检查周期 
+			tm.tv_sec=30;
 			tm.tv_usec=0;
 			ret=select(sock+1,&efds,NULL,&efds,&tm);
 //ShowLog(4,"%s:aft select ret=%d,sock=%d",__FUNCTION__,ret,sock);
@@ -251,7 +245,9 @@ char c;
 				close(sock);
 				quit(3);
 			}
-			if(ret==0 && poolchk) poolchk();
+			if(ret==0 && poolchk) {
+				poolchk();
+			}
 		} while(ret<=0);
 		s=accept(sock,(struct sockaddr *)&cin,&leng);
 		if(s<0) {
@@ -269,6 +265,7 @@ char c;
 			close(sock);
 			quit(5);
 		}
+		repeat=0;
 		Conn.Socket=s;
         	Conn.timeout=0;
 		Conn.only_do=(int (*)())conn_init; //借用一下 

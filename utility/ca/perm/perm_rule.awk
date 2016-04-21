@@ -27,19 +27,19 @@ BEGIN {
 /^!/{
 }
 /^%/{
-	for ( i = 2 ; i < 5 ; i++ ) {
+	for ( i = 2 ; i < NF-1 ; i++ ) {
 print $i
 		USER[i]=$i
 	}
 }
 !/^#/{
-	if ( $2 > "" ) printf "revoke all on %s from public;\n",$2 >"perm.sql"
+	if ( $2 > "" && substr($1,0,1) != "%") printf "revoke all on %s from public;\n",$2 >"perm.sql"
 	for ( i = 3 ; i < NF-1 ; i++ ) {
                 l=0
-		if(substr($1,0,1) != "%") 		
-       		printf "revoke all on %s from %s;\n",$2,USER[i-1] >"perm.sql"
-                if ( $i > "") l = index(PRIV_SET,$i)
-       		if ( l > 0 )  printf "grant %s on %s to %s;\n",PRIV[l],$2,USER[i-1] >"perm.sql"
+		if(substr($1,0,1) != "%") printf "revoke all on %s from %s;\n",$2,USER[i-1] >"perm.sql"
+               	if ( $i > "") l = index(PRIV_SET,$i)
+  		if ( l > 0 )  printf "grant %s on %s to %s;\n",PRIV[l],$2,USER[i-1] >"perm.sql"
+		
 	}
 }
 END {

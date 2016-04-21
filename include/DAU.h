@@ -122,6 +122,7 @@ int DAU_mk(DAU *DP,T_SQL_Connect *SQL_Connect,const char *tabname);
 /* 对选择的列构建update语句，如果choose为空，全部列 ,返回尾部 */
 #define DAU_mk_upd_col(DP,choose,stmt) SRM_mk_upd_col(&(DP)->srm,(DP)->SQL_Connect->DBOWN,(choose),(stmt));
 
+#define DAU_mk_delete(DP,where) SRM_mk_delete(&(DP)->srm,(DP)->SQL_Connect->DBOWN,where)
 
 #define DAU_pkg_pack(DP,buf,dlimit) SRM_pkg_pack(&(DP)->srm,(buf),(dlimit))
 #define DAU_pkg_dispack(DP,buf,dlimit) SRM_pkg_dispack(&(DP)->srm,(buf),(dlimit))

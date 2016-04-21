@@ -4,7 +4,7 @@ CFLAGS= -Wall -fPIC -I$(INCDIR) -g
 CC=cc
 
 LIBOBJS= netvar.o mkvalues.o pack.o json_pack.o patt_copy.o colidx.o except.o SDBC_type.o \
-	mkfield.o setbind.o SRM.o SRM_json.o SRM_utility.o mk_where.o tpl_lib.o
+	mkfield.o setbind.o SRM.o SRM_json.o SRM_utility.o mk_where.o tpl_lib.o jerr.o
 $(LIBDIR)/libscbase.a:$(LIBOBJS)
 	ar -rv $(LIBDIR)/libscbase.a $?
 $(LIBOBJS):$(INCDIR)/pack.h $(INCDIR)/strproc.h

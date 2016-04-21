@@ -129,6 +129,7 @@ int SendPack(T_Connect *connect,T_NetHead *nethead)
 int i,len;
 char *p=NULL;
 
+	if(!connect || !nethead) return -1;
 //ÊÍ·Å½ÓÊÕbuf
 	if(connect->RecvLen > 65536) {
 		if(connect->RecvBuffer) free(connect->RecvBuffer);
@@ -153,11 +154,12 @@ char *p=NULL;
 		p=connect->SendBuffer+HEADPACKLENGTH;
 		if((connect->CryptFlg & (DO_ZIP|UNDO_ZIP)) == DO_ZIP) {
 			nethead->T_LEN=qlz_compress(nethead->data,p,nethead->PKG_LEN);
-/*
+/*YYYY
 			   if(nethead->PKG_LEN!=nethead->T_LEN)
-				ShowLog(6,"SendPack PKG_LEN=%d,T_LEN=%d",
+				ShowLog(5,"SendPack PKG_LEN=%d,T_LEN=%d",
 					nethead->PKG_LEN,nethead->T_LEN);
 */
+
 		} else {
 			if(!(connect->CryptFlg & UNDO_ZIP)) 
 				nethead->T_LEN=nethead->PKG_LEN;
@@ -175,6 +177,7 @@ int i,n;
 u_int crc;
 char *zbuf;
 
+	if(!connect || !nethead) return -1;
 	memset(nethead->para,0,sizeof(nethead->para));
 	nethead->data=NULL;
 	peeraddr(connect->Socket,addr);
@@ -254,6 +257,7 @@ char *zbuf;
 //		*connect->Host?connect->Host:"Client",nethead->T_LEN,nethead->PKG_LEN,connect->RecvBuffer);
 	if(!(connect->CryptFlg & UNDO_ZIP)) connect->RecvBuffer[nethead->PKG_LEN]=0;
 	nethead->data=connect->RecvBuffer;
+	nethead->data[nethead->PKG_LEN]=0;
 	return 0;
 }
 

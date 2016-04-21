@@ -1,12 +1,13 @@
 /*******************************************************
  * Secure Database Connect
- * SDBC 6.0 for ORACLE 
+ * SDBC 7.0 for ORACLE 
  * 2012.09.15 by ylh
  *******************************************************/
 
 #ifndef SCLIDEF
 #define SCLIDEF
 #include <pack.h>
+#include <json_pack.h>
 #include <sc.h>
 
 #ifndef TRAINBEGIN
@@ -67,14 +68,14 @@ extern int N_ChDir(T_Connect *connect,char *dir);
 extern int N_PutEnv(T_Connect *connect,char *env);
 
 /* Client database functions */
-extern int N_SQL_Prepare(T_Connect *,char *,T_SqlDa *);
+int N_SQL_Prepare(T_Connect *conn,char *stmt,T_SqlDa *sqlda);
 /* Fetch() recnum:进入时每次Fetch的记录数,0=全部记录,返回实际得到的记录数,NativeError:列数 */
 extern int N_SQL_Fetch(T_Connect *,int curno,char **result,int recnum);
 /* Select() recnum:进入时希望取得的记录数,0=全部记录,返回实际得到的记录数,NativeError:列数 */
-extern int N_SQL_Select(T_Connect *,char *cmd,char **data,int recnum);
+int N_SQL_Select(T_Connect *,char *cmd,char **data,int recnum);
 extern int N_SQL_Close_RefCursor(T_Connect *connect,int ref_cursor);
-extern int N_SQL_Close(T_Connect *,T_SqlDa *sqlda);
-extern int N_SQL_Exec(T_Connect *,char * cmd);
+int N_SQL_Close(T_Connect *conn,T_SqlDa *sqlda);
+extern int N_SQL_Exec(T_Connect *conn,char * cmd);
 /* st_lvs:状态级别，有几个游标类型就写几 */
 extern int N_SQL_RPC(T_Connect *connect,char *stmt,char **data,int *ncols,int st_lvs);
 extern int N_SQL_EndTran(T_Connect *connect,int TranFlag);
@@ -99,15 +100,16 @@ void free_srv_list(T_CLI_Var *clip);
  * 成功返回0，失败-1；
  *******************************************************/
 int init_svc_no(T_Connect *conn);
+/************************************************************
+ * N_get_tpl:从服务器取得表模板
+ * tabnames="表名1,表名2,,"
+ * 返回JSON对象:{表名:[模板],表名:[模板],...}
+ * **********************************************************/
+JSON_OBJECT N_get_tpl(T_Connect *conn,char *tabnames,int num);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-
-/********************************************************************
- *int (* Function[])(T_Connect *conn,T_NetHead *NetHead) -- Used by server 
- * CLIENT or server.c befor include net.h,define NO_EXTERN_FUNCTION *
- ********************************************************************/
 

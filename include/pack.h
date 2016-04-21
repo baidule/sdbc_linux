@@ -105,7 +105,8 @@ typedef struct {
     char  sqlformat[49];
 } T_SqlVar;
 
-extern T_PkgType SqlDaType[]; /* in net_packc */
+extern T_PkgType SqlDaType[]; /* in pack.c */
+
 typedef struct {
     int  cursor_no;
     int cols;

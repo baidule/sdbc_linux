@@ -17,11 +17,15 @@ int multi_hash(hash_paramiter *para)
 {
 int conflict,i,hashnum;
 int *lp;
-multi_hash_node *hash,*top,*hp,stack[para->key_count];
+multi_hash_node *hash,*top,*hp,*stack;
 
 	if(!para) return -1;
+
+	stack=malloc(sizeof(multi_hash_node) * para->key_count);
+	if(!stack) return MEMERR;
 	para->index=hash=(multi_hash_node *)malloc(para->key_count * sizeof(multi_hash_node));
 	if(!hash) {
+		free(stack);
 		return MEMERR;
 	}
 
@@ -67,8 +71,10 @@ multi_hash_node *hash,*top,*hp,stack[para->key_count];
 			*lp=i;
 		}
 	}
+	free(stack);
 	return conflict;
 }
+
 int multi_hash_find(void *key,hash_paramiter *para,int *a_count)
 {
 multi_hash_node *hp;

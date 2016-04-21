@@ -7,7 +7,6 @@
 #ifndef SCSRVDEF
 #define SCSRVDEF
 #include <pack.h>
-#include <json_pack.h>
 #include <sc.h>
 
 typedef struct {
@@ -80,6 +79,7 @@ sdbcfunc set_callback(int TCBno,sdbcfunc callback,int timeout);
 T_Connect *get_TCB_connect(int TCBno);
 void *get_TCB_ctx(int TCBno);
 int get_TCB_status(int TCB_no);
+T_NetHead *getNetHead(int TCBno);
 /**
  * unset_callback
  * 清除用户自定义回调函数
@@ -134,8 +134,6 @@ int get_event_fd(int TCB_no);
  * @return 事件状态
  */
 int get_event_status(int TCB_no);
-//yield to epoll
-int do_event(int sock,int flg,int timeout);
 
 //clikey.c
 /* 协商密钥 */
@@ -147,7 +145,6 @@ int get_srvname(T_Connect *conn,T_NetHead *NetHead);
 int AIO_read(int fd,char *buff,size_t iosize);
 int AIO_write(int fd,char *buff,size_t iosize);
 
-JSON_OBJECT jerr(int jerrno,const char *errmsg);
 int return_error(T_Connect *conn,T_NetHead *nethead,const char *msg);
 
 #ifdef __cplusplus

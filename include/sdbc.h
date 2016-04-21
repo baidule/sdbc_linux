@@ -50,6 +50,12 @@ int unbind_DB(int TCBno);
 int dui(T_Connect *conn,T_NetHead *nethead);
 int page_select(T_Connect *conn,T_NetHead *nethead);
 
+//清空服务器中的模板库
+int tpl_cancel(T_Connect *conn,T_NetHead *head);
+//取数据库表模板
+//head->data="表名1,表名2,,,"
+//返回JSON对象:{表名:[模板],表名:[模板],...}
+int get_tpl(T_Connect *conn,T_NetHead *head);
 #ifdef __cplusplus
 }
 #endif

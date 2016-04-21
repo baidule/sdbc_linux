@@ -77,7 +77,9 @@ typedef int (*sdbcfunc)(T_Connect *conn,T_NetHead *head);
 extern "C" {
 #endif
 
-
+typedef int (*T_YIELD)(int socket,int rwflg,int timeout);
+T_YIELD get_yield(void);
+T_YIELD set_yield(T_YIELD new_yield);
 int quick_send_pkg(T_Connect *connect,T_NetHead *nethead);
 int  SendPack(T_Connect *connect,T_NetHead *nethead);
 int  RecvPack(T_Connect *connect,T_NetHead *nethead);

@@ -1,6 +1,6 @@
 /***********************************************
  * 线程池服务器 
- * SDBC 7.1 支持Fiberized IO
+ * SDBC 7.1 支持Fiberized IO(coroutine,协程)
  ***********************************************/
 
 #include <sys/socket.h>
@@ -36,6 +36,7 @@ void set_showid(void *ctx);
 }
 #endif
 
+static T_YIELD other_yield=NULL;
 extern srvfunc Function[];// appl function list
 extern u_int family[];
 static void *thread_work(void *param);
@@ -101,6 +102,12 @@ T_SRV_Var * get_SRV_Var(int TCBno)
 {
 	if(TCBno<0 || TCBno>=client_q.max_client) return NULL;
 	return &client_q.pool[TCBno].sv;
+}
+
+T_NetHead *getNetHead(int TCBno)
+{
+	if(TCBno<0 || TCBno>=client_q.max_client) return NULL;
+	return &client_q.pool[TCBno].head;
 }
 
 int TCB_add(TCB **rp,int TCBno)
@@ -521,14 +528,13 @@ struct linger so_linger;
 static int do_epoll(TCB *task,int op,int flg)
 {
 struct epoll_event epv = {0, {0}};
-int  status,ret;
+int  ret;
 	if(task->fd<0) return FORMATERR;
 	if(task->next) {
 		ShowLog(1,"%s:tid=%lX,TCB:%d 已经在队列中,fd=%d,Sock=%d",__FUNCTION__,
 			pthread_self(),task->sv.TCB_no,task->fd,task->conn.Socket);
 		return -1;
 	}
-	status=task->status;
 	epv.events =  flg?EPOLLOUT:EPOLLIN;
 	epv.events |= EPOLLONESHOT;
 	epv.data.ptr = task;
@@ -681,7 +687,7 @@ int timeout=0;
 	}
 	task->timestamp=now_usec();//task与rs的差就是应用任务执行时间/
 	ucontext_t *tc=task->uc.uc_link;
-	if(tc  ) { //防止撞栈
+	if(tc) { //防止撞栈
 		pthread_t tid=pthread_self();
 		resource *rs=tpool.pool;
 		for(ret=0;ret<tpool.num;ret++,rs++) {
@@ -714,7 +720,24 @@ struct epoll_event event;
  			rpool.flg--;
 		}
 		pthread_mutex_unlock(&rpool.mut);
-		if(!task) {
+		if(task) {
+			if(!task->AIO_flg && !task->call_back) {
+/* 这个有冲突  20160311
+				if(task->uc.uc_stack.ss_sp) {
+					munmap(task->uc.uc_stack.ss_sp,task->uc.uc_stack.ss_size);
+					task->uc.uc_stack.ss_sp=NULL;
+					task->uc.uc_stack.ss_size=0;
+				}
+*/
+				task->fd=task->conn.Socket;
+				ShowLog(5,"%s:tid=%lX,TCB_no=%d from rdy_queue",__FUNCTION__,
+					pthread_self(),task->sv.TCB_no);
+				if(task->fd>=0) {
+					do_epoll(task,0,0);
+				}
+				continue;
+			}
+		} else  {
 			fds = epoll_wait(g_epoll_fd, &event, 1 , -1);
 			if(fds < 0){
        	 			ShowLog(1,"%s:epoll_wait err=%d,%s",__FUNCTION__,errno,strerror(errno));
@@ -722,23 +745,27 @@ struct epoll_event event;
 				continue;
        	 		}
 		 	task = (TCB *)event.data.ptr;
-			if(task->events == 0X10||task->fd==-1) {//超时
-				if(task->AIO_flg) break;
-				continue;
-			} else task->events=event.events;
+			if(task->events) {
+			    ShowLog(1,"%s:tid=%lX,TCB_no=%d,task->events=%08X,conflict!",__FUNCTION__,
+			            pthread_self(),task->sv.TCB_no,task->events);//发现惊群
+			    task=NULL;
+			    continue;//丢掉它
+			}
+			task->events=event.events;
 		}
 		rs->timestamp=now_usec();
 		if(task->status>0) set_showid(task->ctx);//Showid 应该在会话上下文结构里 
 		
 		if(task->AIO_flg) {//fiber task
-		task->uc.uc_link=&rs->tc;
-		rs->tc.uc_link=(ucontext_t *)task;
-			pthread_mutex_lock(&task->lock);//防止其他线程提前闯入
+		    task->uc.uc_link=&rs->tc;
+		    rs->tc.uc_link=(ucontext_t *)task;
 ShowLog(5,"%s:tid=%lX,resume to TCB_no=%d",__FUNCTION__,pthread_self(),task->sv.TCB_no);
+			pthread_mutex_lock(&task->lock);//防止其他线程提前闯入
 			setcontext(&task->uc);	//== longjmp()
 			continue;//no action,logic only
 		}
 		if(task->uc.uc_stack.ss_size>0) {//call_back模式，抢入了，进入同步模式
+            rs->tc.uc_link=NULL;
 ShowLog(5,"%s:tid %lX 抢入 SYNC",__FUNCTION__,pthread_self());
 			do_work(task->sv.TCB_no);
 			continue;
@@ -819,7 +846,7 @@ ShowLog(5,"%s:tid=%lX,fiber yield from TCB_no=%d",
 	return NULL;
 }
 //yield to schedle
-int do_event(int sock,int flg,int timeout)
+static int do_event(int sock,int flg,int timeout)
 {
 TCB *task;
 int save_fd,save_timeo=-1;
@@ -830,7 +857,7 @@ resource *rs=tpool.pool;
 	for(ret=0;ret<tpool.num;ret++,rs++) { //找原来的栈
 		if(tid == rs->tid) break;
 	}
-	if(ret>=tpool.num) return -1;
+	if(ret>=tpool.num) return THREAD_ESCAPE;
 	task=(TCB *)rs->tc.uc_link;
 	if(!task || task->uc.uc_stack.ss_size == 0) return MEMERR;
 	save_fd=task->fd;
@@ -858,8 +885,16 @@ resource *rs=tpool.pool;
 	if(flg==0 && task->events != EPOLLIN) {
 		ShowLog(1,"%s:tid=%lX resumed events=%X",__FUNCTION__,
 			pthread_self(),task->events);
-		return -11;
+		return TIMEOUTERR;
 	}
+	return ret;
+}
+
+static int do_yield(int socket,int rwflg,int timeout)
+{
+int ret=do_event(socket,rwflg,timeout);
+	if(THREAD_ESCAPE == ret && other_yield)
+		ret=other_yield(socket,rwflg,timeout);
 	return ret;
 }
 
@@ -891,8 +926,8 @@ int num=0,t;
 		  task->events=0X10;
 		  if(task->AIO_flg) {
 			TCB_add(NULL,task->sv.TCB_no);
-			ShowLog(1,"%s:TCB_no[%d],AIO t=%d,task->timeout=%d",
-				__FUNCTION__,i,t,task->timeout);
+			ShowLog(1,"%s:TCB_no=%d.%d,AIO t=%d,task->timeout=%d",
+				__FUNCTION__,i,task->sv.TCB_no,t,task->timeout);
 		  } else {
 			client_del(task);
 			if(task->status<1) ShowLog(1,"%s:TCB:%d canceled,t=%d",__FUNCTION__,i,t);
@@ -969,6 +1004,9 @@ struct linger so_linger;
 	if(ret) return(ret);
 
 	for(fp=Function;fp->funcaddr!=0;fp++) rpool.svc_num++;
+
+	other_yield=set_yield(do_yield);
+
 	bzero(&sin,sizeof(sin));
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = INADDR_ANY;

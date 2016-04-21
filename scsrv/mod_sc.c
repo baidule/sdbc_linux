@@ -91,7 +91,7 @@ struct timespec tim;
 
 	ShowLog(3,"%s:scpool[%d],tid=%lX created!",__FUNCTION__,poolno,tid);
 	while(1) {
-//从就绪队列取一个任务
+//从等待队列取一个任务
 		pthread_mutex_lock(&qp->mut);
 		while(0>(TCBno=TCB_get(&qp->queue))) {
                         gettimeofday((struct timeval *)&tim,0);

@@ -20,6 +20,7 @@ extern "C" {
 
 //scpool.c
 // ctx_flag=0 use as midsc; !=0 as client
+int set_SC_loglevel(int new_loglevel);
 int scpool_init(int ctx_flag);
 void scpool_free(void);
 void scpool_check(void);

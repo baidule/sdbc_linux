@@ -41,6 +41,7 @@ T_PkgType TinyType[]={
 
 int isnull(void * vp,int type)
 {
+	if(!vp) return 1;
 	switch(type&127) {
 	case CH_CHAR:
 		return (!*(char *)vp);
@@ -76,6 +77,7 @@ void clean_bindtype(T_PkgType *tp,int flg)
 {
 T_PkgType *typ;
 
+	if(!tp) return;
 	for(typ=tp;typ->type>-1;typ++) {
 		typ->bindtype &= ~flg;
 	}
@@ -109,6 +111,7 @@ int i,k,l;
 int ali,dali,lali,llali,ldli;
 int max_align=1;
 
+	if(!pkg_type) return -1;
 	if(pkg_type->offset>-1) return cnt_type(pkg_type);
 	ali= M_ST_OFF(align,b) - 1;
 	dali=M_ST_OFF(dalign,b) - 1;
@@ -186,7 +189,7 @@ int max_align=1;
 				break;
 			case CH_FLOAT:
 			case CH_INT:
-				k=(k+3)&~3;
+				k=(k+ali)&~ali;
 				max_align=(max_align>sizeof(int))?max_align:sizeof(int);
 				break;
 			case CH_STRUCT:

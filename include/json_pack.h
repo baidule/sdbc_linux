@@ -51,6 +51,7 @@ int json_to_Str(char *buf,JSON_OBJECT json,T_PkgType *tp);
 
 //T_PkgType --> JSON result:[]
 int tpl_to_JSON(T_PkgType *tp,JSON_OBJECT result);
+JSON_OBJECT jerr(int jerrno,const char *errmsg);
 //失败返回NULL，成功后，需应用者自行释放
 T_PkgType * new_tpl_fromJSON(JSON_OBJECT tpl_json);
 // at tpl_lib.c
