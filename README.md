@@ -5,6 +5,7 @@ SDBC专注于 **模块化** ，为 **快速构建高频、99.99%交易完整的�
 
 ## Documentation
 -[Documentation Home](https://github.com/sdbc/sdbc_linux/wiki)
+
 -[应用场景](https://github.com/sdbc/sdbc_linux/wiki/应用场景)
 ## compiler instruction
 	下载源代码
@@ -12,7 +13,4 @@ SDBC专注于 **模块化** ，为 **快速构建高频、99.99%交易完整的�
 	#> cd sdbc_linux
 	#> make
 	#> ls lib
-	libsc.a  libscbase.a	
-
-
-
+	libsc.a  libscbase.a
