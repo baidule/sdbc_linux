@@ -9,8 +9,9 @@ CC=gcc
 SUBDIRS=string conf ds crypto socket sccli scsrv pack
 INCDIR=$(SDBCDIR)/include
 LIBDIR=$(SDBCDIR)/lib
+CFLAGS= -m64 -w -fPIC -I$(INCDIR) -g
 
-export CC SUBDIRS SDBCDIR LIBDIR INCDIR
+export CC SUBDIRS SDBCDIR LIBDIR INCDIR CFLAGS
 
 all:CHECK_DIR $(SUBDIRS)
 

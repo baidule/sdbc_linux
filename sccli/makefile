@@ -1,8 +1,5 @@
 
-LIBDIR=$(SDBCDIR)/lib
-INCDIR=$(SDBCDIR)/include
-CFLAGS= -m64 -Wall -fPIC -I$(INCDIR) -O3
-CC=gcc
+CFLAGS:= $(CFLAGS) -O3
 
 LIBOBJS= client.o getls.o sqlc.o sqlinit.o getsvc.o netconnect.o get_clikey.o scpool.o \
 	N_get_tpl.o

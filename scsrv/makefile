@@ -1,8 +1,4 @@
 
-LIBDIR=$(SDBCDIR)/lib
-INCDIR=$(SDBCDIR)/include
-CFLAGS= -m64 -Wall -fPIC -I$(INCDIR) -g
-CC=gcc
 all:$(LIBDIR)/libsc.a
 
 LIBOBJS= chkexec.o echo.o filelist.o rexec.o  PutEvent.o return_error.o\

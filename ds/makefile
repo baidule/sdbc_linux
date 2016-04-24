@@ -1,9 +1,4 @@
 
-LIBDIR=$(SDBCDIR)/lib
-INCDIR=$(SDBCDIR)/include
-CFLAGS= -Wall -fPIC -I$(INCDIR) -g
-CC=gcc
-
 LIBOBJS= getdw.o  tree.o tree_del.o  multi_hash.o Binary_search.o bound.o
 
 $(LIBDIR)/libscbase.a:$(LIBOBJS)
