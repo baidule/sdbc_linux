@@ -6,7 +6,7 @@
 SDBCDIR=$(shell pwd)
 
 CC=gcc
-SUBDIRS=string conf ds crypto socket sccli scsrv pack
+SUBDIRS=string conf ds crypto socket sccli scsrv pack dau sdbc
 INCDIR=$(SDBCDIR)/include
 LIBDIR=$(SDBCDIR)/lib
 CFLAGS= -m64 -w -fPIC -I$(INCDIR) -I$(INCDIR)/ldap -g
