@@ -17,7 +17,7 @@ extern int substitute_env(char *line);
 int WriteTmpFile(char * ls_tmpfile,size_t len,char * ls_time)
 {
 	FILE *fd = fopen(ls_tmpfile,"w");
-	if(fd == NULL)  return -1 ; 
+	if(fd == NULL)  return -1 ;
 	fprintf(fd,"%lu|%s|\n",len,ls_time);
 	fclose(fd);
 	return 0 ;
@@ -26,7 +26,7 @@ int WriteTmpFile(char * ls_tmpfile,size_t len,char * ls_time)
 int ReadTmpFile(char * ls_tmpfile,char * ls_len,char * ls_time)
 {
 	char *p,ls_buf[DEFAULT_TMPFILE_SIZE];
-	
+
 	FILE *fd = fopen(ls_tmpfile,"r");
 	if(fd == NULL)  return -1 ;
 	fgets(ls_buf,sizeof(ls_buf),fd);
@@ -34,11 +34,11 @@ int ReadTmpFile(char * ls_tmpfile,char * ls_len,char * ls_time)
 	p=ls_buf;
 	p = stptok(p,ls_len,21,PROTO_DELIMITER);
 	if(*p != PROTO_DELIMITER_CHAR) return FORMATERR;
-	p = stptok(++p,ls_time,YEAR_TO_SEC_LEN,PROTO_DELIMITER);	
-	
+	p = stptok(++p,ls_time,YEAR_TO_SEC_LEN,PROTO_DELIMITER);
+
 	return 0 ;
 }
-//busToServer��
+//busToServer用
 int ProtoCheck(char *fullname,size_t len,char * ls_time,size_t pos,char * ls_retbuf)
 {
 int li_ret;
@@ -51,8 +51,8 @@ size_t old_len=0;
 	sprintf(ls_tmpfile, "%s.   ",fullname);
 	li_ret=ReadTmpFile(ls_tmpfile, ls_oldlen,ls_oldtime);
 	if(!li_ret) sscanf(ls_oldlen,"%ld",&old_len);
-	if(li_ret || strcmp(ls_oldtime,ls_time) || old_len != len) { 
-//�´��ļ�
+	if(li_ret || strcmp(ls_oldtime,ls_time) || old_len != len) {
+//新传文件
 		if(!li_ret) unlink(ls_tmpfile);
 		pos=0;
 		fd=open(fullname,O_CREAT|O_WRONLY|O_TRUNC,0644);// |O_DIRECT
@@ -67,19 +67,20 @@ size_t old_len=0;
 		sprintf(ls_retbuf,"%s|%lu|%s|%lu|",fullname,len,ls_time,pos);
 		return fd;
 	}
-		
+
 	if(0>(fd=open(fullname,O_WRONLY|O_APPEND|O_CREAT,0644))) { //|O_DIRECT
 		sprintf(ls_retbuf,"%s:err=%d,%s",fullname,errno,strerror(errno));
 		unlink(ls_tmpfile);
 		return -1;
-	}		
-//�ϵ�����
-	pos=lseek(fd,0,SEEK_END);
-ShowLog(5,"�ϵ�����:pos=%ld",pos);
-	sprintf(ls_retbuf,"%s|%ld|%s|%ld|",fullname,len,ls_time,pos);
-	return fd;
-}
-	
+	}
+	//断点续传
+		pos=lseek(fd,0,SEEK_END);
+	ShowLog(5,"断点续传:pos=%ld",pos);
+		sprintf(ls_retbuf,"%s|%ld|%s|%ld|",fullname,len,ls_time,pos);
+		return fd;
+	}
+
+	// 客户端向服务器传送文件
 int cliToServer(connect,NetHead)
 T_NetHead *NetHead;
 T_Connect *connect;
@@ -101,25 +102,27 @@ errret:
 		NetHead->data=tmp;
 		NetHead->PKG_LEN=strlen(NetHead->data);
 		NetHead->PROTO_NUM=PutEvent(connect,Event_no);
-   		NetHead->ERRNO2=-1; 
+   		NetHead->ERRNO2=-1;
 	   	NetHead->PKG_REC_NUM=0;
    		NetHead->D_NODE=0;
    		NetHead->O_NODE=e_node;
 		i=SendPack(connect,NetHead);
 		ShowLog(1,"%s:%s",__FUNCTION__,NetHead->data);
-		return 0;  
+		return 0;
 	}
 ShowLog(5,"%s:data=%s",__FUNCTION__,NetHead->data);
-	
-	
+
+
 	memset((void*)ls_time,0,sizeof(ls_time));
-	
+
 	buffer=valloc(SDBC_BLKSZ);
 	if(!buffer) {
 		sprintf(tmp,"malloc buffer fault!");
 		NetHead->ERRNO1=MEMERR;
 		goto errret;
 	}
+//文件名|尺寸|时间戳 |位置|
+//buffer|len |ls_time|pos |
 	char * p ;
 	p = stptok(NetHead->data,buffer,SDBC_BLKSZ,PROTO_DELIMITER);
 	p = stptok(++p,tmp,sizeof(tmp),PROTO_DELIMITER);
@@ -127,8 +130,8 @@ ShowLog(5,"%s:data=%s",__FUNCTION__,NetHead->data);
 	p = stptok(++p,ls_time,sizeof(ls_time),PROTO_DELIMITER);
 	p = stptok(++p,tmp,sizeof(tmp),PROTO_DELIMITER);
 	pos=atoi(tmp);
-	
-	if(*buffer=='$') 
+
+	if(*buffer=='$')
 	{
 		if(buffer[1]=='/') strsubst(buffer+1,0,"RECVDIR");
 		else if(buffer[1]=='@') strsubst(buffer+1,1,"HOME");
@@ -143,19 +146,19 @@ ShowLog(5,"%s:data=%s",__FUNCTION__,NetHead->data);
 		free(buffer);
 		goto errret;
 	}
-		
+
 	NetHead->PROTO_NUM=PutEvent(connect,Event_no);
-		
+
 	NetHead->ERRNO1=0;
-	NetHead->ERRNO2=PACK_STATUS; 
+	NetHead->ERRNO2=PACK_STATUS;
   	NetHead->O_NODE=e_node;
 	NetHead->D_NODE=0;
 	NetHead->data=tmp;
 	NetHead->PKG_LEN= strlen(NetHead->data);
 	i=SendPack(connect,NetHead);
 ShowLog(5,"%s:%s",__FUNCTION__,NetHead->data);
-  
-    
+
+
 	count=1;
 	do {
 		i=RecvPack(connect,NetHead);
@@ -167,7 +170,7 @@ ShowLog(5,"%s:%s",__FUNCTION__,NetHead->data);
 			goto errret;
 		}
 		if(NetHead->PKG_LEN) {
-			memcpy(buffer,NetHead->data,NetHead->PKG_LEN);//������ҳ�߽�����buffer
+			memcpy(buffer,NetHead->data,NetHead->PKG_LEN);//必须是页边界对齐的buffer
 			i=AIO_write(fd,buffer,NetHead->PKG_LEN);
 			if(i<0) {
 				flg=errno;
@@ -191,7 +194,7 @@ ShowLog(5,"%s:%s",__FUNCTION__,NetHead->data);
 	unlink(errbuf);
 	sprintf(tmp,"%s|%ld|%s|%ld|",buffer,len,ls_time,pos);
 	free(buffer);
-	
+
 	NetHead->PROTO_NUM=PutEvent(connect,Event_no);
  	NetHead->O_NODE=e_node;
  	NetHead->D_NODE=0;
@@ -219,7 +222,7 @@ int o_err=0;
 		sprintf(buf,"open %s:err=%d,%s",fname,errno,strerror(errno));
 		return o_err;
 	}
-	
+
 	li_ret = fstat(fd, &l_stat);
 	if(li_ret !=0) {
 		o_err=-abs(errno);
@@ -228,17 +231,17 @@ int o_err=0;
 		close(fd);
 		return o_err;
 	}
-	
+	//这个有问题，应该换算到time_t再比较。
 	strftime(ftime, sizeof(ftime), "%Y-%m-%d %H:%M:%S", localtime(&l_stat.st_mtime));
 	if(flen != l_stat.st_size || strcmp(ftime,ls_ftime)) {
 		*pos=0;
-	} 
+	}
 	lseek(fd,*pos,SEEK_SET);
 	sprintf(buf,"%s|%lu|%s|%lu|",fname,l_stat.st_size,ftime,*pos);
-	
+
 	return fd ;
 }
-
+//服务器向客户端传送文件
 int serverToCli(connect,NetHead)
 T_NetHead *NetHead;
 T_Connect *connect;
@@ -274,6 +277,8 @@ errret:
 	}
 	substitute_env(fname);
 	ShowLog(5,"%s:%s,p=%s",__FUNCTION__,fname,p);
+	//文件名|尺寸|时间戳 |位置|
+	//第一次传时给： 文件名|0||0|
 	p=stptok(++p,ls_flen,sizeof(ls_flen),PROTO_DELIMITER);
 	if(*p!='|') goto err1;
 	len=0;
@@ -283,7 +288,7 @@ errret:
 	p=stptok(++p,ls_fpos,sizeof(ls_fpos),PROTO_DELIMITER);
 	pos=0;
 	sscanf(ls_fpos,"%lu",&pos);
-	
+
 	buffer=valloc(SDBC_BLKSZ);
 	if(!buffer) {
 		NetHead->ERRNO1=MEMERR;
@@ -296,18 +301,19 @@ errret:
 		NetHead->ERRNO1=fd;
 		free(buffer);
 		goto errret;
-	} 
+	}
 
+//返回：文件名|尺寸|时间戳 |位置|
 ShowLog(5,"%s:buffer=%s",__FUNCTION__,buffer);
 	NetHead->PKG_REC_NUM=0;
-	NetHead->ERRNO1=0; 
+	NetHead->ERRNO1=0;
 	NetHead->O_NODE=e_node;
-	NetHead->D_NODE=0;	
+	NetHead->D_NODE=0;
 	NetHead->PROTO_NUM=0;
 	NetHead->data=buffer;
 	NetHead->PKG_LEN=strlen(NetHead->data) ;
 	NetHead->ERRNO2= PACK_CONTINUE;
-	int li_ret = SendPack(connect,NetHead);	
+	int li_ret = SendPack(connect,NetHead);
 	if(li_ret !=0) {
 		ShowLog(1,"%s: SendPack ret=%d,err=%d,%s",__FUNCTION__,li_ret,
 				errno,strerror(errno));
@@ -315,7 +321,7 @@ ShowLog(5,"%s:buffer=%s",__FUNCTION__,buffer);
 		free(buffer);
 		return -1 ;
 	}
-	
+
 size_t r_len;
 	do {
 		*buffer=0;
@@ -350,7 +356,6 @@ size_t r_len;
 		NetHead->PKG_LEN=0;
 		i=SendPack(connect,NetHead);
 	}
-	ShowLog(2,"%s: %s success,len=%lu",__FUNCTION__,fname,len);   
+	ShowLog(2,"%s: %s success,len=%lu",__FUNCTION__,fname,len);
 	return 0;
 }
-

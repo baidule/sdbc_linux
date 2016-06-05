@@ -1,8 +1,9 @@
 /****************************************************
- * SDBCµÄÈÕÖ¾¹ÜÀí¡£
- * ÈÕÖ¾ÎÄ¼şÃûÊÇÑ­»·Ê¹ÓÃµÄ£¬¿ÉÒÔ°´ÖÜÑ­»·»ò°´ÈÕÑ­»·¡£
- * ÈÕÖ¾·Ö¼¶ÏÔÊ¾£¬¿ÉÒÔÍ¨¹ı»·¾³±äÁ¿¿ØÖÆÈÕÖ¾¼¶±ğ¡£
- * ±¾º¯ÊıÊÇÏß³Ì°²È«µÄ¡£
+ * SDBCçš„æ—¥å¿—ç®¡ç†ã€‚
+ * æ—¥å¿—æ–‡ä»¶åæ˜¯å¾ªç¯ä½¿ç”¨çš„ï¼Œå¯ä»¥æŒ‰å‘¨å¾ªç¯æˆ–æŒ‰æ—¥å¾ªç¯ã€‚
+ * ä¹Ÿå¯ä»¥æ¯æ—¥åˆ†æ—¶æ®µå†™æ–‡ä»¶
+ * æ—¥å¿—åˆ†çº§æ˜¾ç¤ºï¼Œå¯ä»¥é€šè¿‡ç¯å¢ƒå˜é‡æ§åˆ¶æ—¥å¿—çº§åˆ«ã€‚
+ * æœ¬å‡½æ•°æ˜¯å¤šè¿›ç¨‹å¤šçº¿ç¨‹å®‰å…¨çš„ã€‚
  ***************************************************/
 
 #include <fcntl.h>
@@ -19,9 +20,9 @@ char *Showid=NULL;
 
 static T_Tree *thread_showid=NULL;
 static volatile int mthr_flg=0;
+static int level=-1;
 
 static pthread_mutex_t log_mutex=PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t thr_mtx=PTHREAD_MUTEX_INITIALIZER;
 static pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
 
 struct mt_showid {
@@ -42,25 +43,23 @@ static int mthr_dup(T_Tree *tp,void *cont,int len)
 {
 struct mt_showid *m1,*m=(struct mt_showid *)cont;
 	m1=(struct mt_showid *)tp->Content;
-//Èç¹ûtidÒÑ´æÔÚ£¬showid¸üĞÂ  
+//å¦‚æœtidå·²å­˜åœ¨ï¼Œshowidæ›´æ–°
 	m1->showid=m->showid;
 	return 0;
 }
-//¶¨ÖÆÏß³ÌµÄShowid  
+//å®šåˆ¶çº¿ç¨‹çš„Showid
 void mthr_showid_add(pthread_t tid,char *showid)
 {
 struct mt_showid mid;
 	mid.tid=tid;
 	mid.showid=showid;
-//	pthread_mutex_lock(&thr_mtx);
 	pthread_rwlock_wrlock(&rwlock);
 	thread_showid=BB_Tree_Add(thread_showid,&mid,sizeof(mid),mts_cmp,mthr_dup);
 	mthr_flg=1;
 	pthread_rwlock_unlock(&rwlock);
-//	pthread_mutex_unlock(&thr_mtx);
 }
 
-//È¡ÏûÏß³ÌµÄShowid
+//å–æ¶ˆçº¿ç¨‹çš„Showid
 
 int mthr_showid_del(pthread_t tid)
 {
@@ -68,16 +67,23 @@ struct mt_showid mid;
 int i=0;
 	mid.tid=tid;
 	mid.showid=0;
-//	pthread_mutex_lock(&thr_mtx);
 	pthread_rwlock_wrlock(&rwlock);
 	thread_showid=BB_Tree_Del(thread_showid,&mid,sizeof(mid),mts_cmp,0,&i);
 	if(!thread_showid)  mthr_flg=0;
 	pthread_rwlock_unlock(&rwlock);
-//	pthread_mutex_unlock(&thr_mtx);
 	return i;
 }
-//Éú³É·ÖÊ±¼ä¶ÎÈÕÖ¾Ãû 
-//8-20µã6¶Î£¬0-8µã£¬20-24µã¸÷Ò»¶Î 
+//è®¾ç½®æ—¥å¿—çº§åˆ«,å…è®¸ç¨‹åºåŠ¨æ€è®¾ç½®æ—¥å¿—çº§åˆ«
+//è¿”å›åŸå…ˆçš„çº§åˆ«
+int setShowLevel(int new_level)
+{
+int old=level;
+	level=new_level;
+	return old;
+}
+
+//ç”Ÿæˆåˆ†æ—¶é—´æ®µæ—¥å¿—å
+//8-20ç‚¹6æ®µï¼Œ0-8ç‚¹ï¼Œ20-24ç‚¹å„ä¸€æ®µ
 // LOGSEG=8-20?6
 static char * psfx(char *buf,int bh,int eh,int n,int now)
 {
@@ -110,7 +116,7 @@ char *p,buf[5];
 
 	p=getenv("LOGSEG");
 	if(!p || !*p) return "log";
-	
+
 	ret=sscanf(p,"%d?%d:%d",&bh,&m,&n);
 	if(ret<1) return "log";
 	else if(ret == 1 ) {
@@ -171,7 +177,7 @@ FILE *efd=0;
 	if(!cp || !*cp) return 0;
 	sfx=getsfx(tim.tm_hour*60+tim.tm_min);
  	dp=getenv("LOGDAY");
-	if(dp&&toupper(*dp)=='D') 
+	if(dp&&toupper(*dp)=='D')
 		sprintf(fn,"%s%02d.%s",cp,tim.tm_mday,sfx);
 	else sprintf(fn,"%s%d.%s",cp,tim.tm_wday,sfx);
 
@@ -181,7 +187,7 @@ FILE *efd=0;
 		strcpy(LOGFILE,fn);
 		ret=stat(LOGFILE,&sbuf);
 		if(ret<0 || ((today-timezone)/86400-
-			(sbuf.st_ctime-timezone)/86400)>0) mode="w"; 
+			(sbuf.st_ctime-timezone)/86400)>0) mode="w";
     		efd=freopen(LOGFILE,mode,stderr);
     		if(efd) {
 	    		fd=fileno(efd);
@@ -201,14 +207,14 @@ FILE *efd=0;
 	pthread_mutex_unlock(&log_mutex);
 	return 0;
 }
-/* ·µ»Ø0Ã»¼Ç,·µ»Ø1 ¼ÇÁË */     
+/* è¿”å›0æ²¡è®°,è¿”å›1 è®°äº† */
 int ShowLog(int debug_level,const char * fmt,...)
 {
 char *cp;
 struct tm *today_t;
 time_t tim;
 va_list vlist;
-int level,len;
+int len;
 char *showid=Showid;
 
 	if(debug_level==-1){
@@ -218,17 +224,19 @@ char *showid=Showid;
 		}
 		*LOGFILE=0;
 		if(mthr_flg) {
-			pthread_mutex_lock(&thr_mtx);
+			pthread_rwlock_wrlock(&rwlock);
 			BB_Tree_Free(&thread_showid,0);
 			mthr_flg=0;
-			pthread_mutex_unlock(&thr_mtx);
+			pthread_rwlock_unlock(&rwlock);
 		}
 		pthread_mutex_unlock(&log_mutex);
 		return 0;
 	}
-	cp=getenv("LOGLEVEL");
-	if(cp && isdigit(*cp))level=atoi(cp);
-	else level=2;
+	if(level<0) {
+		cp=getenv("LOGLEVEL");
+		if(cp && isdigit(*cp))level=atoi(cp);
+		else level=2;
+	}
 	if(level<debug_level) return 0;
 	time(&tim);
 	today_t=localtime((time_t *)&tim);
@@ -236,7 +244,7 @@ char *showid=Showid;
 char ufmt[len+((showid)?strlen(showid):1)+50];
 
 	setlogfile(tim);
-	if(mthr_flg) {	//¶àÏß³ÌÈÕÖ¾ 
+	if(mthr_flg) {	//å¤šçº¿ç¨‹æ—¥å¿— 
 	struct mt_showid mid;
 	T_Tree *tp;
 
@@ -265,6 +273,6 @@ char ufmt[len+((showid)?strlen(showid):1)+50];
 	fflush(stderr);
 	pthread_mutex_unlock(&log_mutex);
 	va_end(vlist);
-	
+
 	return 1;
 }

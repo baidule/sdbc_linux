@@ -1,7 +1,7 @@
 /****************************** description *****************************/
 /*Copyright (C), 2006-2009, EASYWAY. Co., Ltd.							*/
-/*function:Ê±¼äÈÕÆÚº¯Êı													*/
-/*author:yulihua¡¢huangpeng												*/
+/*function:æ—¶é—´æ—¥æœŸå‡½æ•°														*/
+/*author:yulihua,huangpeng												*/
 /*modify date:2009-4-21													*/
 /************************************************************************/
 #include <datejul.h>
@@ -36,17 +36,17 @@ register	char *p;
 
 
 /************************************************************************/
-/* function:IsLeapYear ÅĞ¶ÏÊÇ·ñÊÇÈòÄê                                   */
+/* function:IsLeapYear åˆ¤æ–­æ˜¯å¦æ˜¯é—°å¹´                                   */
 /************************************************************************/
 static int IsLeapYear(int year)
 {
-  if(!(year % 400)) 
+  if(!(year % 400))
 	  return 1;
-  else if(!(year % 100)) 
+  else if(!(year % 100))
 	  return 0;
-  else if(!(year % 4)) 
+  else if(!(year % 4))
 	  return 1;
-  else 
+  else
 	  return 0;
 }
 
@@ -56,7 +56,7 @@ static int LeapNum(int yn)
 }
 
 /************************************************************************/
-/*function:CheckDate ¼ì²éÈÕÆÚ(1900.1.1£­3532.11.29)(596409)             */
+/*function:CheckDate æ£€æŸ¥æ—¥æœŸ(1900.1.1-3532.11.29)(596409)             */
 /************************************************************************/
 static const int month_days[12]={31,28,31,30,31,30,31,31,30,31,30,31};
 
@@ -64,23 +64,23 @@ static int CheckDate(register short ymd[3])
 {
 	int days;
 
-    if((ymd[0] < 1900) || (ymd[0] >3532)) 
+    if((ymd[0] < 1900) || (ymd[0] >3532))
 		return FORMATERR-101;
-    if((ymd[1] < 1) || (ymd[1] >12)) 
+    if((ymd[1] < 1) || (ymd[1] >12))
 		return FORMATERR-102;
     days = month_days[ymd[1]-1];
-    if(ymd[1] == 2) 
+    if(ymd[1] == 2)
 		days += IsLeapYear(ymd[0]);
-    if(ymd[2] > days) 
+    if(ymd[2] > days)
 		ymd[2] = days;
-    if(ymd[2] < 1) 
+    if(ymd[2] < 1)
 		return FORMATERR-103;
-    
+
 	return 0;
 }
 
 /************************************************************************/
-/*function:rymdjul ½«ÄêÔÂÈÕÊı×é×ª»»Îª×¼ÈåÂÔÀúÊı,1899.12.31ÖÁÖ¸¶¨ÈÕµÄÌìÊı*/
+/*function:rymdjul å°†å¹´æœˆæ—¥æ•°ç»„è½¬æ¢ä¸ºå‡†å„’ç•¥å†æ•°,1899.12.31è‡³æŒ‡å®šæ—¥çš„å¤©æ•°*/
 /************************************************************************/
 INT4 rymdjul(short ymd[3])
 {
@@ -88,19 +88,19 @@ INT4 rymdjul(short ymd[3])
 	register INT4 TotalDays = 0;
 
     if(ymd[0]==1899 && ymd[1]==12 && ymd[2]==31) return 0;
-    if(0!=(ccount = CheckDate(ymd))) 
+    if(0!=(ccount = CheckDate(ymd)))
 		return ccount;
     TotalDays = (ymd[0] - 1900) * 365 + LeapNum(ymd[0]-1900);
-    for (ccount = 1; ccount < ymd[1]; ccount++) 
+    for (ccount = 1; ccount < ymd[1]; ccount++)
 		TotalDays += month_days[ccount-1];
-    if(ymd[1] > 2) 
+    if(ymd[1] > 2)
 		TotalDays += IsLeapYear(ymd[0]);
 
     return (TotalDays + ymd[2]);
 }
 
 /************************************************************************/
-/*function:rjulymd ½«×¼ÈåÂÔÀúÊı(¾àÀë1899.12.31µÄÌìÊı)×ª»»ÎªÄêÔÂÈÕÊı×é	*/
+/*function:rjulymd å°†å‡†å„’ç•¥å†æ•°(è·ç¦»1899.12.31çš„å¤©æ•°)è½¬æ¢ä¸ºå¹´æœˆæ—¥æ•°ç»„	*/
 /************************************************************************/
 INT4 rjulymd(INT4  date,short ymd[3])
 {
@@ -117,8 +117,8 @@ INT4 rjulymd(INT4  date,short ymd[3])
 	if(modday <= 0) {
 		ymd[0]--;
 		ymd[1] = 12;
-		ymd[2] = 31 + modday;     
-		if(ymd[2] <= 0) 
+		ymd[2] = 31 + modday;
+		if(ymd[2] <= 0)
 			return FORMATERR-101;
 		return 0;
 	}
@@ -127,9 +127,9 @@ INT4 rjulymd(INT4  date,short ymd[3])
 		int day;
 		day = modday;
 		modday -= month_days[i];
-		if(i == 1) 
+		if(i == 1)
 			modday -= IsLeapYear(ymd[0]);
-		if(modday <= 0) 
+		if(modday <= 0)
 		{
 			ymd[2] = day;
 			return 0;
@@ -152,10 +152,10 @@ int i,num;
 	return num;
 }
 /************************************************************************/
-/* function:rstrfmttotime ½«×Ö·û´®µÄÄêÔÂÈÕÊ±·ÖÃë×ª»»³É×¼ÈåÂÔÀúÊı	*/
-/*description:fmt(YYYY-MM-DD HH24:MI:SS»òYYYY-MM-DD HH:NN:SSµÈ¸ñÊ½)	*/
-/*¿ÉÒÔÈÎÒâµßµ¹´ÎĞò£¬¿ÉÒÔ´óĞ´»òĞ¡Ğ´£¬¿ÉÒÔÃ»ÓĞ·Ö¸ô·û¡£·Ö¸ô·û¿ÉÒÔÊÇºº×Ö	*/
-/*·µ»Ø£º×¼ÈåÂÔÀúÊı(ÒÔÌìÎªµ¥Î»)£¬hmsÖĞÓĞÊ±·ÖÃë usec ÀïÊÇÎ¢Ãë		*/
+/* function:rstrfmttotime å°†å­—ç¬¦ä¸²çš„å¹´æœˆæ—¥æ—¶åˆ†ç§’è½¬æ¢æˆå‡†å„’ç•¥å†æ•°	*/
+/*description:fmt(YYYY-MM-DD HH24:MI:SSæˆ–YYYY-MM-DD HH:NN:SS.FF6ç­‰æ ¼å¼)	*/
+/*å¯ä»¥ä»»æ„é¢ å€’æ¬¡åºï¼Œå¯ä»¥å¤§å†™æˆ–å°å†™ï¼Œå¯ä»¥æ²¡æœ‰åˆ†éš”ç¬¦ã€‚åˆ†éš”ç¬¦å¯ä»¥æ˜¯æ±‰å­—	*/
+/*è¿”å›ï¼šå‡†å„’ç•¥å†æ•°(ä»¥å¤©ä¸ºå•ä½)ï¼Œhmsä¸­æœ‰æ—¶åˆ†ç§’ usec é‡Œæ˜¯å¾®ç§’		*/
 /************************************************************************/
 INT4 rstrfmttotime(char *str,const char *fmt,short hms[3],int *usec)
 {
@@ -186,13 +186,13 @@ long f;
 			strncpy(buffer, scp, scp_siz);
 			buffer[scp_siz] = 0;
 			ymd[0] = (short)atoi(buffer);
-			if(ymd[0] < 70) 
+			if(ymd[0] < 70)
 				ymd[0] += 2000;
-			else if(ymd[0] < 200) 
+			else if(ymd[0] < 200)
 				ymd[0] += 1900;
-			else if(ymd[0] < 700) 
+			else if(ymd[0] < 700)
 				ymd[0] += 2000;
-			else if(ymd[0] < 1000) 
+			else if(ymd[0] < 1000)
 				ymd[0] += 1000;
 			scp_siz=0;
 			break;
@@ -224,7 +224,7 @@ long f;
 			while(*cp == *cp1)
 				cp1++;
 			scp_siz=cp1-cp;
-			if(!strncmp(cp1, "24", 2)) 
+			if(!strncmp(cp1, "24", 2))
 				cp1 += 2, f24 = 2;
 			strncpy(buffer, scp, scp_siz);
 			buffer[scp_siz] = 0;
@@ -264,7 +264,7 @@ minuts:
 			j=6-f;
 			ten=1;
 			if(j>0) {
-				for(i=0;i<j;i++) ten*=10;	
+				for(i=0;i<j;i++) ten*=10;
 				*usec *= ten;
 			}
 			break;
@@ -273,7 +273,7 @@ minuts:
 			continue;
 		}
 		if(!*cp1) break;
-		while(*cp1 && ___not_dtime(*cp1)) 
+		while(*cp1 && ___not_dtime(*cp1))
 			cp1++;
 		scp += (int)(cp1-cp) - f24 - scp_siz;
 		cp = cp1;
@@ -282,9 +282,9 @@ minuts:
 }
 
 /************************************************************************/
-/* function:rtimetostrfmt½«ÈÕÆÚĞÍ×ª»»³É×Ö·û´®µÄÄêÔÂÈÕÊ±·ÖÃë             */
-/*description:fmt(YYYY-MM-DD HH24:MI:SS»òYYYY-MM-DD HH:NN:SSµÈ¸ñÊ½)		*/
-/*¿ÉÒÔÈÎÒâµßµ¹´ÎĞò£¬¿ÉÒÔ´óĞ´»òĞ¡Ğ´£¬¿ÉÒÔÃ»ÓĞ·Ö¸ô·û¡£·Ö¸ô·û¿ÉÒÔÊÇºº×Ö	*/
+/* function:rtimetostrfmtå°†æ—¥æœŸå‹è½¬æ¢æˆå­—ç¬¦ä¸²çš„å¹´æœˆæ—¥æ—¶åˆ†ç§’             */
+/*description:fmt(YYYY-MM-DD HH24:MI:SSæˆ–YYYY-MM-DD HH:NN:SS.FF6ç­‰æ ¼å¼)		*/
+/*å¯ä»¥ä»»æ„é¢ å€’æ¬¡åºï¼Œå¯ä»¥å¤§å†™æˆ–å°å†™ï¼Œå¯ä»¥æ²¡æœ‰åˆ†éš”ç¬¦ã€‚åˆ†éš”ç¬¦å¯ä»¥æ˜¯æ±‰å­—	*/
 /************************************************************************/
 char *rtimetostrfmt(char *buffer,const char *fmt,short ymd[3],short hms[3],int usec)
 {
@@ -306,17 +306,17 @@ char *cp1,*p;
 				cp1++;
 			i = 4 - (cp1 - cp);
 			p+=sprintf(p, "%04d", ymd[0]);
-			if(i > 0) 
+			if(i > 0)
 				strsubst(p, i, 0);		/*strproc.c*/
 			break;
 		case 'm':
 		case 'M':
-			if((cp[1] == 'I') || (cp[1] == 'i')) 
+			if((cp[1] == 'I') || (cp[1] == 'i'))
 			{
 				cp1+=2;
 				goto min;
 			}
-			if(*cp != cp[1]) 
+			if(*cp != cp[1])
 			{
 				*p++ = *cp1++;
 				*p = 0;
@@ -327,7 +327,7 @@ char *cp1,*p;
 			break;
 		case 'd':
 		case 'D':
-			if(*cp != cp[1]) 
+			if(*cp != cp[1])
 			{
 				*p++ = *cp1++;
 				*p = 0;
@@ -338,20 +338,20 @@ char *cp1,*p;
 			break;
 		case 'H':
 		case 'h':
-			if(*cp != cp[1]) 
+			if(*cp != cp[1])
 			{
 				*p++ = *cp1++;
 				*p = 0;
 				break;
 			}
 			cp1 += 2;
-			if(!strncmp(cp1, "24", 2)) 
+			if(!strncmp(cp1, "24", 2))
 				cp1 += 2;
 			p+=sprintf(p, "%02d", hms[0]);
 			break;
 		case 'N':
 		case 'n':
-			if(*cp != cp[1]) 
+			if(*cp != cp[1])
 			{
 				*p++ = *cp1++;
 				*p++ = *cp1++;
@@ -364,7 +364,7 @@ min:
 			break;
 		case 'S':
 		case 's':
-			if(*cp != cp[1]) 
+			if(*cp != cp[1])
 			{
 				*p++ = *cp1++;
 				*p = 0;
@@ -375,7 +375,7 @@ min:
 			break;
 		case 'F': // TIMESTAMP
 		case 'f':
-			if(*cp != cp[1]) 
+			if(*cp != cp[1])
 			{
 				*p++ = *cp1++;
 				*p = 0;
@@ -386,7 +386,7 @@ min:
 			j=6-f;
 			ten=1;
 			if(j>0) {
-				for(i=0;i<j;i++) ten*=10;	
+				for(i=0;i<j;i++) ten*=10;
 			}
 			p+=sprintf(p,"%0*d",(int)f,usec/ten);
 			break;
@@ -404,9 +404,9 @@ min:
 }
 
 /************************************************************************/
-/*function:rstrfmttojul ½«ÄêÔÂÈÕ×Ö·û´®°´Ö¸¶¨¸ñÊ½×ª»»Îª×¼ÈåÂÔÀúÊı        */
-/*description:fmt(YYYY-MM-DDµÈ¸ñÊ½)										*/
-/*¿ÉÒÔÈÎÒâµßµ¹´ÎĞò£¬¿ÉÒÔ´óĞ´»òĞ¡Ğ´£¬¿ÉÒÔÃ»ÓĞ·Ö¸ô·û¡£·Ö¸ô·û¿ÉÒÔÊÇºº×Ö	*/
+/*function:rstrfmttojul å°†å¹´æœˆæ—¥å­—ç¬¦ä¸²æŒ‰æŒ‡å®šæ ¼å¼è½¬æ¢ä¸ºå‡†å„’ç•¥å†æ•°        */
+/*description:fmt(YYYY-MM-DDç­‰æ ¼å¼)										*/
+/*å¯ä»¥ä»»æ„é¢ å€’æ¬¡åºï¼Œå¯ä»¥å¤§å†™æˆ–å°å†™ï¼Œå¯ä»¥æ²¡æœ‰åˆ†éš”ç¬¦ã€‚åˆ†éš”ç¬¦å¯ä»¥æ˜¯æ±‰å­—	*/
 /************************************************************************/
 INT4 rstrfmttojul(char *str,const char *fmt)
 {
@@ -416,9 +416,9 @@ INT4 rstrfmttojul(char *str,const char *fmt)
 }
 
 /************************************************************************/
-/*function:rjultostrfmt ½«×¼ÈåÂÔÀúÊı°´Ö¸¶¨¸ñÊ½×ª»»ÎªÄêÔÂÈÕ×Ö·û´®        */
-/*description:fmt(YYYY-MM-DDµÈ¸ñÊ½)										*/
-/*¿ÉÒÔÈÎÒâµßµ¹´ÎĞò£¬¿ÉÒÔ´óĞ´»òĞ¡Ğ´£¬¿ÉÒÔÃ»ÓĞ·Ö¸ô·û¡£·Ö¸ô·û¿ÉÒÔÊÇºº×Ö	*/
+/*function:rjultostrfmt å°†å‡†å„’ç•¥å†æ•°æŒ‰æŒ‡å®šæ ¼å¼è½¬æ¢ä¸ºå¹´æœˆæ—¥å­—ç¬¦ä¸²        */
+/*description:fmt(YYYY-MM-DDç­‰æ ¼å¼)										*/
+/*å¯ä»¥ä»»æ„é¢ å€’æ¬¡åºï¼Œå¯ä»¥å¤§å†™æˆ–å°å†™ï¼Œå¯ä»¥æ²¡æœ‰åˆ†éš”ç¬¦ã€‚åˆ†éš”ç¬¦å¯ä»¥æ˜¯æ±‰å­—	*/
 /************************************************************************/
 char *rjultostrfmt(char *buffer,INT4  dat,const char *fmt)
 {
@@ -427,7 +427,7 @@ char *rjultostrfmt(char *buffer,INT4  dat,const char *fmt)
 	short hms[3];
 
 	i = rjulymd(dat,ymd);
-	if(i) 
+	if(i)
 	{
 		sprintf(buffer, "Date err %d", i);
 		return 0;
@@ -439,8 +439,8 @@ char *rjultostrfmt(char *buffer,INT4  dat,const char *fmt)
 }
 
 /************************************************************************/
-/*function:SetDefaultDateFormat ÉèÖÃÄ¬ÈÏÈÕÆÚ¸ñÊ½				        */
-/*description:Èç¹ûÃ»ÓĞÉèÖÃ£¬ÔòÄ¬ÈÏ¸ñÊ½ÎªYYYY.MM.DD						*/
+/*function:SetDefaultDateFormat è®¾ç½®é»˜è®¤æ—¥æœŸæ ¼å¼				        */
+/*description:å¦‚æœæ²¡æœ‰è®¾ç½®ï¼Œåˆ™é»˜è®¤æ ¼å¼ä¸ºYYYY.MM.DD						*/
 /************************************************************************/
 static char DefaultDateFormat[] = "YYYY.MM.DD";
 static char  *DateFormat = DefaultDateFormat;
@@ -450,17 +450,17 @@ char *SetDefaultDateFormat(char *format)
 	char *old;
 
 	old = DateFormat;
-	if(format) 
+	if(format)
 		DateFormat = format;
-	else 
+	else
 		DateFormat = DefaultDateFormat;
 
 	return old;
 }
 
 /************************************************************************/
-/*function:rjulstr ½«×¼ÈåÂÔÀúÊı°´×îºóÉèÖÃÄ¬ÈÏµÄ¸ñÊ½×ª»»ÎªÄêÔÂÈÕ×Ö·û´®	*/
-/*description:È±Ê¡Ä¬ÈÏ¸ñÊ½ÎªYYYY.MM.DD									*/
+/*function:rjulstr å°†å‡†å„’ç•¥å†æ•°æŒ‰æœ€åè®¾ç½®é»˜è®¤çš„æ ¼å¼è½¬æ¢ä¸ºå¹´æœˆæ—¥å­—ç¬¦ä¸²	*/
+/*description:ç¼ºçœé»˜è®¤æ ¼å¼ä¸ºYYYY.MM.DD									*/
 /************************************************************************/
 char *rjulstr(char *str,INT4 jul)
 {
@@ -468,8 +468,8 @@ char *rjulstr(char *str,INT4 jul)
 }
 
 /************************************************************************/
-/*function:rstrjul ½«×îºóÉèÖÃÄ¬ÈÏ¸ñÊ½µÄÄêÔÂÈÕ×Ö·û´®×ª»»Îª×¼ÈåÂÔÀúÊı		*/
-/*description:È±Ê¡Ä¬ÈÏ¸ñÊ½ÎªYYYY.MM.DD									*/
+/*function:rstrjul å°†æœ€åè®¾ç½®é»˜è®¤æ ¼å¼çš„å¹´æœˆæ—¥å­—ç¬¦ä¸²è½¬æ¢ä¸ºå‡†å„’ç•¥å†æ•°		*/
+/*description:ç¼ºçœé»˜è®¤æ ¼å¼ä¸ºYYYY.MM.DD									*/
 /************************************************************************/
 INT4 rstrjul(char *str)
 {
@@ -477,11 +477,11 @@ INT4 rstrjul(char *str)
 }
 
 /************************************************************************/
-/*function:rstrminfmt ½«ÄêÔÂÈÕÊ±·Ö°´¸ñÊ½×ª»»³É×¼ÈåÂÔÀúÊı(ÒÔ·ÖÖÓÎªµ¥Î»)	*/
-/*description:fmt(YYYY-MM-DD HH24:MI»òYYYY-MM-DD HH:NNµÈ¸ñÊ½)			*/
-/*¿ÉÒÔÈÎÒâµßµ¹´ÎĞò£¬¿ÉÒÔ´óĞ´»òĞ¡Ğ´£¬¿ÉÒÔÃ»ÓĞ·Ö¸ô·û¡£·Ö¸ô·û¿ÉÒÔÊÇºº×Ö	*/
+/*function:rstrminfmt å°†å¹´æœˆæ—¥æ—¶åˆ†æŒ‰æ ¼å¼è½¬æ¢æˆå‡†å„’ç•¥å†æ•°(ä»¥åˆ†é’Ÿä¸ºå•ä½)	*/
+/*description:fmt(YYYY-MM-DD HH24:MIæˆ–YYYY-MM-DD HH:NNç­‰æ ¼å¼)			*/
+/*å¯ä»¥ä»»æ„é¢ å€’æ¬¡åºï¼Œå¯ä»¥å¤§å†™æˆ–å°å†™ï¼Œå¯ä»¥æ²¡æœ‰åˆ†éš”ç¬¦ã€‚åˆ†éš”ç¬¦å¯ä»¥æ˜¯æ±‰å­—	*/
 /************************************************************************/
-INT4 rstrminfmt(char *year_to_min,const char *fmt) 
+INT4 rstrminfmt(char *year_to_min,const char *fmt)
 {
 	short hms[3];
 	INT4  minuts;
@@ -494,9 +494,9 @@ INT4 rstrminfmt(char *year_to_min,const char *fmt)
 }
 
 /************************************************************************/
-/*function:rminstrfmt ½«×¼ÈåÂÔÀúÊı(ÒÔ·ÖÖÓÎªµ¥Î»)°´¸ñÊ½×ª»»³ÉÄêÔÂÈÕÊ±·Ö	*/
-/*description:fmt(YYYY-MM-DD HH24:MI»òYYYY-MM-DD HH:NNµÈ¸ñÊ½)			*/
-/*¿ÉÒÔÈÎÒâµßµ¹´ÎĞò£¬¿ÉÒÔ´óĞ´»òĞ¡Ğ´£¬¿ÉÒÔÃ»ÓĞ·Ö¸ô·û¡£·Ö¸ô·û¿ÉÒÔÊÇºº×Ö	*/
+/*function:rminstrfmt å°†å‡†å„’ç•¥å†æ•°(ä»¥åˆ†é’Ÿä¸ºå•ä½)æŒ‰æ ¼å¼è½¬æ¢æˆå¹´æœˆæ—¥æ—¶åˆ†	*/
+/*description:fmt(YYYY-MM-DD HH24:MIæˆ–YYYY-MM-DD HH:NNç­‰æ ¼å¼)			*/
+/*å¯ä»¥ä»»æ„é¢ å€’æ¬¡åºï¼Œå¯ä»¥å¤§å†™æˆ–å°å†™ï¼Œå¯ä»¥æ²¡æœ‰åˆ†éš”ç¬¦ã€‚åˆ†éš”ç¬¦å¯ä»¥æ˜¯æ±‰å­—	*/
 /************************************************************************/
 char *rminstrfmt(char *year_to_min,INT4  minuts,const char *fmt)
 {
@@ -515,18 +515,18 @@ char *rminstrfmt(char *year_to_min,INT4  minuts,const char *fmt)
 }
 
 /************************************************************************/
-/*function:rstrmin ½«±¾µØµÄÄêÔÂÈÕÊ±·Ö°´¸ñÊ½×ª»»³ÉGREENWITH(ÒÔ·ÖÖÓÎªµ¥Î»)*/
-/*description:fmt(Ä¬ÈÏÎªYYYY.MM.DD HH24:MI¸ñÊ½)							*/
+/*function:rstrmin å°†æœ¬åœ°çš„å¹´æœˆæ—¥æ—¶åˆ†æŒ‰æ ¼å¼è½¬æ¢æˆGREENWITH(ä»¥åˆ†é’Ÿä¸ºå•ä½)*/
+/*description:fmt(é»˜è®¤ä¸ºYYYY.MM.DD HH24:MIæ ¼å¼)							*/
 /************************************************************************/
 static char *minuts_fmt = "YYYY.MM.DD HH24:MI";
-INT4 rstrmin(char *year_to_min) 
+INT4 rstrmin(char *year_to_min)
 {
 	return rstrminfmt(year_to_min, minuts_fmt);
 }
 
 /************************************************************************/
-/*function:rminstr ½«GREENWITH(ÒÔ·ÖÖÓÎªµ¥Î»)°´¸ñÊ½×ª»»³É±¾µØµÄÄêÔÂÈÕÊ±·Ö*/
-/*description:fmt(Ä¬ÈÏÎªYYYY.MM.DD HH24:MI¸ñÊ½)							*/
+/*function:rminstr å°†GREENWITH(ä»¥åˆ†é’Ÿä¸ºå•ä½)æŒ‰æ ¼å¼è½¬æ¢æˆæœ¬åœ°çš„å¹´æœˆæ—¥æ—¶åˆ†*/
+/*description:fmt(é»˜è®¤ä¸ºYYYY.MM.DD HH24:MIæ ¼å¼)							*/
 /************************************************************************/
 char *rminstr(char *year_to_min,INT4  minuts)
 {
@@ -534,10 +534,10 @@ char *rminstr(char *year_to_min,INT4  minuts)
 }
 
 /************************************************************************/
-/* function:rstrsecfmt ½«×Ö·û´®µÄÄêÔÂÈÕÊ±·ÖÃë×ª»»³É×¼ÈåÂÔÀúÊı			*/
-/*description:fmt(YYYY-MM-DD HH24:MI:SS»òYYYY-MM-DD HH:NN:SSµÈ¸ñÊ½)		*/
-/*¿ÉÒÔÈÎÒâµßµ¹´ÎĞò£¬¿ÉÒÔ´óĞ´»òĞ¡Ğ´£¬¿ÉÒÔÃ»ÓĞ·Ö¸ô·û¡£·Ö¸ô·û¿ÉÒÔÊÇºº×Ö	*/
-/*×¼ÈåÂÔÀúÊı(ÒÔÃëÎªµ¥Î»)												*/
+/* function:rstrsecfmt å°†å­—ç¬¦ä¸²çš„å¹´æœˆæ—¥æ—¶åˆ†ç§’è½¬æ¢æˆå‡†å„’ç•¥å†æ•°			*/
+/*description:fmt(YYYY-MM-DD HH24:MI:SSæˆ–YYYY-MM-DD HH:NN:SSç­‰æ ¼å¼)		*/
+/*å¯ä»¥ä»»æ„é¢ å€’æ¬¡åºï¼Œå¯ä»¥å¤§å†™æˆ–å°å†™ï¼Œå¯ä»¥æ²¡æœ‰åˆ†éš”ç¬¦ã€‚åˆ†éš”ç¬¦å¯ä»¥æ˜¯æ±‰å­—	*/
+/*å‡†å„’ç•¥å†æ•°(ä»¥ç§’ä¸ºå•ä½)												*/
 /************************************************************************/
 INT64 rstrsecfmt(char *str,const char *fmt)
 {
@@ -552,10 +552,10 @@ INT64 rstrsecfmt(char *str,const char *fmt)
 	return sec;
 }
 /************************************************************************/
-/* function:rstrusecfmt ½«×Ö·û´®µÄÄêÔÂÈÕÊ±·ÖÃë×ª»»³É×¼ÈåÂÔÀúÎ¢ÃëÊı	*/
-/*description:fmt(YYYY-MM-DD HH24:MI:SS»òYYYY-MM-DD HH:NN:SSµÈ¸ñÊ½)	*/
-/*¿ÉÒÔÈÎÒâµßµ¹´ÎĞò£¬¿ÉÒÔ´óĞ´»òĞ¡Ğ´£¬¿ÉÒÔÃ»ÓĞ·Ö¸ô·û¡£·Ö¸ô·û¿ÉÒÔÊÇºº×Ö	*/
-/*·µ»Ø£º×¼ÈåÂÔÀúÊı(ÒÔÎ¢ÃëÎªµ¥Î»)						*/
+/* function:rstrusecfmt å°†å­—ç¬¦ä¸²çš„å¹´æœˆæ—¥æ—¶åˆ†ç§’è½¬æ¢æˆå‡†å„’ç•¥å†å¾®ç§’æ•°	*/
+/*description:fmt(YYYY-MM-DD HH24:MI:SSæˆ–YYYY-MM-DD HH:NN:SSç­‰æ ¼å¼)	*/
+/*å¯ä»¥ä»»æ„é¢ å€’æ¬¡åºï¼Œå¯ä»¥å¤§å†™æˆ–å°å†™ï¼Œå¯ä»¥æ²¡æœ‰åˆ†éš”ç¬¦ã€‚åˆ†éš”ç¬¦å¯ä»¥æ˜¯æ±‰å­—	*/
+/*è¿”å›ï¼šå‡†å„’ç•¥å†æ•°(ä»¥å¾®ç§’ä¸ºå•ä½)						*/
 /************************************************************************/
 INT64 rstrusecfmt(char *str,const char *fmt)
 {
@@ -571,10 +571,10 @@ INT64 usec;
 }
 
 /************************************************************************/
-/* function:rsecstrfmt ½«×¼ÈåÂÔÀúÊı×ª»»³É×Ö·û´®µÄÄêÔÂÈÕÊ±·ÖÃë			*/
-/*description:fmt(YYYY-MM-DD HH24:MI:SS»òYYYY-MM-DD HH:NN:SSµÈ¸ñÊ½)		*/
-/*¿ÉÒÔÈÎÒâµßµ¹´ÎĞò£¬¿ÉÒÔ´óĞ´»òĞ¡Ğ´£¬¿ÉÒÔÃ»ÓĞ·Ö¸ô·û¡£·Ö¸ô·û¿ÉÒÔÊÇºº×Ö	*/
-/*×¼ÈåÂÔÀúÊı(ÒÔÃëÎªµ¥Î»)												*/
+/* function:rsecstrfmt å°†å‡†å„’ç•¥å†æ•°è½¬æ¢æˆå­—ç¬¦ä¸²çš„å¹´æœˆæ—¥æ—¶åˆ†ç§’			*/
+/*description:fmt(YYYY-MM-DD HH24:MI:SSæˆ–YYYY-MM-DD HH:NN:SSç­‰æ ¼å¼)		*/
+/*å¯ä»¥ä»»æ„é¢ å€’æ¬¡åºï¼Œå¯ä»¥å¤§å†™æˆ–å°å†™ï¼Œå¯ä»¥æ²¡æœ‰åˆ†éš”ç¬¦ã€‚åˆ†éš”ç¬¦å¯ä»¥æ˜¯æ±‰å­—	*/
+/*å‡†å„’ç•¥å†æ•°(ä»¥ç§’ä¸ºå•ä½)												*/
 /************************************************************************/
 char *rsecstrfmt(char *buf,INT64 sec,const char *fmt)
 {
@@ -595,10 +595,10 @@ char *rsecstrfmt(char *buf,INT64 sec,const char *fmt)
 }
 
 /************************************************************************/
-/* function:rusecstrfmt ½«×¼ÈåÂÔÀúÎ¢ÃëÊı×ª»»³É×Ö·û´®µÄÄêÔÂÈÕÊ±·ÖÃë.Î¢Ãë	*/
-/*description:fmt(YYYY-MM-DD HH24:MI:SS.FF6»òYYYY-MM-DD HH:NN:SS.FF6µÈ¸ñÊ½)*/
-/*¿ÉÒÔÈÎÒâµßµ¹´ÎĞò£¬¿ÉÒÔ´óĞ´»òĞ¡Ğ´£¬¿ÉÒÔÃ»ÓĞ·Ö¸ô·û¡£·Ö¸ô·û¿ÉÒÔÊÇºº×Ö	*/
-/*·µ»Ø£º×¼ÈåÂÔÀúÊı(ÒÔÎ¢ÃëÎªµ¥Î»)					*/
+/* function:rusecstrfmt å°†å‡†å„’ç•¥å†å¾®ç§’æ•°è½¬æ¢æˆå­—ç¬¦ä¸²çš„å¹´æœˆæ—¥æ—¶åˆ†ç§’.å¾®ç§’	*/
+/*description:fmt(YYYY-MM-DD HH24:MI:SS.FF6æˆ–YYYY-MM-DD HH:NN:SS.FF6ç­‰æ ¼å¼)*/
+/*å¯ä»¥ä»»æ„é¢ å€’æ¬¡åºï¼Œå¯ä»¥å¤§å†™æˆ–å°å†™ï¼Œå¯ä»¥æ²¡æœ‰åˆ†éš”ç¬¦ã€‚åˆ†éš”ç¬¦å¯ä»¥æ˜¯æ±‰å­—	*/
+/*è¿”å›ï¼šå‡†å„’ç•¥å†æ•°(ä»¥å¾®ç§’ä¸ºå•ä½)					*/
 /************************************************************************/
 char *rusecstrfmt(char *buf,INT64 usec,const char *fmt)
 {
@@ -623,19 +623,19 @@ INT64 sec;
 
 
 /************************************************************************/
-/*function:cvtdate Ïà¶ÔÈÕÆÚ×ª»»º¯Êı,·µ»Ø×¼ÈåÂÔÀúÊı						*/
+/*function:cvtdate ç›¸å¯¹æ—¥æœŸè½¬æ¢å‡½æ•°,è¿”å›å‡†å„’ç•¥å†æ•°						*/
 /*description:															*/
-/*»ù±¾ĞÎÊ½:str(YYYY.MM.DD), refday:²Î¿¼ÈÕÆÚ								*/
-/*Èç¹ûÄÄÒ»¶ÎÈ±Ê¡,ÒÔ²Î¿¼ÈÕÆÚµÄÏàÓ¦Êı×Ö´úÌæ								*/
-/*DD = 31,½«±»²Î¿¼ÈÕÆÚÔÂµ×ÈÕÈ¡´ú										*/
-/*ÄÄÒ»¶ÎÒÔ+ -¿ªÍ·£¬Ïà¶Ô²Î¿¼ÈÕÆÚµÄÏàÓ¦Êı×ÖÔËËã							*/
-/*L´ú±íÔÂµ×(°üÀ¨2ÔÂµÄ28»ò29ÈÕ,ÒÔ¼°ÆäËüÔÂµÄ30ÈÕ¡¢31ÈÕ)					*/
-/*Àı£º																	*/
-/*  .´ú±íµ±ÈÕ£¬..´ú±í±¾ÔÂµ±ÈÕ¡£											*/
-/*  +1´ú±íÃ÷Ìì£¬-1´ú±í×òÌì, .31»ò31»ò.L´ú±í±¾ÔÂÔÂµ×¡£					*/
-/*  .-1.»ò-1. ´ú±íÉÏÔÂÍ¬ÈÕ£¬-1.31´ú±íÉÏÔÂÔÂµ×¡£							*/
-/*  -1.1.1´ú±íÈ¥Äê1ÔÂ1ÈÕ¡£ -1..´ú±íÈ¥Äê±¾ÔÂµ±ÈÕ¡£-1.2.31´ú±íÈ¥Äê2ÔÂµ×	*/
-/*  2009.1.1´ú±í2009Äê1ÔÂ1ÈÕ¡£.1.1»ò1.1´ú±í½ñÄê1ÔÂ1ÈÕ¡£.1»ò1´ú±í±¾ÔÂ1ÈÕ */
+/*åŸºæœ¬å½¢å¼:str(YYYY.MM.DD), refday:å‚è€ƒæ—¥æœŸ								*/
+/*å¦‚æœå“ªä¸€æ®µç¼ºçœ,ä»¥å‚è€ƒæ—¥æœŸçš„ç›¸åº”æ•°å­—ä»£æ›¿								*/
+/*DD = 31,å°†è¢«å‚è€ƒæ—¥æœŸæœˆåº•æ—¥å–ä»£										*/
+/*å“ªä¸€æ®µä»¥+ -å¼€å¤´ï¼Œç›¸å¯¹å‚è€ƒæ—¥æœŸçš„ç›¸åº”æ•°å­—è¿ç®—							*/
+/*Lä»£è¡¨æœˆåº•(åŒ…æ‹¬2æœˆçš„28æˆ–29æ—¥,ä»¥åŠå…¶å®ƒæœˆçš„30æ—¥ã€31æ—¥)					*/
+/*ä¾‹ï¼š																	*/
+/*  .ä»£è¡¨å½“æ—¥ï¼Œ..ä»£è¡¨æœ¬æœˆå½“æ—¥ã€‚											*/
+/*  +1ä»£è¡¨æ˜å¤©ï¼Œ-1ä»£è¡¨æ˜¨å¤©, .31æˆ–31æˆ–.Lä»£è¡¨æœ¬æœˆæœˆåº•ã€‚					*/
+/*  .-1.æˆ–-1. ä»£è¡¨ä¸ŠæœˆåŒæ—¥ï¼Œ-1.31ä»£è¡¨ä¸Šæœˆæœˆåº•ã€‚							*/
+/*  -1.1.1ä»£è¡¨å»å¹´1æœˆ1æ—¥ã€‚ -1..ä»£è¡¨å»å¹´æœ¬æœˆå½“æ—¥ã€‚-1.2.31ä»£è¡¨å»å¹´2æœˆåº•	*/
+/*  2009.1.1ä»£è¡¨2009å¹´1æœˆ1æ—¥ã€‚.1.1æˆ–1.1ä»£è¡¨ä»Šå¹´1æœˆ1æ—¥ã€‚.1æˆ–1ä»£è¡¨æœ¬æœˆ1æ—¥ */
 /************************************************************************/
 INT4 cvtdate(char *str,INT4 refday)
 {
@@ -645,113 +645,113 @@ INT4 cvtdate(char *str,INT4 refday)
 	static char sepr[] = "./";
 	short ymd[3];
 
-	if(!str || !(*str)) 
+	if(!str || !(*str))
 	{
 		return (refday);
 	}
 
-	while(*str && (*str <= ' ')) 
+	while(*str && (*str <= ' '))
 		str++;
-	if(*str == '\\') 
+	if(*str == '\\')
 		str++;
-	if(!*str) 
+	if(!*str)
 		return (refday);
-	if(!strpbrk(str,"+-L ")) 
+	if(!strpbrk(str,"+-L "))
 	{
 		day = rstrjul(str);
-		if(day > 0) 
-			return (day); 
+		if(day > 0)
+			return (day);
 	}
 	if(*(p = stptok(str, s1, sizeof(s1), sepr)))		/*./utils/StrProc.c*/
 	{
  		p++;
-		if(*p == '\\') 
+		if(*p == '\\')
 			p++;
-		if(*(p = stptok(p, s2, sizeof(s2), sepr))) 
+		if(*(p = stptok(p, s2, sizeof(s2), sepr)))
 		{
 			/* YYYY.MM.DD */
 			p++;
-			if(*p == '\\') 
+			if(*p == '\\')
 				p++;
 			strcpy(s3,p);
 dat3:
 			cc = 0;
-			if(!(*s1) && !(*s2) && !(*s3)) 
+			if(!(*s1) && !(*s2) && !(*s3))
 				return (refday);
 
 			/* DAY */
-			if((*s3 == '+') || (*s3=='-')) 
+			if((*s3 == '+') || (*s3=='-'))
 			{
 				sscanf(s3, "%d", &cc);
 				day = refday + cc;
 				cc = 0;
 			}
-			else if(isdigit(*s3)) 
+			else if(isdigit(*s3))
 			{
 				sscanf(s3, "%d", &cc);
 				day = refday;
 			}
-			else 
+			else
 				day = refday;
 			rjulymd(day, ymd);
-			if(cc) 
+			if(cc)
 			{
 				ymd[2] = cc;
 				cc = 0;
 			}
 
 			/* MON */
-			if((*s2 == '+') || (*s2 == '-')) 
+			if((*s2 == '+') || (*s2 == '-'))
 			{
 				sscanf(s2, "%d", &cc);
 				ymd[1] += cc;
-				if(ymd[1] <= 0) 
+				if(ymd[1] <= 0)
 				{
-					while(ymd[1] <= 0) 
+					while(ymd[1] <= 0)
 					{
 						ymd[0]--;
 						ymd[1] += 12;
 					}
 				}
-				else if(ymd[1] > 12) 
-				{	
-					while(ymd[1] > 12) 
+				else if(ymd[1] > 12)
+				{
+					while(ymd[1] > 12)
 					{
 						ymd[0]++;
 						ymd[1] -= 12;
 					}
 				}
 			}
-			else if(isdigit(*s2)) 
+			else if(isdigit(*s2))
 				sscanf(s2, "%hd", &ymd[1]);
 			else ;
-			while(ymd[1] <= 0) 
+			while(ymd[1] <= 0)
 				ymd[1] += 12, ymd[1]--;
-			while(ymd[1] > 12) 
+			while(ymd[1] > 12)
 				ymd[1] -= 12, ymd[1]++;
-			cc = 0; 
+			cc = 0;
 
 			/* YEAR */
-			if(ymd[0] < 70) 
+			if(ymd[0] < 70)
 				ymd[0] += 2000;
-			else if(ymd[0] < 100) 
+			else if(ymd[0] < 100)
 				ymd[0] += 1900;
-			if((*s1 == '+') || (*s1 == '-')) 
+			if((*s1 == '+') || (*s1 == '-'))
 			{
 				sscanf(s1, "%d", &cc);
 				ymd[0] += cc;
 			}
-			else if(isdigit(*s1)) 
+			else if(isdigit(*s1))
 			{
 				sscanf(s1, "%hd", &ymd[0]);
-				if(ymd[0] < 71) 
+				if(ymd[0] < 71)
 					ymd[0] += 2000;
-				else if(ymd[0] < 100) 
+				else if(ymd[0] < 100)
 					ymd[0] += 1900;
-			} 
+			}
 			else ;
 			day = rymdjul(ymd);
-			if(*s3 == 'L') 
+			if(*s3 == 'L')
 				return (mon_end(day));
 			return (day);
 		}
@@ -764,33 +764,33 @@ dat3:
 	}
 
 	/* DD */
-	if((*str == '+') || (*str == '-')) 
+	if((*str == '+') || (*str == '-'))
 	{
 		sscanf(str, "%d", &day);
 		return (refday + day);
 	}
-	else 
+	else
 	{
 		*s1 = 0;
 		*s2 = 0;
 		strcpy(s3, str);
-		if(*s3 == 'L') 
+		if(*s3 == 'L')
 			return (mon_end(refday));
 		goto dat3 ;
 	}
 }
 
 /************************************************************************/
-/*function:yday ÄêÊ±¼ä´Áº¯Êı											*/
+/*function:yday å¹´æ—¶é—´æˆ³å‡½æ•°											*/
 /*description:															*/
-/*¼ÆËãÖ¸¶¨µÄ×¼ÈåÂÔÀúÊı¶ÔÓ¦µÄÄêÔÂÈÕ¾àÀë¸ÃÄê1ÔÂ1ÈÕ(°üº¬¸ÃÌì)µÄÌìÊı		*/
+/*è®¡ç®—æŒ‡å®šçš„å‡†å„’ç•¥å†æ•°å¯¹åº”çš„å¹´æœˆæ—¥è·ç¦»è¯¥å¹´1æœˆ1æ—¥(åŒ…å«è¯¥å¤©)çš„å¤©æ•°		*/
 /************************************************************************/
 INT4 yday(INT4 day)
 {
 	short ymd[3];
 	INT4  day1;
 
-	if(day < 366) 
+	if(day < 366)
 		return day;
 	rjulymd(day, ymd);
 	ymd[1] = 1;
@@ -800,10 +800,10 @@ INT4 yday(INT4 day)
 }
 
 /************************************************************************/
-/*function:jday ¼¾¶ÈÊ±¼ä´Áº¯Êı											*/ 
+/*function:jday å­£åº¦æ—¶é—´æˆ³å‡½æ•°											*/
 /*description:															*/
-/*¼ÆËãÖ¸¶¨µÄ×¼ÈåÂÔÀúÊı¶ÔÓ¦µÄÄêÔÂÈÕ¾àÀëÃ¿Ò»¼¾¶È(1¡¢4¡¢7¡¢10ÔÂ1ÈÕ(°üº¬	*/
-/*¸ÃÌì))µÄÌìÊı															*/
+/*è®¡ç®—æŒ‡å®šçš„å‡†å„’ç•¥å†æ•°å¯¹åº”çš„å¹´æœˆæ—¥è·ç¦»æ¯ä¸€å­£åº¦(1ã€4ã€7ã€10æœˆ1æ—¥(åŒ…å«	*/
+/*è¯¥å¤©))çš„å¤©æ•°															*/
 /************************************************************************/
 INT4 jday(INT4 day)
 {
@@ -818,11 +818,11 @@ INT4 jday(INT4 day)
 }
 
 /************************************************************************/
-/*function:mon_end ÔÂµ×Ê±¼ä´Áº¯Êı										*/
+/*function:mon_end æœˆåº•æ—¶é—´æˆ³å‡½æ•°										*/
 /*description:															*/
-/*¼ÆËãÖ¸¶¨µÄ×¼ÈåÂÔÀúÊı¶ÔÓ¦ÔÂµÄÔÂµ×¾àÀë1899.12.31µÄÌìÊı					*/
+/*è®¡ç®—æŒ‡å®šçš„å‡†å„’ç•¥å†æ•°å¯¹åº”æœˆçš„æœˆåº•è·ç¦»1899.12.31çš„å¤©æ•°					*/
 /************************************************************************/
-INT4 mon_end(INT4 day) 
+INT4 mon_end(INT4 day)
 {
 	short ymd[3];
 
@@ -833,10 +833,10 @@ INT4 mon_end(INT4 day)
 }
 
 /************************************************************************/
-/*function:mday	Ã¿ÔÂÌìÊıº¯Êı											*/
-/*description:¼ÆËãÖ¸¶¨µÄ×¼ÈåÂÔÀúÊı¶ÔÓ¦ÔÂµÄ×ÜÌìÊı						*/
+/*function:mday	æ¯æœˆå¤©æ•°å‡½æ•°											*/
+/*description:è®¡ç®—æŒ‡å®šçš„å‡†å„’ç•¥å†æ•°å¯¹åº”æœˆçš„æ€»å¤©æ•°						*/
 /************************************************************************/
-INT4 mday(INT4 day) 
+INT4 mday(INT4 day)
 {
 	short ymd[3];
 
@@ -846,10 +846,10 @@ INT4 mday(INT4 day)
 }
 
 /************************************************************************/
-/*function:dday	ÔÂÊ±¼ä´Áº¯Êı											*/
-/*description:¼ÆËãÖ¸¶¨µÄ×¼ÈåÂÔÀúÊı¶ÔÓ¦ÔÂ¾àÀë¸ÃÔÂ1ÈÕµÄÌìÊı				*/
+/*function:dday	æœˆæ—¶é—´æˆ³å‡½æ•°											*/
+/*description:è®¡ç®—æŒ‡å®šçš„å‡†å„’ç•¥å†æ•°å¯¹åº”æœˆè·ç¦»è¯¥æœˆ1æ—¥çš„å¤©æ•°				*/
 /************************************************************************/
-INT4 dday(INT4 day) 
+INT4 dday(INT4 day)
 {
 	short ymd[3];
 
@@ -857,4 +857,3 @@ INT4 dday(INT4 day)
 
 	return (ymd[2]);
 }
-

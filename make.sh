@@ -1,6 +1,3 @@
-#!/bin/bash
-mkdir lib
-
 rm */*.o
 cd string
 make
@@ -16,8 +13,6 @@ cd ../sccli
 make
 cd ../scsrv
 make
-# delete target binary object files
-
 
 if [ -d ../pack ]
 then
