@@ -1,0 +1,8 @@
+CFLAGS=-I$(TUXDIR)/include -I${SDBCDIR}/include -I$(HOME)/usrinc
+CC=gcc
+LIBS = -L$(ORACLE_HOME)/lib -L$(SDBCDIR)/lib -L$(HOME)/lib
+LANG=C
+
+
+tux_test: tux_test.o
+	buildclient -o tux_test -f tux_test.o  -f "$(LIBS) -lKPAPP -lsc -lscry -lm -ljson -lDAU -lstr " -w

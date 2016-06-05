@@ -1,0 +1,1 @@
+./test ../config/kpsrv.cfg

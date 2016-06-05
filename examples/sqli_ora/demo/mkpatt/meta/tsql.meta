@@ -1,0 +1,23 @@
+# 我不太清楚该语句的功能，模板类型未必正确 
+#-- 分组排序
+#SELECT a.deptno,
+#       a.empno,
+#       a.ename,
+#       a.sal,
+#       -- 可跳跃的rank
+#       rank() over(PARTITION BY a.deptno ORDER BY a.sal DESC) r1,
+#       -- 密集型rank
+#       dense_rank() over(PARTITION BY a.deptno ORDER BY a.sal DESC) r2,
+#       -- 不分组排序
+#       rank() over(ORDER BY sal DESC) r3
+#  FROM scott.emp a
+#  ORDER BY a.deptno,a.sal DESC;
+TEMPLATE emp 7
+deptno:=CH_SHORT
+empno:=CH_INT
+sal:=CH_DOUBLE %.2lf
+ename:=CH_CHAR 17
+rank() over(PARTITION BY deptno ORDER BY sal DESC) r1:=CH_SHORT
+dense_rank() over(PARTITION BY deptno ORDER BY sal DESC) r2:=CH_INT
+rank() over(ORDER BY sal DESC) r3:=CH_DOUBLE %.2lf
+emp

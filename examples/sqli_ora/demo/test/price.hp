@@ -1,0 +1,21 @@
+
+extern T_PkgType TRAIN_PRICE_tpl[];
+typedef struct {
+	int id;
+	char start_station[4];
+	char end_station[4];
+	char beg_date[YEAR_TO_DAY_LEN];
+	char end_date[YEAR_TO_DAY_LEN];
+	int yz_fee;
+	int rz_fee;
+	int rz1_fee;
+	int rz2_fee;
+	int yws_fee;
+	int ywz_fee;
+	int ywx_fee;
+	int rws_fee;
+	int rwx_fee;
+	int g2s_fee;
+	int g2x_fee;
+	char note[51];
+} TRAIN_PRICE_stu;

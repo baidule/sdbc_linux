@@ -1,0 +1,6 @@
+# 将生成的模板安装到指定目录，供参考 
+mv $1.stu $INCDIR
+mv $1.tpl $SRVDIR/dao
+cd $SRVDIR/dao
+make
+

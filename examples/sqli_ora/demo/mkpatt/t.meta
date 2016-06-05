@@ -1,0 +1,12 @@
+TEMPLATE testmeta 10
+a_stu:=CH_STRUCT b_stu
+NC0012 id:=CH_INT %08d
+"Beg_Date" Beg_Date:=CH_CJUL YYYYMMDD
+"Devid" Devid:=CH_CHAR 17
+NU0001 userid:=CH_CHAR 17
+TI0104 logtime:=CH_TIME
+count(*) cnt:=CH_SHORT
+CL0001 cmd:=CH_CLOB
+NC0015 quantity:=CH_CNUM
+TS0005 t_timestamp:=CH_USEC YYYY-MM-DD HH24:MI:SS.FF6
+TUXTICKET	devid|userid|

@@ -1,0 +1,13 @@
+
+extern T_PkgType st_tpl[];
+typedef struct {
+	char c;
+	INT64 bi;
+} st_stu;
+
+extern T_PkgType ss_tpl[];
+typedef struct {
+	char c;
+	st_stu s;
+	int i;
+} ss_stu;

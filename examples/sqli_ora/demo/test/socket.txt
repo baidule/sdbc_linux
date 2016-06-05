@@ -1,0 +1,24 @@
+linux下可用sysctl -a | grep net.ipv4.tcp_wmem查看系统默认的发送缓存大小:
+net.ipv4.tcp_wmem = 4096 16384 81920
+这有三个值,第一个值是socket的发送缓存区分配的最少字节数,第二个值是默认值(该值会被net.core.wmem_default覆盖),缓存区在系统负载不重的情况下可以增长到这个值,第三个值是发送缓存区空间的最大字节数(该值会被net.core.wmem_max覆盖).
+根据实际测试,如果手工更改了net.ipv4.tcp_wmem的值,则会按更改的值来运行,否则在默认情况下,协议栈通常是按net.core.wmem_default和net.core.wmem_max的值来分配内存的.
+
+应用程序应该根据应用的特性在程序中更改发送缓存大小:
+
+socklen_t sendbuflen = 0;
+socklen_t len = sizeof(sendbuflen);
+getsockopt(clientSocket, SOL_SOCKET, SO_SNDBUF, (void*)&sendbuflen, &len);
+printf("default,sendbuf:%d\n", sendbuflen);
+
+sendbuflen = 10240;
+setsockopt(clientSocket, SOL_SOCKET, SO_SNDBUF, (void*)&sendbuflen, len);
+getsockopt(clientSocket, SOL_SOCKET, SO_SNDBUF, (void*)&sendbuflen, &len);
+printf("now,sendbuf:%d\n", sendbuflen);
+
+ysctl kern.maxfiles=5000
+kern.maxfiles: 2088 -> 5000
+　　sysctl 变量的设置通常是字符串、数字或者布尔型。 (布尔型用 1 来表示'yes'，用 0 来表示'no')。
+
+　　如果你想在每次机器启动时自动设置某些变量， 可将它们加入到文件 /etc/sysctl.conf 之中。更多信息，请参阅手册页 sysctl.conf(5) 及 第 11.10.4 节。
+
+

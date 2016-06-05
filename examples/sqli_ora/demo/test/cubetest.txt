@@ -1,0 +1,6 @@
+//只读数据库
+Cube by Tree:num=0,TIMEVAL=34653
+Group by cube:num=0,TIMEVAL=15870
+//cube,不打印结果
+Cube by Tree:num=552,TIMEVAL=70454
+Group by cube:num=552,TIMEVAL=17502

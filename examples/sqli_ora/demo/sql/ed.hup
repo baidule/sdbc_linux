@@ -1,0 +1,75 @@
+CREATE OR REPLACE PROCEDURE make_seats (
+          p_train_no     IN VARCHAR2　DEFAULT NULL
+         ,p_dflg         IN NUMBER    DEFAULT 0    ---- 如果1则不用TRAINS里面的偏移量
+         ,p_offset_days  IN NUMBER    DEFAULT 0    ---- 缺省当天则偏移为0, +1为第二天
+         ,p_created_days IN NUMBER    DEFAULT 1    ---- 缺省一天
+         )
+AS
+   lv_timestamp DATE := SYSDATE;
+BEGIN
+   INSERT INTO seat_parameter (    -- 参数表
+          dflg            -- 控制JOBDAY的计算
+         ,start_date      -- today
+         ,end_date        -- 如果非空，则可以生成多天的数据
+         ,train_no        -- 如果为0或NULL则忽略
+          )
+   VALUES(p_dflg
+         ,TRUNC(SYSDATE)+p_offset_days
+         ,TRUNC(SYSDATE)+p_offset_days + p_created_days -1
+         ,p_train_no
+         );
+
+
+   INSERT INTO seat (
+          train_no
+         ,gride            -- grade?
+         ,end_station
+         ,start_date
+         ,carno
+         ,purpose
+         ,seat_type
+         ,shortest_station
+         ,flag
+         ,beg_station
+         ,on_date
+         ,run_train
+         ,pro
+         ,seat_no
+         ,used_time
+         ,used_dev
+         ,used_uid
+         )
+   SELECT train_no
+         ,gride
+         ,end_station
+         ,start_date
+         ,carno
+         ,purpose
+         ,seat_type
+         ,shortest_station
+         ,flag
+         ,beg_station
+         ,on_date
+         ,run_train
+         ,pro
+         ,seat_no
+         ,lv_timestamp AS used_time
+         ,'xwfb' AS used_dev
+         ,'xwfb' AS used_uid
+     FROM vw_new_seat;
+
+
+   MERGE INTO pre_seat_index psi
+   USING (SELECT DISTINCT psi.ROWID rid
+            FROM pre_seat_index psi
+                ,vw_train tr
+           WHERE psi.train_no=tr.train_no AND psi.item=tr.item AND tr.jobday BETWEEN psi.beg_date AND psi.end_date AND psi.flag=0
+         ) n
+   ON (n.rid = psi.ROWID)
+   WHEN MATCHED THEN UPDATE
+        SET psi.distribute_time = lv_timestamp;
+
+   COMMIT;
+
+END make_seats;
+/

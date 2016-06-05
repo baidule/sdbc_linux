@@ -1,0 +1,12 @@
+
+extern T_PkgType testmeta_tpl[];
+typedef struct {
+	char id;
+	char devid[17];
+	char userid[17];
+	INT64 logtime;
+	INT4 beg_date;
+	int cnt;
+	char *cmd;
+	char quantity[35];
+} testmeta_stu;

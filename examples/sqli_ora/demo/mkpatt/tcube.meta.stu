@@ -1,0 +1,10 @@
+
+extern T_PkgType cube_tpl[];
+typedef struct {
+	char unit[9];
+	char tabname[9];
+	short flg;
+	int count;
+	INT64 s;
+	double ag;
+} cube_stu;

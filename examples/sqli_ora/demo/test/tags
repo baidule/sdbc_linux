@@ -1,0 +1,102 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.5.4	//
+CLIENT	clilogin.c	3;"	d	file:
+DBOWN	kptux.c	/^	char DBOWN[81];$/;"	m	file:
+DBOWN	kptux_good.c	/^	char DBOWN[81];$/;"	m	file:
+GetTable	gettab.c	/^TABDESC *GetTable(T_SQL_Connect *SQL_Connect,char *tablename)$/;"	f
+PARTTERN_COL_type	descDAO.c	/^T_PkgType PARTTERN_COL_type[]={$/;"	v
+PARTTERN_type	descDAO.c	/^static T_PkgType PARTTERN_type[]={$/;"	v	file:
+SDBC_type	gettab.c	/^static T_PkgType SDBC_type[]={$/;"	v	file:
+SERVER	descDAO.c	8;"	d	file:
+SERVER	mkpatt.c	1;"	d	file:
+SERVER	test.c	1;"	d	file:
+SERVER	xwfb.c	8;"	d	file:
+TabdescFree	gettab.c	/^void TabdescFree(TABDESC *tabdesc)$/;"	f
+YEAR_TO_DAY	descDAO.c	/^const char YEAR_TO_DAY[]="YYYY-MM-DD";$/;"	v
+YEAR_TO_DAY_LEN	kptux_good.c	9;"	d	file:
+YEAR_TO_DAY_LEN	xwfb.c	12;"	d	file:
+YEAR_TO_MIN	descDAO.c	/^const char YEAR_TO_MIN[]="YYYY-MM-DD HH24:MI";$/;"	v
+YEAR_TO_MIN_LEN	kptux_good.c	8;"	d	file:
+YEAR_TO_MIN_LEN	xwfb.c	13;"	d	file:
+YEAR_TO_SEC	descDAO.c	/^const char YEAR_TO_SEC[]="YYYY-MM-DD HH24:MI:SS";$/;"	v
+YEAR_TO_SEC_LEN	kptux_good.c	7;"	d	file:
+YEAR_TO_SEC_LEN	xwfb.c	14;"	d	file:
+addxw	xwfb.c	/^int addxw(T_SQL_Connect *SQL_Connect,seat_s *seat)$/;"	f
+adj_remant	xwfb.c	/^static int adj_remant(T_SQL_Connect *SQL_Connect,seat_remant_s *remant)$/;"	f	file:
+bc	kptux.c	/^	char bc[33];$/;"	m	file:
+bc	kptux_good.c	/^	char bc[33];$/;"	m	file:
+bill_num	kptux.c	/^	char bill_num[9];	\/\/当前票号$/;"	m	file:
+bill_num	kptux_good.c	/^	char bill_num[9];	\/\/当前票号$/;"	m	file:
+buf_Cmp	gettab.c	/^static int buf_Cmp(void *rec1,void *rec2,int len)$/;"	f	file:
+chpwd	clilogin.c	/^int chpwd()$/;"	f
+clilogin	clilogin.c	/^clilogin(char **bufp)$/;"	f
+colname	gettab.c	/^        char colname[31];$/;"	m	struct:td_node	file:
+descDAO	descDAO.c	/^int descDAO(DAU *DP,T_SQL_Connect *SQL_Connect,char *uTabname,PARTTERN_s *pp,char *stmt)$/;"	f
+devid	kptux.c	/^	char devid[33];$/;"	m	file:
+devid	kptux_good.c	/^	char devid[33];$/;"	m	file:
+devname	kptux.c	/^	char devname[33];$/;"	m	file:
+devname	kptux_good.c	/^	char devname[33];$/;"	m	file:
+dflg	xwfb.c	/^int dflg=0;$/;"	v
+err_sys	mac_m.c	/^void err_sys(const char *errmsg)$/;"	f
+err_sys	mac_stdout.c	/^void err_sys(const char *errmsg)$/;"	f
+getUpdDAO	descDAO.c	/^int getUpdDAO(DAU *DP,char *tablename,char *Fld_Column_Name,char *stmt)$/;"	f
+get_stop_station	xwfb.c	/^int get_stop_station(T_SQL_Connect *SQL_Connect,stop_station_s *stop_station,char *day)$/;"	f
+getday	xwfb.c	/^INT4 getday(T_SQL_Connect *SQL_Connect,char *Train_no)$/;"	f
+getmac	mac.c	/^int getmac(char *out,int sockfd)$/;"	f
+getxw	tDTO.c	/^int getxw(T_SQL_Connect *SQL_Connect,char *Train_no,INT4 today,char *carno)$/;"	f
+key	gettab.c	/^        int key;$/;"	m	struct:td_node	file:
+log_s	kptux.c	/^} log_s;$/;"	t	file:
+log_s	kptux_good.c	/^} log_s;$/;"	t	file:
+log_type	kptux.c	/^T_PkgType log_type[]={$/;"	v
+log_type	kptux_good.c	/^T_PkgType log_type[]={$/;"	v
+logtime	kptux.c	/^	char logtime[YEAR_TO_SEC_LEN];$/;"	m	file:
+logtime	kptux_good.c	/^	char logtime[YEAR_TO_SEC_LEN];$/;"	m	file:
+main	kptux.c	/^main(int argc, char *argv[])$/;"	f
+main	kptux_good.c	/^main(int argc, char *argv[])$/;"	f
+main	mac_m.c	/^int main(void)$/;"	f
+main	mac_stdout.c	/^int main(void)$/;"	f
+main	mkpatt.c	/^main(int argc,char *argv[])$/;"	f
+main	sfz.c	/^main()$/;"	f
+main	t.c	/^main()$/;"	f
+main	tDTO.c	/^main(int argc,char *argv[])$/;"	f
+main	test.c	/^int main(int argc,char *argv[])$/;"	f
+main	xwfb.c	/^main(int argc,char *argv[])$/;"	f
+mk_sdbc_type	gettab.c	/^static  mk_sdbc_type(char *typename)$/;"	f	file:
+mkcond	gettab.c	/^int mkcond(char *wp,TABDESC *tabdesc,char *key)$/;"	f
+mkcond	test.c	/^char *mkcond(char *buf,void *data,T_PkgType *tp,char *name,char *lexp)$/;"	f
+mkpk	gettab.c	/^static int mkpk(void *content)$/;"	f	file:
+mkwhere	gettab.c	/^int mkwhere(TABDESC *tabdesc,char *where)$/;"	f
+mkxw	xwfb.c	/^static int mkxw(T_SQL_Connect *SQL_Connect,char *stmt,char *day,int start_time, char *carno)$/;"	f	file:
+my_showid	tDTO.c	/^static char my_showid[128];$/;"	v	file:
+my_showid	xwfb.c	/^static char my_showid[128];$/;"	v	file:
+pkn	gettab.c	/^        int *pkn;$/;"	m	struct:td_node	file:
+pks	gettab.c	/^        char **pks;$/;"	m	struct:td_node	file:
+pre_seat_index_type	seatdb.c	/^T_PkgType pre_seat_index_type[] = {		\/* 母表索引 *\/$/;"	v
+pre_seat_type	seatdb.c	/^T_PkgType pre_seat_type[] = {		\/* 母表 *\/$/;"	v
+print_JAVA	mkpatt.c	/^void print_JAVA(FILE *fd,T_PkgType *tp,char *tabname)$/;"	f
+print_JSON	mkpatt.c	/^void print_JSON(FILE *fd,T_PkgType *tp,char *tabname)$/;"	f
+print_java	mkpatt.c	/^void print_java(FILE *fd,T_PkgType *tp,char *tabname)$/;"	f
+print_json	mkpatt.c	/^void print_json(FILE *fd,T_PkgType *tp,char *tabname)$/;"	f
+print_struct	mkpatt.c	/^int print_struct(FILE *fd,T_PkgType *tp,char *tabname)$/;"	f
+print_type	mkpatt.c	/^int print_type(FILE *fd,T_PkgType *tp,char *tabname)$/;"	f
+seat_remant_type	seatdb.c	/^T_PkgType seat_remant_type[] = { 	\/* 存量表 *\/$/;"	v
+seat_type	seatdb.c	/^T_PkgType seat_type[] = {		\/* 席位表 *\/$/;"	v
+seatdata	test.c	/^static char seatdata[]="2008-05-27|BHHP|H6B|H6|2008-05-08 00:10|5|21|12|6|0|0|G04\\\\GG05'G06||1|WEB_JAVA|yulihua|2008-09-02 10:50:16|AAAM3iAAFAAAB81AAO|";$/;"	v	file:
+station_type	stationdb.c	/^T_PkgType station_type[]={$/;"	v
+stop_station_type	stationdb.c	/^T_PkgType stop_station_type[]={$/;"	v
+td_node	gettab.c	/^struct td_node {$/;"	s	file:
+timezone	kptux.c	/^	int timezone;$/;"	m	file:
+timezone	kptux_good.c	/^	int timezone;$/;"	m	file:
+today	xwfb.c	/^INT4 today;$/;"	v
+train_type	stationdb.c	/^T_PkgType train_type[]={$/;"	v
+up1	mkpatt.c	/^char *up1(char *str)$/;"	f
+userid	kptux.c	/^	char userid[33];$/;"	m	file:
+userid	kptux_good.c	/^	char userid[33];$/;"	m	file:
+username	kptux.c	/^	char username[33];$/;"	m	file:
+username	kptux_good.c	/^	char username[33];$/;"	m	file:
+verify18card	sfz.c	/^char verify18card(char *card_no)$/;"	f
+xwfb	xwfb.c	/^int xwfb(T_SQL_Connect *SQL_Connect,train_s *train,char *carno)$/;"	f

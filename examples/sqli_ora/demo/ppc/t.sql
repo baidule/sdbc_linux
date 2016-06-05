@@ -1,0 +1,1 @@
+select * FROM (select A.*,ROWNUM RN FROM (SELECT trn_no,stn_no,stn_name,trn_lvr,arrive_time,departure_time,days,run_minuts,stop_minuts FROM TICKET.trn_mmnt where trn_no='G7124' order by stn_no) A WHERE ROWNUM <= 20) WHERE RN > 1;

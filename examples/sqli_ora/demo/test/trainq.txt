@@ -1,0 +1,20 @@
+[
+{ "train": { "train_no": "H6B", "beg_date": "2008-04-01", "end_date": "2099-12-31", "start_station": "QHHP", "end_station": "SJHP", "start_time": "1435", "station_num": "7", "cycle": "10", "gride": "G04 ", "price_mode": "0", "discount_mode": "0" },
+
+"stop_station": [ { "train_no": "H6B", "run_train_no": "H6", "sequence": "1", "beg_date": "2008-04-01", "end_date": "2099-12-31", "station_code": "BEP", "distance": "50", "running_time": "10", "stop_time": "5", "arrive_time": "2009-07-24 00:05" },
+                  { "train_no": "H6B", "run_train_no": "H6", "sequence": "2", "beg_date": "2008-04-01", "end_date": "2099-12-31", "station_code": "TSP", "distance": "120", "running_time": "30", "stop_time": "1", "arrive_time": "2009-07-24 00:25" },
+				  { "train_no": "H6B", "run_train_no": "H6", "sequence": "3", "beg_date": "2008-04-01", "end_date": "2099-12-31", "station_code": "TJP", "distance": "190", "running_time": "46", "stop_time": "3", "arrive_time": "2009-07-24 00:41" },
+				  { "train_no": "H6B", "run_train_no": "H3", "sequence": "4", "beg_date": "2008-04-01", "end_date": "2099-12-31", "station_code": "VNP", "distance": "320", "running_time": "75", "stop_time": "3", "arrive_time": "2009-07-24 01:10" },
+				  { "train_no": "H6B", "run_train_no": "H3", "sequence": "5", "beg_date": "2008-04-01", "end_date": "2099-12-31", "station_code": "BDP", "distance": "440", "running_time": "103", "stop_time": "1", "arrive_time": "2009-07-24 01:38" },
+				  { "train_no": "H6B", "run_train_no": "H3", "sequence": "6", "beg_date": "2008-04-01", "end_date": "2099-12-31", "station_code": "SJP", "distance": "590", "running_time": "134", "stop_time": "5", "arrive_time": "2009-07-24 02:09" } 
+]
+},
+
+{ "train": { "train_no": "H4", "beg_date": "2008-04-01", "end_date": "2099-12-31", "start_station": "SJHP", "end_station": "QHHP", "start_time": "780", "station_num": "7", "cycle": "01", "gride": "G04 ", "price_mode": "0", "discount_mode": "0" },
+
+"stop_station": [ { "train_no": "H4", "run_train_no": "H5", "sequence": "5", "beg_date": "2008-04-01", "end_date": "2099-12-31", "station_code": "BEP", "distance": "540", "running_time": "122", "stop_time": "5", "arrive_time": "2009-07-24 15:02" }, 
+               { "train_no": "H4", "run_train_no": "H5", "sequence": "6", "beg_date": "2008-04-01", "end_date": "2099-12-31", "station_code": "QTP", "distance": "590", "running_time": "137", "stop_time": "0", "arrive_time": "2009-07-24 15:17" }
+		]
+}
+]
+

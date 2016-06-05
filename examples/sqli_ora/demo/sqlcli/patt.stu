@@ -1,0 +1,10 @@
+
+extern T_PkgType PATTERN_COL_tpl[];
+typedef struct {
+	char tab_name[129];
+	char col_name[129];
+	char col_type[13];
+	int col_len;
+	char col_format[37];
+	char pseudo_name[129];
+} PATTERN_COL_stu;

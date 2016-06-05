@@ -1,0 +1,11 @@
+char unit[9];
+        char tabname[9];
+	        short flg;
+TEMPLATE cube 6
+unit:=CH_CHAR 9
+(select tabname from $DB.dict where tabname=:tabname) tabname:=CH_CHAR 9
+flg:=CH_SHORT
+count(*) count:=CH_INT
+sum(dat1) s:=CH_INT64
+avg(dat1) ag:=CH_DOUBLE
+tjrb	tjdate|unit|tabname|flg|

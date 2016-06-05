@@ -1,0 +1,2 @@
+./mkpatt -f mkpatt.ini $*
+

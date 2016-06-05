@@ -1,0 +1,11 @@
+# set this to $HOME/.bash_profile
+#按照你的环境修改
+export ORACLE_HOME=/home/oracle/instantclient_11_2
+export PATH=$PATH:$ORACLE_HOME/bin:$HOME/bin
+export SDBCDIR=$HOME/sdbc
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME/lib
+export LOG=$HOME/log
+export LANG=zh_CN
+export NLS_LANG=AMERICAN_CHINA.ZHS16GBK
+export NLS_DATE_FORMAT="YYYY-MM-DD HH24:MI:SS"
+

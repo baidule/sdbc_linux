@@ -1,0 +1,4 @@
+TEMPLATE ss 3
+c:=CH_TINY
+s:=CH_STRUCT st
+i:=CH_INT

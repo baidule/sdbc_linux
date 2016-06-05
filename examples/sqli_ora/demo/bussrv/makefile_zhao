@@ -1,0 +1,36 @@
+CFLAGS= -Wall -I$(SDBCDIR)/include -I$(MYSQLDIR)/include -O
+LFLAG=-L$(SDBCDIR)/lib
+
+
+all:bussrvnew  
+#简单的通信服务器
+#当含有family_old.o模块时，xcomd具有与xcom不同的内码，因此不能互相通信，必须通过midware转发 发 
+bussrvnew:bussrv.o f_srv.o event_s.o  newfiles.o
+	cc -o bussrvnew bussrv.o event_s.o f_srv.o newfiles.o $(LFLAG) -lsc -lscry -lstr  -lpthread
+	
+
+all:bussrv  filels 
+#简单的通信服务器
+#当含有family_old.o模块时，xcomd具有与xcom不同的内码，因此不能互相通信，必须通过midware转发 发 
+bussrv:bussrv.o f_srv.o event_s.o 
+	cc -o bussrv bussrv.o event_s.o f_srv.o $(LFLAG) -lsc -lscry -lstr  -lpthread
+
+bussrv.o getlist.o f_srv.o : xcomd.h $(SDBCDIR)/include/sc.h $(SDBCDIR)/include/scsrv.h $(SDBCDIR)/include/strproc.h
+
+xcom:xcom.o clilogin.o getls.o putls.o f_cli.o event_c.o 
+	cc -o xcom xcom.o clilogin.o getls.o putls.o f_cli.o event_c.o $(LFLAG) -lsc -lscry -lstr -lpthread
+xcom.o cli_login.o sendfile.o getls.o putls.o f_cli.o event_c.o:xcom.h $(SDBCDIR)/include/sccli.h $(SDBCDIR)/include/sc.h $(SDBCDIR)/include/strproc.h
+
+
+
+# 文件列表实用程序 
+filels:filels.o 
+	cc -s -o filels filels.o $(LFLAG) -lstr
+#测试程序 
+t:t.o
+	cc -o t t.o $(LFLAG) -lsc -lscry -lstr
+
+
+install:bussrv
+	mv $(HOME)/bin/bussrv $(HOME)/bin/bussrv_old
+	mv bussrv $(HOME)/bin

@@ -1,0 +1,9 @@
+String patt="{" +
+    "PATTERN_COL:[ " +
+	"{name:'tab_name'}," +
+	"{name:'col_name'}," +
+	"{name:'col_type'}," +
+	"{name:'col_len',type:'CH_NUMBER'}," +
+	"{name:'col_format'}," +
+	"{name:'pseudo_name'}" +
+    "]}";

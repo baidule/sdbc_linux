@@ -1,0 +1,1 @@
+./loadsta -f ld.ini  $*  

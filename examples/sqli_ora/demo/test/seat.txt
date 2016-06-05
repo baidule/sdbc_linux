@@ -1,0 +1,4 @@
+pre_seat_index
+pre_seat
+seat
+seat_remant

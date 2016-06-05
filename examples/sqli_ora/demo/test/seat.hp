@@ -1,0 +1,59 @@
+
+extern T_PkgType PRE_SEAT_INDEX_tpl[];
+typedef struct {
+	char train_no[13];
+	char item[2];
+	INT4 beg_date;
+	INT4 end_date;
+	char flag;
+	INT64 distribute_time;
+	char note[21];
+} PRE_SEAT_INDEX_stu;
+
+extern T_PkgType PRE_SEAT_tpl[];
+typedef struct {
+	char pre_id[24];
+	char carno;
+	short seat_type;
+	short beg_seatno;
+	short end_seatno;
+	short beg_station;
+	short end_station;
+	short shortest_station;
+	int purpose;
+	char gride[51];
+} PRE_SEAT_stu;
+
+extern T_PkgType SEAT_tpl[];
+typedef struct {
+	char start_date[YEAR_TO_DAY_LEN];
+	char beg_station[5];
+	char train_no[13];
+	char run_train[7];
+	char on_date[YEAR_TO_MIN_LEN];
+	char carno;
+	char seat_type;
+	short seat_no;
+	short end_station;
+	short shortest_station;
+	int purpose;
+	char gride[51];
+	char pro[6];
+	char flag;
+	char used_dev[17];
+	char used_uid[17];
+	INT64 used_time;
+	char ROWID[20];
+} SEAT_stu;
+
+extern T_PkgType SEAT_REMANT_tpl[];
+typedef struct {
+	char on_date[YEAR_TO_DAY_LEN];
+	char beg_station[5];
+	char run_train[13];
+	char carno;
+	short seat_type;
+	int purpose;
+	short end_station;
+	short amoung;
+} SEAT_REMANT_stu;

@@ -1,0 +1,12 @@
+TEMPLATE SEGMENT 10
+trainno:=CH_CHAR 13
+segmentno:=CH_SHORT
+startstationcode:=CH_CHAR 4
+startstationname:=CH_CHAR 16
+stopstationcode:=CH_CHAR 4
+stopstationname:=CH_CHAR 16
+startstationtraincode:=CH_CHAR 9
+distance:=CH_INT
+starttime:=CH_TIME YYYYMMDDHH24MISS
+stoptime:=CH_TIME YYYYMMDDHH24MISS
+

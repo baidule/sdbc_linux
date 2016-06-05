@@ -1,0 +1,6 @@
+文件名:CRHKPQUERY.pwd 校验码:9508
+文件名:CRHKPDICT.uid 校验码:6AF8
+文件名:CRHKPDICT.pwd 校验码:5CC4
+文件名:CRHKPOPER.uid 校验码:1A06
+文件名:CRHKPOPER.pwd 校验码:2C3A
+文件名:FIRST.oper 校验码:509B

@@ -1,0 +1,59 @@
+7.4  查看索引
+
+当需要查看索引信息时，可以使用Oracle提供的视图，具体如表7-1所示。
+
+表7-1  Oracle提供的查看索引信息的视图
+
+视  图
+ 说  明
+  
+ DBA_INDEXES
+
+ ALL_INDEXES
+
+ USER_INDEXES
+  DBA视图，描述了数据库中所有表上的索引
+   
+  DBA_IND_COLUMNS
+
+  ALL_IND_COLUMNS
+
+  USER_IND_COLUMNS
+   这些视图描述了表中索引的列信息
+    
+   DBA_IND_EXPRESSIONS
+
+   ALL_IND_ EXPRESSIONS
+
+   USER_IND_ EXPRESSIONS
+    这些视图描述了基于函数的索引的表达式
+	 
+	INDEX_STATS
+	 存储来自最后一个ANALYZE INDEX…VALIDATE STRUCTURE语句的信息
+	  
+	INDEX_HISTOGRAM
+	  存储来自最后的ANALYZE INDEX…VALIDATE STRUCTURE语句的信息
+	   
+	VSOBJECT_USAGE
+	  包含ALTER INDEX…MONITORING USAGE函数生成的索引使用信息
+	    
+
+	   例如：使用下面的命令可以查看索引IDX_PRODNAME的信息。
+
+	                 SELECT          OWNER,INDEX_NAME,TABLE_OWNER,TABLE_NAME
+
+	                 FROM         SYS.DBA_INDEXES
+
+			         WHERE         INDEX_NAME = 'IDX_PRODNAME';
+
+	以SYSDBA身份执行上述查询，得到的输出结果如下所示：
+
+   OWNER           INDEX_NAME                   TABLE_OWNER         TABLE_NAME
+
+--------------------------------------------------------------------------------------------------
+
+   SCOTT          IDX_PRODNAME                   SCOTT                   PRODUCT
+
+  1 rows selected
+
+

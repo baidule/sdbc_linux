@@ -1,0 +1,26 @@
+#交易路由表
+#T_PkgType SCPOOL_tpl[]={
+#        {CH_INT,sizeof(int),"D_NODE",0,-1},
+#        {CH_CHAR,17,"DEVID"},
+#        {CH_CHAR,256,"LABEL"},
+#        {CH_CHAR,17,"UID"},
+#        {CH_CHAR,14,"PWD"},
+#        {CH_INT,sizeof(int),"NUM"},
+#        {CH_INT,sizeof(int),"NEXT_D_NODE"},
+#        {CH_CHAR,81,"HOST"},
+#        {CH_CHAR,21,"PORT"},
+##        {CH_INT,sizeof(int),"MTU"},
+#        {CH_CHAR,172,"family"},
+#        {-1,0,0,0}
+#};
+
+#D_NODE|DEVID|LABEL|Operid|pwd|NUM|Next_d_node|HOST|PORT|NextMTU|Next_family|
+
+1|FIRST|ca8sOhRv|||1|0|localhost|11455|0||
+2|FIRST|ca8sOhRv|||1|1|localhost|11060|0||
+3|FIRST|vHP3PmU8yYO@|||1|0|localhost|11355|0||
+7|FIRST|vHP3PmU8yYO@|||1|1|localhost|11060|0||
+4|FIRST|ca8sOhRv|||1|0|localhost|11655|0||
+5|OS_X|4WmVJlAh|||1|0|localhost|11455|0||
+6|FIRST|vHP3PmU8yYO@|||1|0|localhost|11555|0||
+

@@ -1,0 +1,12 @@
+# xinetd的配置文件，按实际运行环境配置 
+# default: off
+# description: Remote execution server
+# securlevel: 30
+service sqlsrv
+{
+	socket_type     = stream
+	protocol        = tcp
+	wait            = no
+	user            = sdbc
+	server          = /home/sdbc/bin/sqlsrv.sh
+}
