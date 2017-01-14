@@ -1,0 +1,39 @@
+#-------------------------------------------------------------------------------
+# This file has been generated on 06.10.2009 at 14:06 from 192.168.36.9:389
+# by Softerra LDAP Browser 2.5 (http://www.ldapbrowser.com)
+#-------------------------------------------------------------------------------
+dn: ou=DBConfig,dc=easyway,dc=net
+ou: DBConfig
+objectClass: organizationalUnit
+
+dn: DBLABEL=CRHKPDICT,ou=DBConfig,dc=easyway,dc=net
+DBLABEL: CRHKPDICT
+objectClass: easyWayDBConfig
+SID: ticket
+uid: dict
+PWD: @l9hW_N6joJ_U
+DBOWN: TICKET
+
+dn: DBLABEL=CRHKPOPER,ou=DBConfig,dc=easyway,dc=net
+DBLABEL: CRHKPOPER
+objectClass: easyWayDBConfig
+SID: ticket
+uid: oper
+PWD: @wXaOnxOJCwLY
+DBOWN: TICKET
+
+dn: DBLABEL=CRHKPQUERY,ou=DBConfig,dc=easyway,dc=net
+DBLABEL: CRHKPQUERY
+objectClass: easyWayDBConfig
+SID: ORACLE10
+uid: query
+PWD: @A1Lxj_594NhC9W@@
+DBOWN: TICKET
+
+dn: DBLABEL=CRHKPDBA,ou=DBConfig,dc=easyway,dc=net
+DBLABEL: CRHKPDBA
+objectClass: easyWayDBConfig
+SID: TICKET
+uid: TICKET
+PWD: TICKET
+DBOWN: TICKET

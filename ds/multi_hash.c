@@ -12,7 +12,7 @@ typedef struct route_node {
 #define GETDATA(i) (para->getdata(para->data,(i)))
 #define COMPARE(i,k) para->key_cmp(GETDATA(i),GETDATA(k))
 
-//²úÉú hash±í
+//äº§ç”Ÿ hashè¡¨
 int multi_hash(hash_paramiter *para)
 {
 int conflict,i,hashnum;
@@ -39,13 +39,13 @@ multi_hash_node *hash,*top,*hp,*stack;
 	for(i=0;i<para->data_count;i++) {
 	    hashnum=para->do_hash(GETDATA(i),para->key_count);
 	    hp=&hash[hashnum];
-	    if(hp->rowno==-1) {	//Ã»ÓÐÉ¢ÁÐ³åÍ» 
+	    if(hp->rowno==-1) {	//æ²¡æœ‰æ•£åˆ—å†²çª
 		hp->rowno=i;
 		hp->count=1;
-	    } else if(!COMPARE(i,hp->rowno)) {	//¼ì²éÖØÂë£¬¹¹½¨ÖØÂëÁ´
+	    } else if(!COMPARE(i,hp->rowno)) {	//æ£€æŸ¥é‡ç ï¼Œæž„å»ºé‡ç é“¾
 		hp->count++;
 		continue;
-	    } else {				//ÓÐÉ¢ÁÐ³åÍ»£¬´æ´¢³åÍ»Á´
+	    } else {				//æœ‰æ•£åˆ—å†²çªï¼Œå­˜å‚¨å†²çªé“¾
 		if(top>stack&&!COMPARE(i,top[-1].rowno)) {
 			top[-1].count++;
 			continue;
@@ -57,12 +57,12 @@ multi_hash_node *hash,*top,*hp,*stack;
 	    }
 	}
 	conflict=top-stack;
-	if(top > stack) { //ÓÐÉ¢ÁÐ³åÍ»£¬¹¹½¨³åÍ»Á´ 
+	if(top > stack) { //æœ‰æ•£åˆ—å†²çªï¼Œæž„å»ºå†²çªé“¾
 		hp=hash;
 		for(i=0;top>stack&&i<para->key_count;i++,hp++) {
 			if(hp->rowno > -1) continue;
 			top--;
-//ÕÒµ½Ë÷Òý±íÀïµÄ¿ÕÏî 
+//æ‰¾åˆ°ç´¢å¼•è¡¨é‡Œçš„ç©ºé¡¹
 			hp->rowno=top->rowno;
 			hp->count=top->count;
 			hp->link=-1;
@@ -88,4 +88,3 @@ multi_hash_node *hp;
         if(a_count) *a_count=hp->count;
         return hp->rowno;
 }
-

@@ -1,7 +1,7 @@
 
 /************************************************
  *  For SDBC 4.0
- * ±¾³ÌÐò×éÍê³É ´®ÐÐÊý¾Ý¶ÔÊý¾Ý¿âSQLÓï¾äµÄÓ³Éä¡£
+ * æœ¬ç¨‹åºç»„å®Œæˆ ä¸²è¡Œæ•°æ®å¯¹æ•°æ®åº“SQLè¯­å¥çš„æ˜ å°„ã€‚
  *  For ORACLE
  ************************************************/
 #define _GNU_SOURCE
@@ -25,7 +25,7 @@ char * ext_copy(char *dest,const char *src)
 	*dest=0;
 	return dest;
 }
-	
+
 char *mkset(char *str, T_PkgType *tp)
 {
 register T_PkgType *typ;
@@ -36,7 +36,7 @@ char *cp,*p;
 	cp=str;
 	for(typ=tp;typ->type>=0;typ++) {
 	    if((typ->bindtype&NOINS) || typ->type == CH_CLOB || !strcmp(typ->name,"ROWID") || *typ->name==' ') continue;
-/* ÌáÈ¡ÕæÊµÁÐÃû */
+/* æå–çœŸå®žåˆ—å */
 		p=(char *)typ->name;
 		cp=strtcpy(cp,&p,' ');
 		*cp++ = ',';
@@ -49,11 +49,11 @@ char *cp,*p;
 static char *mk_date(char *buf,char *name,const char *format)
 {
 char *p,*cp;
-	
+
 	p=(char *)plain_name(name);
 	cp=stpcpy(buf,"TO_CHAR(");
 	if(p==name)  cp=stpcpy(cp,name);
-	else  //¸´ÔÓµÄÁÐ±í´ïÊ½ 
+	else  //å¤æ‚çš„åˆ—è¡¨è¾¾å¼
 		cp+=sprintf(cp,"%.*s",(int)(p-name-1),name);
 	cp=stpcpy(stpcpy(ext_copy(stpcpy(cp,",'"),format),"') "),p);
 	return cp;
@@ -113,7 +113,7 @@ char *cp;
 		case CH_JUL:
 		case CH_TIME:
 		case CH_USEC:
-			if(typ->format) {//²»ÄÜÖ§³ÖÌ«¸´ÔÓµÄÈÕÆÚ±í´ïÊ½ 
+			if(typ->format) {//ä¸èƒ½æ”¯æŒå¤ªå¤æ‚çš„æ—¥æœŸè¡¨è¾¾å¼
 			char *p=(char *)typ->name;
 				cp=stpcpy(stpcpy(cp,"TO_CHAR("),tabname);
 				*cp++='.';

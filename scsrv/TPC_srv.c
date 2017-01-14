@@ -1,5 +1,5 @@
 /***********************************************************
- * SDBC5.X,Ò»¸ö»ùÓÚ¶àÏß³ÌµÄÁ¬½Ó³Ø·şÎñÆ÷¿ò¼Ü  
+ * SDBC5.X,ä¸€ä¸ªåŸºäºå¤šçº¿ç¨‹çš„è¿æ¥æ± æœåŠ¡å™¨æ¡†æ¶
  * TPC:Thread Per Connection
  ***********************************************************/
 #include <signal.h>
@@ -28,28 +28,28 @@ int svcnum=0;
 int (*init)(T_Connect *conn,T_NetHead *head);
 char addr[16];
 
-char gda[Conn.SendLen+1];//±¾Ïß³ÌµÄÈ«¾ÖÊı¾İÇø±ØĞëÔÚ´Ë·ÖÅä¡£ 
-	
-	((T_Connect *)param)->Socket=-1;//Í¨ÖªÖ÷Ïß³Ì 
+char gda[Conn.SendLen+1];//æœ¬çº¿ç¨‹çš„å…¨å±€æ•°æ®åŒºå¿…é¡»åœ¨æ­¤åˆ†é…ã€‚
+
+	((T_Connect *)param)->Socket=-1;//é€šçŸ¥ä¸»çº¿ç¨‹
 	if(Conn.SendLen>0) ctx.var=gda;
 	else ctx.var=0;
 	Conn.SendLen=0;
 	ctx.TCB_no=-1;
-	ctx.tid=pthread_self();//±êÖ¾¶àÏß³Ì·şÎñ  
+	ctx.tid=pthread_self();//æ ‡å¿—å¤šçº¿ç¨‹æœåŠ¡
 	ctx.poolno=-1;
 	ctx.SQL_Connect=NULL;
 	Conn.Var=&ctx;
 	init=Conn.only_do;
 	Conn.only_do=0;
-//½èÓÃonly_do´æ·Åº¯ÊıµØÖ· conn_init  
+//å€Ÿç”¨only_doå­˜æ”¾å‡½æ•°åœ°å€ conn_init
 	for(fp=Function;fp->funcaddr!=0;fp++) svcnum++;
 
 //	ShowLog(2,"%s:tid=%lX,sock=%d",__FUNCTION__,ctx.tid,Conn.Socket);
-// Ğ­ÉÌÃÜÔ¿ 
+// åå•†å¯†é’¥
 	Conn.CryptFlg=mk_clikey(Conn.Socket,&Conn.t,Conn.family);
-	if(Conn.CryptFlg<0) { //Ğ­ÉÌÃÜÔ¿Ê§°Ü
+	if(Conn.CryptFlg<0) { //åå•†å¯†é’¥å¤±è´¥
 		peeraddr(Conn.Socket,addr);
-		ShowLog(1,"%s:tid=%lX addr=%s,Ğ­ÉÌÃÜÔ¿Ê§°Ü!",__FUNCTION__,
+		ShowLog(1,"%s:tid=%lX addr=%s,åå•†å¯†é’¥å¤±è´¥!",__FUNCTION__,
 			ctx.tid,addr);
 		freeconnect(&Conn);
 		return NULL;
@@ -59,7 +59,7 @@ char gda[Conn.SendLen+1];//±¾Ïß³ÌµÄÈ«¾ÖÊı¾İÇø±ØĞëÔÚ´Ë·ÖÅä¡£
 	while(1) {
 		ret=RecvPack(&Conn,&Head);
 		if(ret<0) {
-			ShowLog(1,"%s:tid=%lX,½ÓÊÕ½áÊø,sock=%d,status=%d,%s",
+			ShowLog(1,"%s:tid=%lX,æ¥æ”¶ç»“æŸ,sock=%d,status=%d,%s",
 				__FUNCTION__,ctx.tid,Conn.Socket,errno,strerror(errno));
 			break;
 		}
@@ -85,12 +85,12 @@ char gda[Conn.SendLen+1];//±¾Ïß³ÌµÄÈ«¾ÖÊı¾İÇø±ØĞëÔÚ´Ë·ÖÅä¡£
 			ret=Conn.only_do(&Conn,&Head);
 			continue;
 		} else {
-			if(!logined) {//Î´µÇÂ¼
-				ShowLog(1,"%s:Î´µÇÂ¼,tid=%lX",__FUNCTION__,ctx.tid);
+			if(!logined) {//æœªç™»å½•
+				ShowLog(1,"%s:æœªç™»å½•,tid=%lX",__FUNCTION__,ctx.tid);
 				break;
 			}
 			if(Head.PROTO_NUM>svcnum) {
-				ShowLog(1,"%s:Ã»ÓĞÕâ¸ö·şÎñºÅ %d",__FUNCTION__,Head.PROTO_NUM);
+				ShowLog(1,"%s:æ²¡æœ‰è¿™ä¸ªæœåŠ¡å· %d",__FUNCTION__,Head.PROTO_NUM);
 				break;
 			}
 			ret=Function[Head.PROTO_NUM].funcaddr(&Conn,&Head);
@@ -132,15 +132,15 @@ struct linger so_linger;
 		ShowLog(1,"can not init pthread attr %s",strerror(ret));
 		return ;
 	}
-//ÉèÖÃ·ÖÀëÏß³Ì  
+//è®¾ç½®åˆ†ç¦»çº¿ç¨‹
 	ret=pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);
 	if(ret) {
 		ShowLog(1,"can't set pthread attr:%s",strerror(ret));
 		return ;
 	}
-//ÉèÖÃÏß³Ì¶ÑÕ»±£»¤Çø 16K  
+//è®¾ç½®çº¿ç¨‹å †æ ˆä¿æŠ¤åŒº 16K
 	ret=pthread_attr_setguardsize(&attr,(size_t)(1024 * 16));
-//ÉèÖÃÓÃ»§Õ»¿Õ¼ä
+//è®¾ç½®ç”¨æˆ·æ ˆç©ºé—´
         p=getenv("USERSTACKSZ");
         if(p && isdigit(*p)) {
 size_t sz;
@@ -164,7 +164,7 @@ char c;
         }
 
 	SRVFUNC=Function;
-	
+
 	signal(SIGPIPE,SIG_IGN);
 	signal(SIGHUP,SIG_IGN);
 	signal(SIGINT ,SIG_IGN);
@@ -178,13 +178,13 @@ char c;
 
 	p=getenv("SERVICE");
 	if(!p || !*p) {
-		ShowLog(1,"È±ÉÙ»·¾³±äÁ¿ SERVICE ,²»ÖªÊØºòÄÄ¸ö¶Ë¿Ú£¡");
+		ShowLog(1,"ç¼ºå°‘ç¯å¢ƒå˜é‡ SERVICE ,ä¸çŸ¥å®ˆå€™å“ªä¸ªç«¯å£ï¼");
 		quit(3);
 	}
-//²âÊÔ¶Ë¿ÚÊÇ·ñ±»Õ¼ÓÃ 
+//æµ‹è¯•ç«¯å£æ˜¯å¦è¢«å ç”¨
 	sock=tcpopen("localhost",p);
 	if(sock>-1) {
-		ShowLog(1,"¶Ë¿Ú %s ÒÑ¾­±»Õ¼ÓÃ",p);
+		ShowLog(1,"ç«¯å£ %s å·²ç»è¢«å ç”¨",p);
 		close(sock);
 		sock=-1;
 		quit(255);
@@ -223,19 +223,19 @@ char c;
         if(p && isdigit(*p)) {
                 Conn.MTU=atoi(p);
         } else Conn.MTU=0;
-//±ÜÃâ TIME_WAIT
+//é¿å… TIME_WAIT
           so_linger.l_onoff=1;
           so_linger.l_linger=0;
           ret=setsockopt(sock, SOL_SOCKET, SO_LINGER, &so_linger, sizeof so_linger);
           if(ret) ShowLog(1,"set SO_LINGER err=%d,%s",errno,strerror(errno));
 
 
-	listen(sock,1000);// ÒÔºóÓÃÅäÖÃ 
+	listen(sock,1000);// ä»¥åç”¨é…ç½®
 	while(1) {
 		do {
 			FD_ZERO(&efds);
 			FD_SET(sock, &efds);
-//½¡¿µ¼ì²éÖÜÆÚ 
+//å¥åº·æ£€æŸ¥å‘¨æœŸ
 			tm.tv_sec=30;
 			tm.tv_usec=0;
 			ret=select(sock+1,&efds,NULL,&efds,&tm);
@@ -253,7 +253,7 @@ char c;
 		if(s<0) {
 			ShowLog(1,"%s:accept err=%d,%s",__FUNCTION__,errno,strerror(errno));
 			switch(errno) {
-			case EMFILE:	//fdÓÃÍêÁË,ÆäËûÏß³Ì»¹Òª¼ÌĞø¹¤×÷£¬Ö÷Ïß³ÌĞİÏ¢Ò»ÏÂ¡£  
+			case EMFILE:	//fdç”¨å®Œäº†,å…¶ä»–çº¿ç¨‹è¿˜è¦ç»§ç»­å·¥ä½œï¼Œä¸»çº¿ç¨‹ä¼‘æ¯ä¸€ä¸‹ã€‚
 			case ENFILE:
 				sleep(30);
 				continue;
@@ -268,22 +268,21 @@ char c;
 		repeat=0;
 		Conn.Socket=s;
         	Conn.timeout=0;
-		Conn.only_do=(int (*)())conn_init; //½èÓÃÒ»ÏÂ 
+		Conn.only_do=(int (*)())conn_init; //å€Ÿç”¨ä¸€ä¸‹
 		Conn.SendLen=sizeof_gda;
 		ret=pthread_create(&pthread_id,&attr,thread_work,&Conn);
 		if(ret) {
 			ShowLog(1,"%s:pthread_create:%s",__FUNCTION__,strerror(ret));
 			close(s);
-			if(ret==EAGAIN||ret==ENOMEM) {	//Ïß³ÌÊıÓÃÍêÁË£¬ĞİÏ¢Ò»»á£¬µÈÒ»Ğ©Ïß³ÌÍË³ö 
+			if(ret==EAGAIN||ret==ENOMEM) {	//çº¿ç¨‹æ•°ç”¨å®Œäº†ï¼Œä¼‘æ¯ä¸€ä¼šï¼Œç­‰ä¸€äº›çº¿ç¨‹é€€å‡º
 				sleep(30);
 			}
 			continue;
 		}
 		while(Conn.Socket != -1) usleep(1000);
 	}
-	
+
 	ret=pthread_attr_destroy(&attr);
 	close(sock);
 	quit(0);
 }
-

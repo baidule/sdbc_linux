@@ -1,7 +1,7 @@
 /****************************************************
  * For SDBC 4.0
- * ÕâÊÇSDBCµÄÊı¾İ°ü×°ºÍ²ğ°ü³ÌĞò
- * ±¾³ÌĞòÍê³ÉÁË´®ĞĞÊı¾İ¶ÔCÓïÑÔ½á¹¹µÄÓ³Éä¡£
+ * è¿™æ˜¯SDBCçš„æ•°æ®åŒ…è£…å’Œæ‹†åŒ…ç¨‹åº
+ * æœ¬ç¨‹åºå®Œæˆäº†ä¸²è¡Œæ•°æ®å¯¹Cè¯­è¨€ç»“æ„çš„æ˜ å°„ã€‚
  ***************************************************/
 
 /* net_pack.c for ORACLE */
@@ -48,11 +48,11 @@ T_PkgType SqlVarType[]={
 T_PkgType SqlDaType[]={
         {CH_INT4,4,"cursor_no",0,-1},
         {CH_INT4,4,"cols"},
-//SqlVarType,µÈ½«À´Ö§³Ö½á¹¹ÁĞ  
+//SqlVarType,ç­‰å°†æ¥æ”¯æŒç»“æ„åˆ—
         {-1,0,0,0}
 };
 
-	
+
 int strcpy_esc(char *dest,char *src,int len,char CURDLM)
 {
 char *p;
@@ -97,11 +97,11 @@ static int b2h(char *hex,char *bin,int len)
 {
 register char *hp=hex,*bp=bin;
 int i;
-	for(i=0;i<len;i++) 
-		hp+=sprintf(hp,"%02X",255&*bp++);	
+	for(i=0;i<len;i++)
+		hp+=sprintf(hp,"%02X",255&*bp++);
 	return hp-hex;
 }
-/* EBCDICÂë²»ÄÜÕâÃ´ÓÃ   
+/* EBCDICç ä¸èƒ½è¿™ä¹ˆç”¨
    */
 static char h_b(char *p)
 {
@@ -136,7 +136,7 @@ int i;
 		*p1++ = h2b(p);
 		if(*(++p)) p++;
 	}
-	
+
 	return p-src;
 }
 
@@ -238,11 +238,11 @@ norm:
 		if(typ->format) cnt=sprintf(cp1,typ->format,*(int *)cp2);
 		else cnt=itoStr(*(int *)cp2,cp1)-cp1;
 		break;
-	case CH_LONG: 
+	case CH_LONG:
 		if(typ->format) cnt=sprintf(cp1,typ->format,*(long *)cp2);
 		else cnt=lltoStr((INT64)(*(long *)cp2),cp1)-cp1;
 		break;
-	case CH_INT64: 
+	case CH_INT64:
 		if(typ->format) cnt=sprintf(cp1,typ->format,*(INT64 *)cp2);
 		else cnt=lltoStr(*(INT64 *)cp2,cp1)-cp1;
 		break;
@@ -283,7 +283,7 @@ norm:
 	return cnt;
 }
 /************************************************************
- * get data from struct(data) to string(buf) "..|..|" 
+ * get data from struct(data) to string(buf) "..|..|"
  ************************************************************/
 
 int pkg_pack(char *buf,void *net_struct,T_PkgType *pkg_type,char delimit)
@@ -319,12 +319,12 @@ int put_str_one(void *buf,char *cp,T_PkgType *typ,char CURDLM)
 int ret;
 register char *cp1;
 
-	cp1=typ->offset+(char *)buf;	
+	cp1=typ->offset+(char *)buf;
 	ret=0;
 	switch(typ->type) {
 		case CH_CLOB:
 			*(char **)cp1=cp;
-			if(CURDLM) strcpy_esc(cp,cp,-1,CURDLM); //ÓĞÎÊÌâ 
+			if(CURDLM) strcpy_esc(cp,cp,-1,CURDLM); //æœ‰é—®é¢˜
 			typ->len=strlen(cp);
 			ret=1;
 			break;
@@ -456,7 +456,7 @@ T_PkgType *typ;
 	return (cp-buf);
 }
 /*******************************************
- * ÕÒ±ğÃû
+ * æ‰¾åˆ«å
  *******************************************/
 const char *plain_name(const char *name)
 {

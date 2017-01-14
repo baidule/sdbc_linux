@@ -13,7 +13,7 @@ unsigned long long tmp;
 	tmp=(unsigned long long)a * (unsigned long long)b;
 	ip[0] = (u_int)tmp;
 	ip[1] = (u_int)(tmp >> BITS);
-} 
+}
 
 u_int diva(u_int *pa,u_int b,u_int *pq)
 {
@@ -83,7 +83,7 @@ u_int *pa,*pb,*pm;
 u_int i;
 u_int tmp[MAXNUMBER+1];
 	n_zero(2*n,pm);
-	for(i=0;i<n;i++) 
+	for(i=0;i<n;i++)
 		addm(n+1,pm+i,mul1(n,pa,pb[i],tmp));
 	return pm;
 }
@@ -165,17 +165,17 @@ u_int qtmp,testb;
 u_int testd[2];
 	i=n<<1;
 	j=n;
-	testb=by[n-1]; //³ıÊı×î¸ßÎ»
+	testb=by[n-1]; //é™¤æ•°æœ€é«˜ä½
 	if(!testb) return -1;
-	numcpy(n,tmp,div+n); //tmp=±»³ıÊıµÄ¸ß°ë
+	numcpy(n,tmp,div+n); //tmp=è¢«é™¤æ•°çš„é«˜åŠ
 	do {
 		i--;
 		j--;
 		for(k=n;k>0;k--) tmp[k]=tmp[k-1];
 		tmp[0]=*(div+i-n);
-		numcpy(2,testd,tmp+n-1);//testd=ÖĞ¼ä½á¹ûµÄ±»³ıÊı×î¸ß2Î»
-			
-		if(testd[HIGH]==testb) { //qtmp=ÊÔÉÌ
+		numcpy(2,testd,tmp+n-1);//testd=ä¸­é—´ç»“æœçš„è¢«é™¤æ•°æœ€é«˜2ä½
+
+		if(testd[HIGH]==testb) { //qtmp=è¯•å•†
 			qtmp=-1;
 		} else {
 			diva(testd,testb,&qtmp);

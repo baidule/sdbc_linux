@@ -60,10 +60,9 @@ ENIGMA2 egm;
 		fprintf(fd,"%s\n",buf);
 		fclose(fd);
 		crc=0xFFFF&gencrc(devfile,strlen(devfile));
-		printf("ÎÄ¼şÃû:%s Ğ£ÑéÂë:%04X\n",devfile,crc);
+		printf("æ–‡ä»¶å:%s æ ¡éªŒç :%04X\n",devfile,crc);
 	}
 	freedw(&dwp);
 	if(mkpassfd) fclose(mkpassfd);
 	return 0;
 }
-

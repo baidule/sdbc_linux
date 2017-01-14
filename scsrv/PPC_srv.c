@@ -1,7 +1,7 @@
 /************************************************************
- * netmain():SDBC5.X ·şÎñÆ÷µÄµ¥Ïß³Ìµ÷¶È¹ÜÀíÆ÷¡£ÒÀ¿¿inetdÆô¶¯ 
- * ÒÀ¾İ°üÍ·ÖĞµÄ PROTO_NUM µ÷ÓÃ½á¹¹Êı×éFUNCTIONÖĞµÄ¹ı³Ì¡£
- * Æô¶¯ºóÊ×ÏÈÓÉ¿Í»§¶Ë·¢ÆğÃÜÔ¿Ğ­ÉÌ  
+ * netmain():SDBC5.X æœåŠ¡å™¨çš„å•çº¿ç¨‹è°ƒåº¦ç®¡ç†å™¨ã€‚ä¾é inetdå¯åŠ¨
+ * ä¾æ®åŒ…å¤´ä¸­çš„ PROTO_NUM è°ƒç”¨ç»“æ„æ•°ç»„FUNCTIONä¸­çš„è¿‡ç¨‹ã€‚
+ * å¯åŠ¨åé¦–å…ˆç”±å®¢æˆ·ç«¯å‘èµ·å¯†é’¥åå•†
  ************************************************************/
 
 #include <signal.h>
@@ -52,9 +52,9 @@ int logined=0;
     connect.family=family;
     connect.Var=userdata;
     connect.CryptFlg=mk_clikey(connect.Socket,&connect.t,connect.family);
-    if(connect.CryptFlg<0) { //Ğ­ÉÌÃÜÔ¿Ê§°Ü
- 	freeconnect(&connect);   
-	ShowLog(1,"Ğ­ÉÌÃÜÔ¿Ê§°Ü");
+    if(connect.CryptFlg<0) { //åå•†å¯†é’¥å¤±è´¥
+ 	freeconnect(&connect);
+	ShowLog(1,"åå•†å¯†é’¥å¤±è´¥");
 	return -1;
     }
     if(NetInit) NetInit(&connect,&NetHead);
@@ -100,7 +100,7 @@ int logined=0;
 	    }
 	} else if (connect.only_do) {
 		cc=connect.only_do(&connect,&NetHead);
-		if(cc==-1) { 
+		if(cc==-1) {
 			ShowLog(0,"Disconnect by server onlydo PROTO_NUM=%d,cc=%d",
 				NetHead.PROTO_NUM,cc);
 			freeconnect(&connect);

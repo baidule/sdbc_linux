@@ -6,23 +6,23 @@
 #include <pack.h>
 
 typedef struct {
-	T_PkgType	*tp;			//Ä£°å 
-	char 		*result;		//½á¹û¼¯
-	char		*rp;			//½á¹û¼¯½âÎöÖ¸Õë 
-	void		*rec;			//Êý¾Ý¼ÇÂ¼
-	const char	*hint;			//selectÖ®ºóµÄÌáÊ¾£¬Èç£¬distinct,/*+rule*/
-	int		Aflg;			//ÁÐÊý£¬+tp£¬recÎª´æ´¢·ÖÅä
-	const char	*pks;			//Ö÷¼ü
+	T_PkgType	*tp;			//æ¨¡æ¿
+	char 		*result;		//ç»“æžœé›†
+	char		*rp;			//ç»“æžœé›†è§£æžæŒ‡é’ˆ
+	void		*rec;			//æ•°æ®è®°å½•
+	const char	*hint;			//selectä¹‹åŽçš„æç¤ºï¼Œå¦‚ï¼Œdistinct,/*+rule*/
+	int		Aflg;			//åˆ—æ•°ï¼Œ+tpï¼Œrecä¸ºå­˜å‚¨åˆ†é…
+	const char	*pks;			//ä¸»é”®
 	const char	*tabname;
 	char		*colidx;
-	const char	*befor;			//Ö÷Óï¾äÇ°ÖÃÄÚÈÝ£¬Èç with...as...select...
+	const char	*befor;			//ä¸»è¯­å¥å‰ç½®å†…å®¹ï¼Œå¦‚ with...as...select...
 } SRM;
 
-/* °ÑSRMÄ£°å°´ÕÕÑ¡Ôñ·ûÉú³É×ÓÄ£°å */
+/* æŠŠSRMæ¨¡æ¿æŒ‰ç…§é€‰æ‹©ç¬¦ç”Ÿæˆå­æ¨¡æ¿ */
 #define SRM_patt_copy(srm,tp,choose) patt_copy_col((tp),(srm).tp,(choose),(srm).colidx)
 
-/* SRM_setBind:ÉèÖÃÄ£°åÖÐµÄbindtype,chooseÊÇÁÐÃûÁÐ±í,NULLÈ«²¿ÁÐ¡£
-   bindtype¿ÉÒÔÊÇ0,NOSELECT,NOINSERT,NOSELECT|NOINSERT....
+/* SRM_setBind:è®¾ç½®æ¨¡æ¿ä¸­çš„bindtype,chooseæ˜¯åˆ—ååˆ—è¡¨,NULLå…¨éƒ¨åˆ—ã€‚
+   bindtypeå¯ä»¥æ˜¯0,NOSELECT,NOINSERT,NOSELECT|NOINSERT....
 */
 #define SRM_setBind(srm,bindtype,choose) set_bindtype_idx((srm)->tp,(bindtype),(choose),abs((srm)->Aflg),(srm)->colidx)
 
@@ -35,7 +35,7 @@ void SRM_free(SRM *srmp);
 void PartternFree(SRM *srmp);
 int mk_sdbc_type(char *type_name);
 
-/* °´ÕÕkeyÈ¡Ä£°å */
+/* æŒ‰ç…§keyå–æ¨¡æ¿ */
 T_PkgType *SRM_getType(SRM *srmp,const char *key);
 
 int SRM_pkg_pack(SRM *srmp,char *buf,char dlimit);
@@ -47,21 +47,21 @@ int SRM_setString(SRM *srmp,char *buf,char *key);
 int SRM_getOne(SRM *srmp,char *buf,int idx);
 int SRM_putOne(SRM *srmp,char *buf,int idx);
 /**
- *  ÒÔÏÂº¯ÊýÈ¡Êý¾ÝÏîµÄÖ¸Õë£¬Êý¾ÝÀàÐÍ¡¢³¤¶ÈÓÉÓ¦ÓÃÈí¼þ¸ºÔð
+ *  ä»¥ä¸‹å‡½æ•°å–æ•°æ®é¡¹çš„æŒ‡é’ˆï¼Œæ•°æ®ç±»åž‹ã€é•¿åº¦ç”±åº”ç”¨è½¯ä»¶è´Ÿè´£
  */
-// °´Ãû×ÖÈ¡Ö¸Õë£¬²»ºÏÊÊµÄÁÐÃû·µ»Ø¿ÕÖ¸Õë
+// æŒ‰åå­—å–æŒ‡é’ˆï¼Œä¸åˆé€‚çš„åˆ—åè¿”å›žç©ºæŒ‡é’ˆ
 void *SRM_getP_by_key(SRM *srmp,const char *key);
-//°´ÁÐºÅÈ¡Ö¸Õë£¬²»ºÏÊÊµÄÁÐºÅ·µ»Ø¿ÕÖ¸Õë
+//æŒ‰åˆ—å·å–æŒ‡é’ˆï¼Œä¸åˆé€‚çš„åˆ—å·è¿”å›žç©ºæŒ‡é’ˆ
 void *SRM_getP_by_index(SRM *srmp,int idx);
 
-/* Éú³Ébind WHERE ×Ó¾ä */
+/* ç”Ÿæˆbind WHERE å­å¥ */
 char * mk_where(const char *keys,char *stmt);
 char * SRM_mk_returning(SRM *srmp,const char *keys,char *stmt);
 int SRM_mk_select(SRM *srmp,char *DBOWN,char *where);
 int SRM_mk_delete(SRM *srmp,char *DBOWN,char *where);
-//Éú³É°ë¸öUPDATEÓï¾ä:"UPDATE DBOWN.TABNAME "
+//ç”ŸæˆåŠä¸ªUPDATEè¯­å¥:"UPDATE DBOWN.TABNAME "
 char * SRM_mk_update(SRM *srmp,char *DBOWN,char *where);
-/* ¶ÔÑ¡ÔñµÄÁÐ¹¹½¨updateÓï¾ä£¬Èç¹ûchooseÎª¿Õ£¬È«²¿ÁÐ ,·µ»ØÎ²²¿ */
+/* å¯¹é€‰æ‹©çš„åˆ—æž„å»ºupdateè¯­å¥ï¼Œå¦‚æžœchooseä¸ºç©ºï¼Œå…¨éƒ¨åˆ— ,è¿”å›žå°¾éƒ¨ */
 char * SRM_mk_upd_col(SRM *srmp,char *DBOWN,const char *choose,char *stmt);
 
 #ifdef __cplusplus
@@ -72,4 +72,3 @@ char * SRM_mk_upd_col(SRM *srmp,char *DBOWN,const char *choose,char *stmt);
 #define SRM_except_col(srmp,buf,except) except_col((buf),((srmp)->tp),(except))
 
 #endif
-

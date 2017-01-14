@@ -29,7 +29,7 @@ int colnum;
 	if(!src || !dest) return 0;
 	tp=src;
 	dp=dest;
-	if(!choose||!*choose) {		// Ã»ÓĞÑ¡Ôñ£¬È«²¿¼ÓÈë
+	if(!choose||!*choose) {		// æ²¡æœ‰é€‰æ‹©ï¼Œå…¨éƒ¨åŠ å…¥
 	    for(i=0;tp[i].type>=0;i++,dp++) {
 		tp_cp(dp,tp,i);
 	    }
@@ -42,11 +42,11 @@ int colnum;
 	do {
 	char *p;
 		*buf=0;
-		cp=stptok(skipblk((char *)cp),buf,sizeof(buf),",|");	//¿ÉÒÔÓÃµÄ·Ö¸ô·û
+		cp=stptok(skipblk((char *)cp),buf,sizeof(buf),",|");	//å¯ä»¥ç”¨çš„åˆ†éš”ç¬¦
 		p=buf;
 		TRIM(p);
 		if(!*p) continue;
-		if(isdigit(*p)) {	//Êı×ÖÑ¡Ôñ£¬×Ö¶ÎºÅ·¶Î§
+		if(isdigit(*p)) {	//æ•°å­—é€‰æ‹©ï¼Œå­—æ®µå·èŒƒå›´
 		int ret,beg,end;
 			end=beg=-1;
 			ret=sscanf(buf,"%d - %d",&beg,&end);
@@ -57,7 +57,7 @@ int colnum;
 	    			tp_cp(dp,tp,ret);
 				num++;
 			}
-		} else {		//×ÖÄ¸£¬×Ö¶ÎÃû
+		} else {		//å­—æ¯ï¼Œå­—æ®µå
 			i=index_col(idxcol,colnum,p,src);
 			if(src[i].type<0) continue;
 	    		tp_cp(dp,tp,i);
@@ -68,4 +68,3 @@ int colnum;
 	tp_cp(dp,tp,colnum);
 	return num;
 }
-

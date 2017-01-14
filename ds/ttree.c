@@ -1,4 +1,4 @@
-/* ttree.c ²âÊÔÆ½ºâ¶ş²æÊ÷ */
+/* ttree.c æµ‹è¯•å¹³è¡¡äºŒå‰æ ‘ */
 #include <stdio.h>
 #include <BB_tree.h>
 
@@ -36,14 +36,14 @@ int num,ret;
 T_Tree *root=0;
 char buf[10];
 
-	printf("ÊäÈënum£¬q½áÊø:\n");
+	printf("è¾“å…¥numï¼Œqç»“æŸ:\n");
 	while((ret=scanf("%d",&num))==1) {
 		root=BB_Tree_Add(root,&num,sizeof(num),Tree_Cmp,0);
 	}
 	BB_Tree_print(root);
 	fgets(buf,sizeof(buf),stdin);
 	while(!ferror(stdin) && root) {
-		printf("ÊäÈëÉ¾³ıµÄ½ÚµãºÅ£º\n");
+		printf("è¾“å…¥åˆ é™¤çš„èŠ‚ç‚¹å·ï¼š\n");
 		ret=scanf("%d",&num);
 		if(ret != 1) break;
 		root=BB_Tree_Del(root,&num,sizeof(num),Tree_Cmp,0,&ret);

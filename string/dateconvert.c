@@ -1,12 +1,12 @@
 #include <datejul.h>
 
 /************************************************************************/
-/*function:DateTimeConvert ÈÕÆÚÊ±¼äÊıÖµÓë×Ö·û´®Ö¸¶¨¸ñÊ½×ª»»				*/
-/*description:fmt(YYYYMMDDHHmmSS¸ñÊ½)									*/
-/*Èç¹ûÖ¸¶¨×Ö·û´®'date'Ê±£¬Ôò½«×Ö·û´®×ª»»³É¾àÀë(1970.01.01 00:00:00 GMT	*/
-/*»»Ëã³É±¾µØÊ±¼ä)µÄÊ±¼ä´ÁÃëÊı£»Èç¹ûÖ¸¶¨Ê±¼ä´ÁÃëÊı,ÔòdateÉèÖÃÎª¿Õ,¼´½«¾à	*/
-/*Àë(1970.01.01 00:00:00 GMT»»Ëã³É±¾µØÊ±¼ä)µÄÊ±¼ä´ÁÃëÊı×ª»»³É×Ö·û´®		*/
-/*ÓĞĞ§µÄÊ±¼ä·¶Î§ÊÇ1970.1.1 00:00:00 -- 2038.1.19(GREEMWITHÊ±¼ä)			*/
+/*function:DateTimeConvert æ—¥æœŸæ—¶é—´æ•°å€¼ä¸å­—ç¬¦ä¸²æŒ‡å®šæ ¼å¼è½¬æ¢				*/
+/*description:fmt(YYYYMMDDHHmmSSæ ¼å¼)									*/
+/*å¦‚æœæŒ‡å®šå­—ç¬¦ä¸²'date'æ—¶ï¼Œåˆ™å°†å­—ç¬¦ä¸²è½¬æ¢æˆè·ç¦»(1970.01.01 00:00:00 GMT	*/
+/*æ¢ç®—æˆæœ¬åœ°æ—¶é—´)çš„æ—¶é—´æˆ³ç§’æ•°ï¼›å¦‚æœæŒ‡å®šæ—¶é—´æˆ³ç§’æ•°,åˆ™dateè®¾ç½®ä¸ºç©º,å³å°†è·	*/
+/*ç¦»(1970.01.01 00:00:00 GMTæ¢ç®—æˆæœ¬åœ°æ—¶é—´)çš„æ—¶é—´æˆ³ç§’æ•°è½¬æ¢æˆå­—ç¬¦ä¸²		*/
+/*æœ‰æ•ˆçš„æ—¶é—´èŒƒå›´æ˜¯1970.1.1 00:00:00 -- 2038.1.19(GREEMWITHæ—¶é—´)			*/
 /************************************************************************/
 void DateTimeConvert(char *date,time_t *secs,char *fmt)
 {
@@ -17,118 +17,118 @@ void DateTimeConvert(char *date,time_t *secs,char *fmt)
 	char tmp[5];
 
 	tzset();
-	memset(&tim, 0, sizeof(tim));	
-	if ('\0' == date[0]) 
+	memset(&tim, 0, sizeof(tim));
+	if ('\0' == date[0])
 	{
-		/* ÊıÖµ×ª´® */
+		/* æ•°å€¼è½¬ä¸² */
 		tt = (0 == *secs) ? time(NULL) : *secs;
 		tim = *localtime(&tt);
 		len = strlen(fmt);
 		sprintf(tmp, "%04d", tim.tm_year + 1900);
-		for (i = 0; i < len; i++) 
+		for (i = 0; i < len; i++)
 		{
-			if (!strncmp("YYYY", fmt + i, 4)) 
+			if (!strncmp("YYYY", fmt + i, 4))
 			{
 				strncpy(date + i, tmp, 4);
 				i = i + 3;
-			} 
-			else if (!strncmp(fmt + i, "YY", 2)) 
+			}
+			else if (!strncmp(fmt + i, "YY", 2))
 			{
 				strncpy(date + i, tmp + 2, 2);
 				i++;
-			} 
-			else if (!strncmp(fmt + i, "MM", 2)) 
+			}
+			else if (!strncmp(fmt + i, "MM", 2))
 			{
 				sprintf(date + i, "%02d", tim.tm_mon + 1 );
 				i++;
-			} 
-			else if (!strncmp(fmt + i, "DD", 2)) 
+			}
+			else if (!strncmp(fmt + i, "DD", 2))
 			{
 				sprintf(date + i, "%02d", tim.tm_mday);
 				i++;
-			} 
-			else if (!strncmp(fmt + i, "HH", 2)) 
+			}
+			else if (!strncmp(fmt + i, "HH", 2))
 			{
 				sprintf(date + i, "%02d", tim.tm_hour);
 				i++;
-			} 
-			else if (!strncmp(fmt + i, "mm", 2)) 
+			}
+			else if (!strncmp(fmt + i, "mm", 2))
 			{
 				sprintf(date + i, "%02d", tim.tm_min);
 				i++;
-			} 
-			else if (!strncmp(fmt + i, "SS", 2)) 
+			}
+			else if (!strncmp(fmt + i, "SS", 2))
 			{
 				sprintf(date + i, "%02d", tim.tm_sec);
 				i++;
-			} 
-			else 
+			}
+			else
 			{
 				date[i] = fmt[i];
 			}
 		}			/* end of for */
 		date = '\0';
-		if (secs != NULL) 
+		if (secs != NULL)
 		{
 			*secs = tt;
 		}
-	} 
-	else 
+	}
+	else
 	{
-		/*´®×ªÊıÖµ*/
+		/*ä¸²è½¬æ•°å€¼*/
 		len = strlen(fmt);
-		for (i = 0; i < len; i++) 
+		for (i = 0; i < len; i++)
 		{
 			memset(tmp, 0x00, sizeof(tmp));
 			strncpy(tmp, date + i, 2);
-			if (!strncmp("YYYY", fmt + i, 4)) 
+			if (!strncmp("YYYY", fmt + i, 4))
 			{
 				strncpy(tmp, date + i, 4);
 				tim.tm_year = atoi(tmp) - 1900;
 				i = i + 3;
-			} 
-			else if (!strncmp(fmt + i, "YY", 2)) 
+			}
+			else if (!strncmp(fmt + i, "YY", 2))
 			{
 				tim.tm_year = atoi(tmp);
 				i++;
-			} 
-			else if (!strncmp(fmt + i, "MM", 2)) 
+			}
+			else if (!strncmp(fmt + i, "MM", 2))
 			{
 				tim.tm_mon = atoi(tmp) - 1;
 				i++;
-			} 
-			else if (!strncmp(fmt + i, "DD", 2)) 
+			}
+			else if (!strncmp(fmt + i, "DD", 2))
 			{
 				tim.tm_mday = (0 == tim.tm_mday) ? 1 : atoi(tmp);
 				tim.tm_mday = atoi(tmp);
 				i++;
-			} 
-			else if (!strncmp(fmt + i, "HH", 2)) 
+			}
+			else if (!strncmp(fmt + i, "HH", 2))
 			{
 				tim.tm_hour = atoi(tmp);
 				i++;
-			} 
-			else if (!strncmp(fmt + i, "mm", 2)) 
+			}
+			else if (!strncmp(fmt + i, "mm", 2))
 			{
 				tim.tm_min = atoi(tmp);
 				i++;
-			} 
-			else if (!strncmp(fmt + i, "SS", 2)) 
+			}
+			else if (!strncmp(fmt + i, "SS", 2))
 			{
 				tim.tm_sec = atoi(tmp);
 				i++;
-			} 
-		}		/* end of for */		
+			}
+		}		/* end of for */
 		tt = mktime(&tim);
 		*secs = tt;
 	}
-	return; 
+	return;
 }
 
 /************************************************************************/
-/*function:DateFormatCovert ÈÕÆÚÊ±¼ä¸ñÊ½×ª»»							*/
-/*description:fmt(YYYYMMDDHHmmSS»òYYYY-MM-DD HH:mm:SSµÈ¸ñÊ½)			*/
-/*½«'src'×ª»»³Éfmt¸ñÊ½´æ·Åµ½'dest'ÖĞ									*/
+/*function:DateFormatCovert æ—¥æœŸæ—¶é—´æ ¼å¼è½¬æ¢							*/
+/*description:fmt(YYYYMMDDHHmmSSæˆ–YYYY-MM-DD HH:mm:SSç­‰æ ¼å¼)			*/
+/*å°†'src'è½¬æ¢æˆfmtæ ¼å¼å­˜æ”¾åˆ°'dest'ä¸­									*/
 /************************************************************************/
 int DateFormatCovert(char *dest,char *src,char *fmt)
 {
@@ -140,32 +140,32 @@ int DateFormatCovert(char *dest,char *src,char *fmt)
 		printf("the source string error!\n");
 		return -1;
 	}
-	if ((strcmp(fmt,"YYYY-MM-DD")) == 0)				/* ½«YYYYMMDD×ª»»³ÉYYYY-MM-DD */
+	if ((strcmp(fmt,"YYYY-MM-DD")) == 0)				/* å°†YYYYMMDDè½¬æ¢æˆYYYY-MM-DD */
 	{
 		sscanf(src,"%4s%2s%2s",year,month,day);
 		sprintf(dest,"%4s-%2s-%2s",year,month,day);
 	}
-	else if ((strcmp(fmt,"YYYYMMDD")) == 0)				/* ½«YYYY-MM-DD×ª»»³ÉYYYYMMDD */
+	else if ((strcmp(fmt,"YYYYMMDD")) == 0)				/* å°†YYYY-MM-DDè½¬æ¢æˆYYYYMMDD */
 	{
 		sscanf(src,"%4s-%2s-%2s",year,month,day);
 		sprintf(dest,"%4s%2s%2s",year,month,day);
 	}
-	else if ((strcmp(fmt,"YYYY-MM-DD HH:mm")) == 0)		/* ½«YYYYMMDDHHmm×ª»»³ÉYYYY-MM-DD HH:mm */
+	else if ((strcmp(fmt,"YYYY-MM-DD HH:mm")) == 0)		/* å°†YYYYMMDDHHmmè½¬æ¢æˆYYYY-MM-DD HH:mm */
 	{
 		sscanf(src,"%4s%2s%2s%2s%2s",year,month,day,hour,minute);
 		sprintf(dest,"%4s-%2s-%2s %2s:%2s",year,month,day,hour,minute);
 	}
-	if ((strcmp(fmt,"YYYYMMDDHHmm")) == 0)				/* ½«YYYY-MM-DD HH:mm×ª»»³ÉYYYYMMDDHHmm */
+	if ((strcmp(fmt,"YYYYMMDDHHmm")) == 0)				/* å°†YYYY-MM-DD HH:mmè½¬æ¢æˆYYYYMMDDHHmm */
 	{
 		sscanf(src,"%4s-%2s-%2s %2s:%2s",year,month,day,hour,minute);
 		sprintf(dest,"%2s%2s%2s%2s",month,day,hour,minute);
-	} 
-	else if ((strcmp(fmt,"YYYY-MM-DD HH:mm:SS")) == 0)	/* ½«YYYYMMDDHHmmSS×ª»»³ÉYYYY-MM-DD HH:mm:SS */
+	}
+	else if ((strcmp(fmt,"YYYY-MM-DD HH:mm:SS")) == 0)	/* å°†YYYYMMDDHHmmSSè½¬æ¢æˆYYYY-MM-DD HH:mm:SS */
 	{
 		sscanf(src,"%4s%2s%2s%2s%2s%2s",year,month,day,hour,minute,second);
 		sprintf(dest,"%4s-%2s-%2s %2s:%2s:%2s",year,month,day,hour,minute,second);
 	}
-	else if ((strcmp(fmt,"YYYYMMDDHHmmSS")) == 0)		/* ½«YYYY-MM-DD HH:mm:SS×ª»»³ÉYYYYMMDDHHmmSS */
+	else if ((strcmp(fmt,"YYYYMMDDHHmmSS")) == 0)		/* å°†YYYY-MM-DD HH:mm:SSè½¬æ¢æˆYYYYMMDDHHmmSS */
 	{
 		sscanf(src,"%4s-%2s-%2s %2s:%2s:%2s",year,month,day,hour,minute,second);
 		sprintf(dest,"%4s%2s%2s%2s%2s%2s",year,month,day,hour,minute,second);

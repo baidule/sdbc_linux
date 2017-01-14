@@ -50,7 +50,7 @@ int Event_no=0;
 	o_node=LocalAddr(connect->Socket,0);
 	nethead.PROTO_NUM=get_srv_no(connect->Var,"Rexec");
     if( nethead.PROTO_NUM==1) {
-        ShowLog(1,"%s:Ã»ÓĞÕâ¸ö·şÎñ",__FUNCTION__);
+        ShowLog(1,"%s:æ²¡æœ‰è¿™ä¸ªæœåŠ¡",__FUNCTION__);
         return FORMATERR;
     }
 	nethead.O_NODE=htonl(o_node);
@@ -74,12 +74,12 @@ int Event_no=0;
 
 		i=RecvPack(connect,&nethead);
 		if(i){
-			ShowLog(1,"N_Rexec:Î´µ÷ÊÔ¹ıµÄ´úÂë input Recv i=%d",i);
+			ShowLog(1,"N_Rexec:æœªè°ƒè¯•è¿‡çš„ä»£ç  input Recv i=%d",i);
 			return i;
 		}
 		Event_no=nethead.PROTO_NUM;
 		if(nethead.ERRNO1) {
-			ShowLog(1,"N_Rexec Î´µ÷ÊÔ¹ıµÄ´úÂë "
+			ShowLog(1,"N_Rexec æœªè°ƒè¯•è¿‡çš„ä»£ç  "
 				"ERRNO1=%d,ERRNO2=%d,Addr=%s,%s",
 				nethead.ERRNO1,nethead.ERRNO2,
 				StrAddr(ntohl(nethead.O_NODE),
@@ -154,10 +154,10 @@ T_CLI_Var *clip;
 	ShowLog(1,"%s:no T_CLI_Var",__FUNCTION__);
 	return FORMATERR;
     }
-    
+
     nethead.PROTO_NUM=get_srv_no(clip,"PutFile");
     if( nethead.PROTO_NUM==1) {
-        ShowLog(1,"%s:Ã»ÓĞÕâ¸ö·şÎñ",__FUNCTION__);
+        ShowLog(1,"%s:æ²¡æœ‰è¿™ä¸ªæœåŠ¡",__FUNCTION__);
         return FORMATERR;
     }
     fd=open(local_file,O_RDONLY);
@@ -261,10 +261,10 @@ T_CLI_Var *clip;
 	ShowLog(1,"%s:no T_CLI_Var",__FUNCTION__);
 	return FORMATERR;
     }
-    ShowLog(5,"ÎÄ¼ş´«Êä ±¾µØÎÄ¼şÃû:%s <-------- Ô¶³ÌÎÄ¼şÃû:%s",local_file,remote_file);
+    ShowLog(5,"æ–‡ä»¶ä¼ è¾“ æœ¬åœ°æ–‡ä»¶å:%s <-------- è¿œç¨‹æ–‡ä»¶å:%s",local_file,remote_file);
     nethead.PROTO_NUM=get_srv_no(clip,"GetFile");
     if( nethead.PROTO_NUM==1) {
-                ShowLog(1,"%s:Ã»ÓĞÕâ¸ö·şÎñ",__FUNCTION__);
+                ShowLog(1,"%s:æ²¡æœ‰è¿™ä¸ªæœåŠ¡",__FUNCTION__);
                 return FORMATERR;
     }
 
@@ -330,7 +330,7 @@ T_CLI_Var *clip;
 
     nethead.PROTO_NUM=get_srv_no(clip,"Pwd");
     if( nethead.PROTO_NUM==1) {
-	ShowLog(1,"%s:Ã»ÓĞÕâ¸ö·şÎñ",__FUNCTION__);
+	ShowLog(1,"%s:æ²¡æœ‰è¿™ä¸ªæœåŠ¡",__FUNCTION__);
 	return FORMATERR;
     }
     nethead.ERRNO2=0;
@@ -362,7 +362,7 @@ T_CLI_Var *clip;
     }
 	nethead.PROTO_NUM=get_srv_no(clip,"ChDir");
     if( nethead.PROTO_NUM==1) {
-        ShowLog(1,"%s:Ã»ÓĞÕâ¸ö·şÎñ",__FUNCTION__);
+        ShowLog(1,"%s:æ²¡æœ‰è¿™ä¸ªæœåŠ¡",__FUNCTION__);
         return FORMATERR;
     }
 	nethead.O_NODE=clip->ctx_id;
@@ -393,7 +393,7 @@ T_CLI_Var *clip;
     }
 	nethead.PROTO_NUM=get_srv_no(clip,"PutEnv");
 	if( nethead.PROTO_NUM==1) {
-       		ShowLog(1,"%s:Ã»ÓĞÕâ¸ö·şÎñ",__FUNCTION__);
+       		ShowLog(1,"%s:æ²¡æœ‰è¿™ä¸ªæœåŠ¡",__FUNCTION__);
        		return FORMATERR;
 	}
 

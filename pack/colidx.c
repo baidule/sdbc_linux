@@ -1,5 +1,5 @@
 /********************************************
- * ¿ìËÙ²éÕÒÄ£°å£¬ÀûÓÃhashËã·¨
+ * å¿«é€ŸæŸ¥æ‰¾æ¨¡æ¿ï¼Œåˆ©ç”¨hashç®—æ³•
  *******************************************/
 //#include <alloca.h>
 #include <pack.h>
@@ -20,10 +20,10 @@ static int hash_name(const char *name,int mod)
 {
 register int hashval=0;
 	if(!mod) return -1;
-	while(*name) hashval += *(unsigned char *)name++; 
+	while(*name) hashval += *(unsigned char *)name++;
 	return (hashval&0x7FFFFFFF)%mod;
 }
-//²úÉúË÷Òı 
+//äº§ç”Ÿç´¢å¼•
 char *mk_col_idx(T_PkgType *tpl)
 {
 int coln,i;
@@ -54,10 +54,10 @@ hashnode *top,stack[coln];
 	for(tp=tpl;tp->type>=0;tp++,i++) {
 	char *p=(char *)plain_name(tp->name);
 	int hashnum=hash_name(p,coln);
-	    if(colp[hashnum].colno==-1) {	//Ã»ÓĞÉ¢ÁĞ³åÍ» 
+	    if(colp[hashnum].colno==-1) {	//æ²¡æœ‰æ•£åˆ—å†²çª
 		colp[hashnum].name=p;
 		colp[hashnum].colno=i;
-	    } else {				//ÓĞÉ¢ÁĞ³åÍ»£¬´æ´¢³åÍ»Á´
+	    } else {				//æœ‰æ•£åˆ—å†²çªï¼Œå­˜å‚¨å†²çªé“¾
 //printf("%s:name[%d]=%s,%d,--%s\n",__FUNCTION__,i,p,hashnum,colp[hashnum].name);
 		top->name=p;
 		top->colno=i;
@@ -65,11 +65,11 @@ hashnode *top,stack[coln];
 		top++;
 	    }
 	}
-	if(top != stack) { //ÓĞÉ¢ÁĞ³åÍ»£¬¹¹½¨³åÍ»Á´ 
+	if(top != stack) { //æœ‰æ•£åˆ—å†²çªï¼Œæ„å»ºå†²çªé“¾
 		for(i=0;i<coln;i++) {
 			if(colp[i].colno != -1) continue;
 			top--;
-//ÕÒµ½Ë÷Òı±íÀïµÄ¿ÕÏî 
+//æ‰¾åˆ°ç´¢å¼•è¡¨é‡Œçš„ç©ºé¡¹
 			colp[i].name=top->name;
 			colp[i].colno=top->colno;
 /*
@@ -84,12 +84,12 @@ hashnode *top,stack[coln];
 
 	return (char *)colp;
 }
-//²éÕÒÁĞºÅ 
+//æŸ¥æ‰¾åˆ—å·
 int index_col(const char *idx,int colnum,const char *key,T_PkgType *tp)
 {
 register colidx *cp;
 #define colp ((colidx *)(idx))
-	
+
 	if(!tp) return -1;
 	if(!idx) {
 	int i;
@@ -100,7 +100,6 @@ register colidx *cp;
 	for(cp=colp+hash_name(key,colnum);
 	   strcmp(cp->name,key); cp=colp+cp->link) {
 		if(cp->link==-1) return -1;
-	} 
+	}
 	return cp->colno;
 }
-

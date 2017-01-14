@@ -1,4 +1,4 @@
-#²âÊÔ±ä»»family£¬xcomdÓëxcomµÄfamily²»Í¬£¬Òò´ËËüÃÇ²»ÄÜ»¥ÏàÍ¨ĞÅ£¬±ØĞëÍ¨¹ımidware×ª·¢¡£
+#æµ‹è¯•å˜æ¢familyï¼Œxcomdä¸xcomçš„familyä¸åŒï¼Œå› æ­¤å®ƒä»¬ä¸èƒ½äº’ç›¸é€šä¿¡ï¼Œå¿…é¡»é€šè¿‡midwareè½¬å‘ã€‚
 #1 192.168.38.195|xcomd|0|0|F~~~~zj111EpGetmm1M7F7Fp0SBWAQmndsC3BN3n7SEd2dl0MkI9B9llxfLCJQonegEm9ntlExRuF11KadTtWA5VxWAqTY1eCq70MXewSQ7rFBochnX2yngBNrD8xb5gDimKkwSnni0ApSq794QdcQewojQcM3Rvlj7KRMzzc2j|
 #2 192.168.38.195|sqlsrv|0|0||
 #3 192.168.38.195|11355|0|0||
@@ -27,4 +27,3 @@
 1|TUXSERVER|Ymhkk6Bpt8DD|||16|0|localhost|sdbc|0||
 2|TUXSERVER|Ymhkk68NFnbk|||2|0|localhost|sdbc|0||
 3|TUXSERVER|_dZOE~pzYBZeb0@@|||2|0|localhost|sdbc|0||
-

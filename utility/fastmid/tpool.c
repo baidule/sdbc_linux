@@ -1,5 +1,5 @@
 /***********************************************
- * Ïß³Ì³Ø·şÎñÆ÷ 
+ * çº¿ç¨‹æ± æœåŠ¡å™¨
  ***********************************************/
 
 #include <sys/socket.h>
@@ -21,7 +21,7 @@ extern u_int family[];
 srvfunc *SRVFUNC=Function;//used by get_srvname();
 static int g_epoll_fd=-1;
 
-// SDBC task control block for epoll event 
+// SDBC task control block for epoll event
 typedef struct event_node {
 	struct event_node *next;
 	int index;
@@ -32,7 +32,7 @@ typedef struct event_node {
 	char	   *ctx;
 	int (*call_back)(T_Connect *conn,T_NetHead *head);
 	int poolno;
-	int status; //-1 Î´Á¬½Ó£¬0:Î´µÇÂ¼£¬1£ºÒÑµÇÂ¼
+	int status; //-1 æœªè¿æ¥ï¼Œ0:æœªç™»å½•ï¼Œ1ï¼šå·²ç™»å½•
 	INT64 timestamp;
 } TCB;
 
@@ -45,23 +45,23 @@ typedef  struct {
 	int svc_num;
 } Qpool;
 
-//¾ÍĞ÷¶ÓÁĞ
+//å°±ç»ªé˜Ÿåˆ—
 static Qpool rpool={PTHREAD_MUTEX_INITIALIZER,PTHREAD_COND_INITIALIZER,NULL,-1};
 
-//Ïß³Ì³Ø½Úµã
+//çº¿ç¨‹æ± èŠ‚ç‚¹
 typedef struct {
 	pthread_t tid;
 	int status;
 	INT64 timestamp;
 } resource;
-//Ïß³Ì³Ø
+//çº¿ç¨‹æ± 
 static struct {
 	pthread_mutex_t mut;
 	int num;
 	resource *pool;
 	pthread_attr_t attr;
 } tpool={PTHREAD_MUTEX_INITIALIZER,0,NULL};
-//ÈÎÎñ³Ø
+//ä»»åŠ¡æ± 
 static  struct {
 	pthread_mutex_t mut;
 	int max_client;
@@ -73,7 +73,7 @@ void TCB_add(TCB **rp,int TCBno)
 TCB *en;
 	if(TCBno<0 || TCBno>=client_q.max_client) return;
 	en=&client_q.pool[TCBno];
-	if(en->next) return;//²»¿ÉÒÔÔÚÆäËû¶ÓÁĞ
+	if(en->next) return;//ä¸å¯ä»¥åœ¨å…¶ä»–é˜Ÿåˆ—
 	if(!rp) {
 		rp=&rpool.queue;
 		pthread_mutex_lock(&rpool.mut);
@@ -82,13 +82,13 @@ TCB *en;
 		*rp=en;
 		en->next=en;
 	} else {
-		en->next=(*rp)->next;//Á¬½Ó¶ÓÍ·
-		(*rp)->next=en;//¹Òµ½Á´Î²
-		*rp=en;//Ö¸Ïòµ½Á´Î²
+		en->next=(*rp)->next;//è¿æ¥é˜Ÿå¤´
+		(*rp)->next=en;//æŒ‚åˆ°é“¾å°¾
+		*rp=en;//æŒ‡å‘åˆ°é“¾å°¾
 	}
 	if(*rp==rpool.queue) {
 		pthread_mutex_unlock(&rpool.mut);
-		pthread_cond_signal(&rpool.cond); //»½ĞÑ¹¤×÷Ïß³Ì	
+		pthread_cond_signal(&rpool.cond); //å”¤é†’å·¥ä½œçº¿ç¨‹
 	}
 }
 
@@ -96,9 +96,9 @@ int TCB_get(TCB **rp)
 {
 TCB *enp;
 	if(!rp || !*rp) return -1;
-	enp=(*rp)->next;//ÕÒµ½¶ÓÍ·
-	if(enp->next == enp) *rp=NULL;//×îºóÒ»¸öÁË
-	else (*rp)->next=enp->next;//ĞÂµÄ¶ÓÍ·
+	enp=(*rp)->next;//æ‰¾åˆ°é˜Ÿå¤´
+	if(enp->next == enp) *rp=NULL;//æœ€åä¸€ä¸ªäº†
+	else (*rp)->next=enp->next;//æ–°çš„é˜Ÿå¤´
 	enp->next=NULL;
 	return enp->index;
 }
@@ -110,9 +110,9 @@ void set_callback(int TCBno,int (*callback)(T_Connect *,T_NetHead *))
 }
 /**
  * clr_event
- * Çå³ıÓÃ»§×Ô¶¨Òå»Øµ÷º¯Êış
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ³É¹¦ 0
+ * æ¸…é™¤ç”¨æˆ·è‡ªå®šä¹‰å›è°ƒå‡½æ•°ï¿½
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return æˆåŠŸ 0
  */
 int unset_callback(int TCB_no)
 {
@@ -141,7 +141,7 @@ int i;
 	pthread_mutex_destroy(&rpool.mut);
 	pthread_mutex_destroy(&client_q.mut);
 	if(client_q.pool) {
-		if(client_q.pool[0].ctx) 
+		if(client_q.pool[0].ctx)
 			free(client_q.pool[0].ctx);
 		for(i=0;i<client_q.max_client;i++) {
 			freeconnect(&client_q.pool[i].conn);
@@ -188,7 +188,7 @@ struct rlimit sLimit;
 
 	p=getenv("MAXCLT");
 	if(!p || !isdigit(*p)) {
-		ShowLog(4,"%s:È±ÉÙ»·¾³±äÁ¿MAXCLT,ÉèÖÃÎª2",__FUNCTION__);
+		ShowLog(4,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡MAXCLT,è®¾ç½®ä¸º2",__FUNCTION__);
 		client_q.max_client=2;
 	} else {
 		client_q.max_client=atoi(p);
@@ -206,7 +206,7 @@ struct rlimit sLimit;
 			return -2;
 		} else ;
 	else client_q.pool[0].ctx=NULL;
-	
+
 	for(i=0;i<=client_q.max_client;i++) {
 		initconnect(&client_q.pool[i].conn);
 		client_q.pool[i].next=NULL;
@@ -224,7 +224,7 @@ struct rlimit sLimit;
 
 	p=getenv("MAXTHREAD");
 	if(!p || !isdigit(*p)) {
-		ShowLog(4,"%s:È±ÉÙ»·¾³±äÁ¿MAXTHREAD,ÉèÖÃÎª1",__FUNCTION__);
+		ShowLog(4,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡MAXTHREAD,è®¾ç½®ä¸º1",__FUNCTION__);
 		tpool.num=1;
 	} else tpool.num=atoi(p);
 	if(NULL==(tpool.pool=(resource *)malloc(tpool.num * sizeof(resource)))) {
@@ -238,17 +238,17 @@ struct rlimit sLimit;
 		tpool.pool[i].tid=0;
 		tpool.pool[i].status=0;
 		tpool.pool[i].timestamp=0;
-	}	
+	}
 	ret= pthread_attr_init(&tpool.attr);
         if(ret) {
                 ShowLog(1,"%s:can not init pthread attr %s",__FUNCTION__,strerror(ret));
         } else {
-//ÉèÖÃ·ÖÀëÏß³Ì
+//è®¾ç½®åˆ†ç¦»çº¿ç¨‹
         	ret=pthread_attr_setdetachstate(&tpool.attr,PTHREAD_CREATE_DETACHED);
         	if(ret) {
                	 ShowLog(1,"can't set pthread attr PTHREAD_CREATE_DETACHED:%s",strerror(ret));
        		}
-//ÉèÖÃÏß³Ì¶ÑÕ»±£»¤Çø 256K
+//è®¾ç½®çº¿ç¨‹å †æ ˆä¿æŠ¤åŒº 256K
 		pthread_attr_setguardsize(&tpool.attr,(size_t)(1024 * 256));
 	}
 	rpool.queue=NULL;
@@ -292,12 +292,12 @@ TCB *enp;
 }
 /**
  * set_event
- * ÓÃ»§×Ô¶¨ÒåÊÂ¼ş
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @param fd ÊÂ¼şfd Ö»Ö§³Ö¶ÁÊÂ¼ş 
- * @param call_back ·¢ÉúÊÂ¼şµÄ»Øµ÷º¯Êı
- * @param timeout fdµÄ³¬Ê±Ãë,Ö»ÔÊĞíÉèÖÃsocket fd
- * @return ³É¹¦ 0
+ * ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @param fd äº‹ä»¶fd åªæ”¯æŒè¯»äº‹ä»¶
+ * @param call_back å‘ç”Ÿäº‹ä»¶çš„å›è°ƒå‡½æ•°
+ * @param timeout fdçš„è¶…æ—¶ç§’,åªå…è®¸è®¾ç½®socket fd
+ * @return æˆåŠŸ 0
  */
 int set_event(int TCB_no,int fd,int (*call_back)(T_Connect *conn,T_NetHead *head),int timeout)
 {
@@ -311,7 +311,7 @@ int ret;
           	ret=setsockopt(fd,SOL_SOCKET,SO_RCVTIMEO,(char *)&to,sizeof(to));
            	if(ret) {
                    ShowLog(1,"%s:setsockopt RCVTIMEO %d error %s",__FUNCTION__,to.tv_sec,strerror(errno));
-          	}            
+          	}
 	}
 	client_q.pool[TCB_no].fd=fd;
 	client_q.pool[TCB_no].call_back=call_back;
@@ -323,14 +323,14 @@ int ret;
 
 /**
  * clr_event
- * Çå³ıÓÃ»§×Ô¶¨ÒåÊÂ¼ş
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ³É¹¦ 0
+ * æ¸…é™¤ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return æˆåŠŸ 0
  */
 int clr_event(int TCB_no)
 {
 	if(TCB_no<0 || client_q.max_client <= TCB_no) return -1;
-	client_q.pool[TCB_no].status=-4; //Ö»É¾³ıÊÂ¼ş 
+	client_q.pool[TCB_no].status=-4; //åªåˆ é™¤äº‹ä»¶
 	do_epoll(&client_q.pool[TCB_no]);
 
 	client_q.pool[TCB_no].fd=client_q.pool[TCB_no].conn.Socket;
@@ -341,9 +341,9 @@ int clr_event(int TCB_no)
 
 /**
  * get_event_fd
- * È¡ÊÂ¼şfd
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ÊÂ¼şfd
+ * å–äº‹ä»¶fd
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return äº‹ä»¶fd
  */
 int get_event_fd(int TCB_no)
 {
@@ -352,9 +352,9 @@ int get_event_fd(int TCB_no)
 }
 /**
  * get_event_status
- * È¡ÊÂ¼ş×´Ì¬
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ÊÂ¼ş×´Ì¬
+ * å–äº‹ä»¶çŠ¶æ€
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return äº‹ä»¶çŠ¶æ€
  */
 int get_event_status(int TCB_no)
 {
@@ -364,9 +364,9 @@ int get_event_status(int TCB_no)
 
 /**
  * get_event_status
- * È¡TCB×´Ì¬
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return TCB×´Ì¬
+ * å–TCBçŠ¶æ€
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return TCBçŠ¶æ€
  */
 int get_TCB_status(int TCB_no)
 {
@@ -374,7 +374,7 @@ int get_TCB_status(int TCB_no)
 	return client_q.pool[TCB_no].status;
 }
 
-//¼ÓÈëĞÂÁ¬½Ó
+//åŠ å…¥æ–°è¿æ¥
 static int do_epoll(TCB *task)
 {
 struct epoll_event epv = {0, {0}};
@@ -401,7 +401,7 @@ int  op,ret;
 	redo:
 		ret=epoll_ctl(g_epoll_fd,op,task->fd,&epv);
 		if(ret<0 && EEXIST == errno) {
-//¿ÉÄÜÓĞµÄÏß³ÌÇÀÏÈÁË£¬µÈ±ğÈËÊÍ·ÅÕâ¸öfd
+//å¯èƒ½æœ‰çš„çº¿ç¨‹æŠ¢å…ˆäº†ï¼Œç­‰åˆ«äººé‡Šæ”¾è¿™ä¸ªfd
 			usleep(1000);
 			goto redo;
 		}
@@ -422,7 +422,7 @@ int  op,ret;
 	}
 	return 0;
 }
-//¹¤×÷Ïß³Ì
+//å·¥ä½œçº¿ç¨‹
 static void *thread_work(void *param)
 {
 resource *rs=(resource *)param;
@@ -434,12 +434,12 @@ T_SRV_Var ctx;
 
 	rs->tid=pthread_self();
 	ShowLog(4,"%s:thread%lu crested,TIMEVAL=%d",__FUNCTION__,rs->tid,(int)(now_usec() - rs->timestamp));
-	ctx.tid=rs->tid;//±êÖ¾¶àÏß³Ì·şÎñ
+	ctx.tid=rs->tid;//æ ‡å¿—å¤šçº¿ç¨‹æœåŠ¡
 	ctx.SQL_Connect.dbh=-1;
 	ctx.SQL_Connect.tid=NULL;
 
 	while(1) {
-//´Ó¾ÍĞ÷¶ÓÁĞÈ¡Ò»¸öÈÎÎñ
+//ä»å°±ç»ªé˜Ÿåˆ—å–ä¸€ä¸ªä»»åŠ¡
 		rs->timestamp=now_usec();
 
 		pthread_mutex_lock(&rpool.mut);
@@ -451,9 +451,9 @@ T_SRV_Var ctx;
 				rs->status=0;
 				pthread_mutex_unlock(&tpool.mut);
 				gettimeofday((struct timeval *)&tim,0);
-				tim.tv_sec+=300; //µÈ´ı5·ÖÖÓ 
+				tim.tv_sec+=300; //ç­‰å¾…5åˆ†é’Ÿ
 				tim.tv_nsec*=1000;
-				ret=pthread_cond_timedwait(&rpool.cond,&rpool.mut,&tim); //Ã»ÓĞÈÎÎñ£¬µÈ´ı
+				ret=pthread_cond_timedwait(&rpool.cond,&rpool.mut,&tim); //æ²¡æœ‰ä»»åŠ¡ï¼Œç­‰å¾…
 				if(ETIMEDOUT == ret)  break;
 				pthread_mutex_lock(&tpool.mut);
 				rs->status=1;
@@ -470,8 +470,8 @@ T_SRV_Var ctx;
 		task->conn.Var=&ctx;
 		ctx.var=task->ctx;
 //ShowLog(5,"%s:got TCB %d,status=%d",__FUNCTION__,task->index,task->status);
-	      if(!task->call_back) { //SDBC±ê×¼ÊÂ¼ş 
-//Ğ­ÉÌÃÜÔ¿
+	      if(!task->call_back) { //SDBCæ ‡å‡†äº‹ä»¶
+//åå•†å¯†é’¥
 		if(task->status==-1) {
 			init=(void (*)())conn->only_do;
 			task->conn.Var=&ctx;
@@ -480,8 +480,8 @@ T_SRV_Var ctx;
 			if(init) init(conn,&task->head);
 			ret=mk_clikey(conn->Socket,&conn->t,conn->family);
 			if(ret<0) {
-				ShowLog(1,"%s:tid=%lu task[%d]Ğ­ÉÌÃÜÔ¿Ê§°Ü!",__FUNCTION__,ctx.tid,task->index);
-//ÊÍ·ÅÁ¬½Ó
+				ShowLog(1,"%s:tid=%lu task[%d]åå•†å¯†é’¥å¤±è´¥!",__FUNCTION__,ctx.tid,task->index);
+//é‡Šæ”¾è¿æ¥
 errret:
 				task->status=-3; //delete it
 			} else {
@@ -495,11 +495,11 @@ errret:
 		}
 
 		ctx.poolno=task->poolno;
-		if(task->status>0) set_showid(task->ctx);//Showid Ó¦¸ÃÔÚ»á»°ÉÏÏÂÎÄ½á¹¹Àï 
+		if(task->status>0) set_showid(task->ctx);//Showid åº”è¯¥åœ¨ä¼šè¯ä¸Šä¸‹æ–‡ç»“æ„é‡Œ
 //ShowLog(5,"%s:tid=%lu,begin RecvPack!",__FUNCTION__,ctx.tid);
 		ret=RecvPack(conn,&task->head);
 		if(ret) {
-			ShowLog(1,"%s:task[%d]½ÓÊÕ´íÎó,tid=%lu,err=%d,%s",__FUNCTION__,
+			ShowLog(1,"%s:task[%d]æ¥æ”¶é”™è¯¯,tid=%lu,err=%d,%s",__FUNCTION__,
 				task->index,rs->tid,errno,strerror(errno));
 			goto errret;
 		}
@@ -521,18 +521,18 @@ errret:
 		} else if (conn->only_do) {
 			ret=conn->only_do(conn,&task->head);
 			if(ret==-1) task->status=-3;
-			
+
 		} else {
 			if(task->head.PROTO_NUM==0) {
 				ret=get_srvname(conn,&task->head);
 			} else if(task->head.PROTO_NUM>rpool.svc_num) {
-                                ShowLog(1,"%s:Ã»ÓĞÕâ¸ö·şÎñºÅ %d",__FUNCTION__,task->head.PROTO_NUM);
+                                ShowLog(1,"%s:æ²¡æœ‰è¿™ä¸ªæœåŠ¡å· %d",__FUNCTION__,task->head.PROTO_NUM);
                                 task->status=-3;
                         } else ret=Function[task->head.PROTO_NUM].funcaddr(conn,&task->head);
 		}
-	      } else { //ÓÃ»§×Ô¶¨ÒåÊÂ¼ş
+	      } else { //ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶
 		ctx.poolno=task->poolno;
-		set_showid(task->ctx);//Showid Ó¦¸ÃÔÚ»á»°ÉÏÏÂÎÄ½á¹¹Àï 
+		set_showid(task->ctx);//Showid åº”è¯¥åœ¨ä¼šè¯ä¸Šä¸‹æ–‡ç»“æ„é‡Œ
 		ret=task->call_back(conn,&task->head);
 //ShowLog(5,"%s:aft call_back TCB:%d,ret=%d,task->status=%d",__FUNCTION__,task->index,ret,task->status);
 		if(task->status==0) { //finish_login,return 0 or 1
@@ -540,7 +540,7 @@ errret:
 			if(ret==1) task->poolno=ctx.poolno;
 		}
 	      }
-//»ØµÈ´ı¶ÓÁĞ
+//å›ç­‰å¾…é˜Ÿåˆ—
 //ShowLog(5,"%s:befor do_epoll TCB:%d,return=%d,status=%d",__FUNCTION__,task->index,ret,task->status);
 		switch(ret) {
 		case -1:
@@ -556,7 +556,7 @@ errret:
 			ret=task->status;
 			break;
 		}
-		
+
 		cc=do_epoll(task);
 		task->status=ret;
 //ShowLog(5,"%s:aft do_epoll TCB:%d,ret=%d,task->status=%d",__FUNCTION__,task->index,ret,task->status);
@@ -589,7 +589,7 @@ int i,n=-2;
 	pthread_mutex_unlock(&tpool.mut);
 	return n;
 }
-//¼ì²é³¬Ê±µÄÁ¬½Ó
+//æ£€æŸ¥è¶…æ—¶çš„è¿æ¥
 int check_TCB_timeout()
 {
 int i;
@@ -611,7 +611,7 @@ int num=0;
 	return num;
 }
 
-//½¨Á¢ĞÂÏß³Ì
+//å»ºç«‹æ–°çº¿ç¨‹
 static int new_wt(int n)
 {
 pthread_t tid;
@@ -632,7 +632,7 @@ int ret;
 	return 0;
 }
 /**
- * µ÷¶ÈÏß³Ì
+ * è°ƒåº¦çº¿ç¨‹
  */
 
 static void * sched(void *param)
@@ -648,28 +648,28 @@ struct epoll_event events[tpool.num];
 			sleep(30);
 			continue;
        	 	}
-		if(fds==0) { //³¬Ê±ÁË	
+		if(fds==0) { //è¶…æ—¶äº†
 			check_TCB_timeout();
 			continue;
 		}
 		for(i=0;i<fds;i++) {
 		 TCB *task;
 		 	task = (TCB *)events[i].data.ptr;
-//¼ì²éÊÂ¼şÊÇ·ñ½¡¿µ
-//			if(task->conn.Socket<0) continue;	//±£ÏÕÒ»µã
+//æ£€æŸ¥äº‹ä»¶æ˜¯å¦å¥åº·
+//			if(task->conn.Socket<0) continue;	//ä¿é™©ä¸€ç‚¹
 			task->events=events[i].events;
 			if(!task->call_back && !(events[i].events&EPOLLIN)) {
-				task->status=-3; //delete it	
+				task->status=-3; //delete it
 				do_epoll(task);
 				continue;
 			}
 			pthread_mutex_lock(&rpool.mut);
 			rdy_add(task);
-			ret=test_wt(); //²âÊÔ¹¤×÷Ïß³Ì
+			ret=test_wt(); //æµ‹è¯•å·¥ä½œçº¿ç¨‹
 //ShowLog(5,"%s:TCB:%d,test_wt=%d,event=%08X,i=%d",__FUNCTION__,task->index,ret,events[i].events,i);
 			pthread_mutex_unlock(&rpool.mut);
-			if(ret==-1) pthread_cond_signal(&rpool.cond); //»½ĞÑ¹¤×÷Ïß³Ì	
-			else new_wt(ret); //½¨Á¢ĞÂÏß³Ì
+			if(ret==-1) pthread_cond_signal(&rpool.cond); //å”¤é†’å·¥ä½œçº¿ç¨‹
+			else new_wt(ret); //å»ºç«‹æ–°çº¿ç¨‹
 		}
 	}
 	close(g_epoll_fd);
@@ -681,7 +681,7 @@ static int event_no()
 {
 int i;
 	pthread_mutex_lock(&client_q.mut);
-	for(i=0;i<client_q.max_client;i++) 
+	for(i=0;i<client_q.max_client;i++)
 		if(client_q.pool[i].conn.Socket==-1) break;
 	if(i==client_q.max_client) {
 		pthread_mutex_unlock(&client_q.mut);
@@ -689,7 +689,7 @@ int i;
 	}
 	client_q.pool[i].poolno=0;
 	client_q.pool[i].next=NULL;
-	client_q.pool[i].conn.Socket=-2; //ÏÈÕ¼Î»
+	client_q.pool[i].conn.Socket=-2; //å…ˆå ä½
 	pthread_mutex_unlock(&client_q.mut);
 	return i;
 }
@@ -716,7 +716,7 @@ srvfunc *fp;
 		ShowLog(1,"%s:can not init pthread attr %s",__FUNCTION__,strerror(ret));
 		return -1;
 	}
-//ÉèÖÃ·ÖÀëÏß³Ì  
+//è®¾ç½®åˆ†ç¦»çº¿ç¨‹
 	ret=pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);
 	if(ret) {
 		ShowLog(1,"%s:can't set pthread attr:%s",__FUNCTION__,strerror(ret));
@@ -731,13 +731,13 @@ srvfunc *fp;
 
 	p=getenv("SERVICE");
 	if(!p || !*p) {
-		ShowLog(1,"È±ÉÙ»·¾³±äÁ¿ SERVICE ,²»ÖªÊØºòÄÄ¸ö¶Ë¿Ú£¡");
+		ShowLog(1,"ç¼ºå°‘ç¯å¢ƒå˜é‡ SERVICE ,ä¸çŸ¥å®ˆå€™å“ªä¸ªç«¯å£ï¼");
 		quit(3);
 	}
-//²âÊÔ¶Ë¿ÚÊÇ·ñ±»Õ¼ÓÃ 
+//æµ‹è¯•ç«¯å£æ˜¯å¦è¢«å ç”¨
 	sock=tcpopen("localhost",p);
 	if(sock>-1) {
-		ShowLog(1,"¶Ë¿Ú %s ÒÑ¾­±»Õ¼ÓÃ",p);
+		ShowLog(1,"ç«¯å£ %s å·²ç»è¢«å ç”¨",p);
 		close(sock);
 		sock=-1;
 		quit(255);
@@ -775,7 +775,7 @@ srvfunc *fp;
 //#endif
 	listen(sock,client_q.max_client>>1);
 
-// Æô¶¯µ÷¶ÈÏß³Ì	
+// å¯åŠ¨è°ƒåº¦çº¿ç¨‹
 	ret=pthread_create(&pthread_id,&attr,sched,NULL);
 	if(ret) {
 		ShowLog(1,"%s:create sched thread fail!err=%d,%s",
@@ -785,7 +785,7 @@ srvfunc *fp;
 		return -1;
 	}
 	ShowLog(0,"main start tid=%lu sock=%d",pthread_self(),sock);
-	
+
 	int repeat=0;
 	leng=sizeof(cin);
 
@@ -793,7 +793,7 @@ srvfunc *fp;
 		do {
 			FD_ZERO(&efds);
 			FD_SET(sock, &efds);
-//½¡¿µ¼ì²éÖÜÆÚ5·ÖÖÓ 
+//å¥åº·æ£€æŸ¥å‘¨æœŸ5åˆ†é’Ÿ
 			tm.tv_sec=300;
 			tm.tv_usec=0;
 			ret=select(sock+1,&efds,NULL,&efds,&tm);
@@ -806,8 +806,8 @@ srvfunc *fp;
 		} while(ret<=0);
 
 		while(0>(i=event_no())) {
-			ShowLog(1,"%s:³¬¹ı×î´óÁ¬½ÓÊı£¡",__FUNCTION__);
-			ret=check_TCB_timeout(); //²éÒ»ÏÂÓĞÃ»ÓĞ³¬Ê±ÍË³öµÄ
+			ShowLog(1,"%s:è¶…è¿‡æœ€å¤§è¿æ¥æ•°ï¼",__FUNCTION__);
+			ret=check_TCB_timeout(); //æŸ¥ä¸€ä¸‹æœ‰æ²¡æœ‰è¶…æ—¶é€€å‡ºçš„
 			if(ret <= 0) sleep(10);
 		}
 
@@ -815,7 +815,7 @@ srvfunc *fp;
 		if(s<0) {
 			ShowLog(1,"%s:accept err=%d,%s",__FUNCTION__,errno,strerror(errno));
 			switch(errno) {
-			case EMFILE:	//fdÓÃÍêÁË,ÆäËûÏß³Ì»¹Òª¼ÌĞø¹¤×÷£¬Ö÷Ïß³ÌĞİÏ¢Ò»ÏÂ¡£  
+			case EMFILE:	//fdç”¨å®Œäº†,å…¶ä»–çº¿ç¨‹è¿˜è¦ç»§ç»­å·¥ä½œï¼Œä¸»çº¿ç¨‹ä¼‘æ¯ä¸€ä¸‹ã€‚
 			case ENFILE:
 				sleep(30);
 				continue;
@@ -835,7 +835,7 @@ srvfunc *fp;
 		client_q.pool[i].conn.only_do=(int (*)())conn_init;
 		ret=do_epoll(&client_q.pool[i]);
 	}
-	
+
 	close(sock);
 	pthread_attr_destroy(&attr);
 	tpool_free();

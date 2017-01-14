@@ -13,7 +13,7 @@ char *p;
 static int GetError(T_Connect *conn,T_NetHead *NetHead)
 {
 register T_User_Var *up;
-	
+
         up=(T_User_Var *)conn->Var;
        	*up->ErrMsg=0;
         up->NativeError=NetHead->PKG_REC_NUM;
@@ -32,7 +32,7 @@ T_CLI_Var *clip=(T_CLI_Var *)connect->Var;
 int i;
 	nethead.PROTO_NUM=get_srv_no(connect->Var,"SQL_EndTran");
 	if(nethead.PROTO_NUM==1) {
-		ShowLog(1,"%s:·şÎñ²»´æÔÚ",__FUNCTION__);
+		ShowLog(1,"%s:æœåŠ¡ä¸å­˜åœ¨",__FUNCTION__);
 		return FORMATERR;
 	}
 	nethead.O_NODE=clip->ctx_id;
@@ -59,7 +59,7 @@ T_CLI_Var *clip=(T_CLI_Var *)connect->Var;
 int i;
 	nethead.PROTO_NUM=get_srv_no(connect->Var,"SQL_Select");
 	if(nethead.PROTO_NUM==1) {
-		ShowLog(1,"%s:·şÎñ²»´æÔÚ",__FUNCTION__);
+		ShowLog(1,"%s:æœåŠ¡ä¸å­˜åœ¨",__FUNCTION__);
 		return FORMATERR;
 	}
 	nethead.ERRNO1=0;
@@ -91,7 +91,7 @@ T_NetHead nethead;
 int i;
 	nethead.PROTO_NUM=get_srv_no(connect->Var,"SQL_Exec");
 	if(nethead.PROTO_NUM==1) {
-		ShowLog(1,"%s:·şÎñ²»´æÔÚ",__FUNCTION__);
+		ShowLog(1,"%s:æœåŠ¡ä¸å­˜åœ¨",__FUNCTION__);
 		return FORMATERR;
 	}
 	nethead.O_NODE=clip->ctx_id;
@@ -120,7 +120,7 @@ char *p;
 
 	nethead.PROTO_NUM=get_srv_no(connect->Var,"SQL_Prepare");
 	if(nethead.PROTO_NUM==1) {
-		ShowLog(1,"%s:·şÎñ²»´æÔÚ",__FUNCTION__);
+		ShowLog(1,"%s:æœåŠ¡ä¸å­˜åœ¨",__FUNCTION__);
 		return FORMATERR;
 	}
 	nethead.O_NODE=clip->ctx_id;
@@ -172,14 +172,14 @@ T_NetHead nethead;
 int i;
 	nethead.PROTO_NUM=get_srv_no(connect->Var,"SQL_Fetch");
 	if(nethead.PROTO_NUM==1) {
-		ShowLog(1,"%s:·şÎñ²»´æÔÚ",__FUNCTION__);
+		ShowLog(1,"%s:æœåŠ¡ä¸å­˜åœ¨",__FUNCTION__);
 		return FORMATERR;
 	}
 	nethead.O_NODE=clip->ctx_id;
 	nethead.D_NODE=get_d_node();
 	nethead.ERRNO2=PACK_STATUS;
 	nethead.ERRNO1=curno;
-/* recnum:½øÈëÊ±Ã¿´ÎFetchµÄ¼ÇÂ¼Êı£¬0=È«²¿¼ÇÂ¼ */
+/* recnum:è¿›å…¥æ—¶æ¯æ¬¡Fetchçš„è®°å½•æ•°ï¼Œ0=å…¨éƒ¨è®°å½• */
 	nethead.PKG_REC_NUM=recnum;
 	nethead.data=0;
 	nethead.PKG_LEN=0;
@@ -196,7 +196,7 @@ int i;
 /* colunm num */
        		((T_User_Var *)connect->Var)->NativeError=
 					nethead.ERRNO2;
-/* ·µ»ØÊµ¼ÊµÃµ½µÄ¼ÇÂ¼Êı */
+/* è¿”å›å®é™…å¾—åˆ°çš„è®°å½•æ•° */
 		return nethead.PKG_REC_NUM;
 	} else return GetError(connect,&nethead);
 }
@@ -209,7 +209,7 @@ int i;
 
 	nethead.PROTO_NUM=get_srv_no(connect->Var,"SQL_Close");
 	if(nethead.PROTO_NUM==1) {
-		ShowLog(1,"%s:·şÎñ²»´æÔÚ",__FUNCTION__);
+		ShowLog(1,"%s:æœåŠ¡ä¸å­˜åœ¨",__FUNCTION__);
 		return FORMATERR;
 	}
 	nethead.O_NODE=clip->ctx_id;
@@ -220,10 +220,10 @@ int i;
 	nethead.data=NULL;
 	nethead.PKG_LEN=0;
 	if(ref_cursor<0) {
-//ÖÕÖ¹ÖĞ¼ä¼şµÄ×´Ì¬
+//ç»ˆæ­¢ä¸­é—´ä»¶çš„çŠ¶æ€
 		if(connect->status <= 0) {
 			connect->status=0;
-//ÇëÇóØ²ÕÛ×´Ì¬
+//è¯·æ±‚å¤­æŠ˜çŠ¶æ€
 			nethead.ERRNO2=PACK_NOANSER;
 			SendPack(connect,&nethead);
 		}
@@ -266,7 +266,7 @@ T_CLI_Var *clip;
 	p+=sprintf(p,")");
         return N_SQL_Exec(conn,stmt);
 }
-/* only used by SYBASE 
+/* only used by SYBASE
 int  N_SQL_Cur_Exec(T_Connect *connect,int cur_no,char *cmd)
 {
 T_CLI_Var *clip=(T_CLI_Var *)connect->Var;
@@ -296,7 +296,7 @@ int i;
  * cmd: RPC_NAME(value,:TYPE(Format) Value,.......)
  * TYPE is:num,int,double,date,cursor,char, default is char;
  * data:address of point:  restlt1|..result n|value1|value2|....value n|
- * return:if != 0:error¡£
+ * return:if != 0:errorã€‚
  *	else:
  *      SQL_Connect->NativeError=result_num;
  ****************************************************************/
@@ -309,7 +309,7 @@ T_CLI_Var *clip;
 	clip=(T_CLI_Var *)connect->Var;
 	nethead.PROTO_NUM=get_srv_no(connect->Var,"SQL_RPC");
 	if(nethead.PROTO_NUM==1) {
-		ShowLog(1,"%s:·şÎñ²»´æÔÚ",__FUNCTION__);
+		ShowLog(1,"%s:æœåŠ¡ä¸å­˜åœ¨",__FUNCTION__);
 		return FORMATERR;
 	}
 	connect->status += st_lev;

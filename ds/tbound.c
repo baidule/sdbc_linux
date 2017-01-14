@@ -1,12 +1,12 @@
 /*************************************************
- * ¿ÉÒÔ¿´µ½ÈçºÎÓÃlowerBound()ºÍupperBound×éºÏ³É
- * <  <=  > ¹¦ÄÜ
+ * å¯ä»¥çœ‹åˆ°å¦‚ä½•ç”¨lowerBound()å’ŒupperBoundç»„åˆæˆ
+ * <  <=  > åŠŸèƒ½
  ************************************************/
 #include <stdio.h>
 #include <Binary_search.h>
 #include <pack.h>
 
-// <keyµÄ×îºóÔªËØ
+// <keyçš„æœ€åå…ƒç´ 
 int less_than(void *key,void *data,int data_siz,int cmp(void *key,void *data,int n))
 {
 int ret;
@@ -17,7 +17,7 @@ int ret;
 	return --ret;
 }
 
-// <=keyµÄ×îºóÔªËØ
+// <=keyçš„æœ€åå…ƒç´ 
 int less_eq(void *key,void *data,int data_siz,int cmp(void *key,void *data,int n))
 {
 int ret;
@@ -26,7 +26,7 @@ int ret;
 	return --ret;
 }
 
-// >=keyµÄµÚÒ»¸öÔªËØ
+// >=keyçš„ç¬¬ä¸€ä¸ªå…ƒç´ 
 int great_eq(void *key,void *data,int data_siz,int cmp(void *key,void *data,int n))
 {
 int ret;
@@ -60,7 +60,7 @@ printf("------------\n");
 printf("------------\n");
 	ret=less_than(&key,tab,COUNT,int_cmp);
 printf("------------\n");
-	
+
 	printf("key=%d,low=%d,up=%d,less=%d,less_eq=%d,great_eq=%d\n",key,low,up,ret,
 		less_eq(&key,tab,COUNT,int_cmp),
 		great_eq(&key,tab,COUNT,int_cmp));
@@ -70,4 +70,3 @@ printf("------------\n");
 	printf("GTEQ:key=%d,ret=%d,data=%d\n",key,ret,(ret>=0)?tab1[ret]:INTNULL);
 	return 0;
 }
-

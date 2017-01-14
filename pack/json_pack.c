@@ -47,7 +47,7 @@ const char *cp;
 	if(!json) return json;
 	colnum=set_offset(typ);
 	tp=typ;
-	if(!choose||!*choose) {		// Ã»ÓĞÑ¡Ôñ£¬È«²¿¼ÓÈë
+	if(!choose||!*choose) {		// æ²¡æœ‰é€‰æ‹©ï¼Œå…¨éƒ¨åŠ å…¥
 	    for(i=0;tp->type>=0;i++,tp++) {
 			if(tp->bindtype & NOSELECT) continue;
 			if(choose&&isnull((char *)data+tp->offset,tp->type)) continue;
@@ -66,11 +66,11 @@ const char *cp;
 	do {
 	char *p;
 		*buf=0;
-		cp=stptok(skipblk((char *)cp),buf,sizeof(buf),",|");	//¿ÉÒÔÓÃµÄ·Ö¸ô·û
+		cp=stptok(skipblk((char *)cp),buf,sizeof(buf),",|");	//å¯ä»¥ç”¨çš„åˆ†éš”ç¬¦
 		p=buf;
 		TRIM(p);
 		if(!*p) continue;
-		if(isdigit(*p)) {	//Êı×ÖÑ¡Ôñ£¬×Ö¶ÎºÅ·¶Î§:"1-3,6-11"
+		if(isdigit(*p)) {	//æ•°å­—é€‰æ‹©ï¼Œå­—æ®µå·èŒƒå›´:"1-3,6-11"
 		int ret,beg,end;
 			end=beg=-1;
 			ret=sscanf(buf,"%d - %d",&beg,&end);
@@ -87,7 +87,7 @@ const char *cp;
 				}
 				add_field_to_object(json,data,&typ[ret]);
 			}
-		} else {		//×ÖÄ¸£¬×Ö¶ÎÃû :"colname1,colname2,..."
+		} else {		//å­—æ¯ï¼Œå­—æ®µå :"colname1,colname2,..."
 			n=index_col(colidx,colnum,p,typ);
 			if(n<0) continue;
 			if(typ[n].type==CH_STRUCT) {
@@ -135,7 +135,7 @@ T_PkgType *typ,Char_Type[2];
 		continue;
 	}
         p1=json_get_string(json,plain_name(typ->name));
-        if(p1) p+=get_one_str(p,p1,Char_Type,'|'); // ×é´®Ê±ĞèÒª×ªÒå
+        if(p1) p+=get_one_str(p,p1,Char_Type,'|'); // ç»„ä¸²æ—¶éœ€è¦è½¬ä¹‰
         *p++ = '|';
         *p=0;
     }
@@ -162,9 +162,9 @@ char *cp=tmp;
         *cp=0;
       {
         json_object_object_foreach(json, key, val) {
-                p1= (char *)json_object_get_string(val);        //È¡Ô­Ê¼´®
+                p1= (char *)json_object_get_string(val);        //å–åŸå§‹ä¸²
                 if(p1) {
-                        cp+=get_one_str(cp,p1,Char_Type,'|'); // ×é´®Ê±ĞèÒª×ªÒå
+                        cp+=get_one_str(cp,p1,Char_Type,'|'); // ç»„ä¸²æ—¶éœ€è¦è½¬ä¹‰
                         *cp++ = '|';
                         *cp=0;
                 } else cp+=sprintf(cp,"|");
@@ -203,7 +203,7 @@ char *cp;
 	return num;
 }
 /***********************************************************************
- * Íù´æ´¢·ÖÅäµÄ´®Àï×·¼ÓÊı¾İ ,¶à·ÖÅäÁË100×Ö½Ú£¬ÊÂºó¿ÉÒÔ×·¼ÓÉÙÁ¿Êı¾İ¡£
+ * å¾€å­˜å‚¨åˆ†é…çš„ä¸²é‡Œè¿½åŠ æ•°æ® ,å¤šåˆ†é…äº†100å­—èŠ‚ï¼Œäº‹åå¯ä»¥è¿½åŠ å°‘é‡æ•°æ®ã€‚
  ***********************************************************************/
 
 char *strappend(char *allocated,char *tobeapp)
@@ -270,4 +270,4 @@ JSON_OBJECT json1;
 	}
 	tp[-1].type=-1;
 	return typ;
-}	
+}

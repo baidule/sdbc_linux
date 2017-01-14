@@ -1,4 +1,4 @@
-//¸ºÔØ¾ùºâ£¬ÕÒÒ»¸ö¸ºÔØ×îÇáµÄ³Ø
+//è´Ÿè½½å‡è¡¡ï¼Œæ‰¾ä¸€ä¸ªè´Ÿè½½æœ€è½»çš„æ± 
 resource * get_SC_weight()
 {
 int i,max_weight,w,n,m;
@@ -12,7 +12,7 @@ resource *rs;
 //	badtime=now_usec();
 	pl=scpool;
 	for(i=0;i<SCPOOLNUM;i++,pl++) {
-//ÕÒÈ¨ÖØ×îÖØµÄÄÇ¸ö³Ø
+//æ‰¾æƒé‡æœ€é‡çš„é‚£ä¸ªæ± 
 ShowLog(5,"%s:weight[%d]=%d",__FUNCTION__,i,pl->weight);
 		pthread_mutex_lock(&pl->mut);
 		if(pl->weight>0) {
@@ -32,10 +32,10 @@ ShowLog(5,"%s:weight[%d]=%d",__FUNCTION__,i,pl->weight);
 			return rs;
 		}
 		else continue;
-	} 
+	}
 	ShowLog(4,"%s:get_SC_weight:n=%d,weight=%d",__FUNCTION__,
 				n,max_weight);
-	for(m=0;m<SCPOOLNUM;m++) { //²âÒ»±é¹ÊÕÏ³Ø,¿´¿´ÄÜ·ñ»Ö¸´
+	for(m=0;m<SCPOOLNUM;m++) { //æµ‹ä¸€éæ•…éšœæ± ,çœ‹çœ‹èƒ½å¦æ¢å¤
 		if(scpool[m].weight>=0) continue;
 		rs=get_SC_resource(m,1);
 		if(rs && rs != (resource *)-1) {
@@ -44,8 +44,8 @@ ShowLog(5,"%s:weight[%d]=%d",__FUNCTION__,i,pl->weight);
 		}
 	}
 	clock_gettime(CLOCK_REALTIME, &tims);
-	tims.tv_sec+=6;//ÒòÎª¹é»¹Á¬½Ó²¢²»ËøweightLock£¬¿ÉÄÜ¶ªÊ§ÊÂ¼ş£¬µÈ6Ãë
-	pthread_cond_timedwait(&weightCond,&weightLock,&tims); //ÊµÔÚÃ»ÓĞÁË£¬µÈ
+	tims.tv_sec+=6;//å› ä¸ºå½’è¿˜è¿æ¥å¹¶ä¸é”weightLockï¼Œå¯èƒ½ä¸¢å¤±äº‹ä»¶ï¼Œç­‰6ç§’
+	pthread_cond_timedwait(&weightCond,&weightLock,&tims); //å®åœ¨æ²¡æœ‰äº†ï¼Œç­‰
 	scpool_check();
     } while(1);
 }

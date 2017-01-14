@@ -1,4 +1,4 @@
-/* enigma ¼ÓÃÜ²âÊÔ */
+/* enigma åŠ å¯†æµ‹è¯• */
 #include <strproc.h>
 #include <enigma.h>
 #include <sys/time.h>

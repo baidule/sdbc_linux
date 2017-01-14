@@ -1,6 +1,6 @@
 #ifdef __cplusplus
 
-//һ�������ڶ��̻߳�����sdbc���ӳأ��̳߳ػ����ļ�../mod_sc
+//一个适用于多线程环境的sdbc连接池，线程池环境的见../mod_sc
 extern "C" {
 #endif
 

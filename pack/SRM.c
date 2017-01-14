@@ -22,7 +22,7 @@ void SRM_init(SRM *srmp,void *record,T_PkgType *tp)
 	srmp->rec=record;
 	srmp->tp=NULL;
 	if(tp) {
-		srmp->tp=patt_dup(tp); //ÎªÁËÏß³Ì°²È«
+		srmp->tp=patt_dup(tp); //ä¸ºäº†çº¿ç¨‹å®‰å…¨
 		if(!srmp->tp) return;
 		srmp->Aflg=-set_offset(srmp->tp);
 		srmp->result=0;
@@ -77,7 +77,7 @@ register char *p,*p1;
 char *whp=0;
 
 	if(!where) return -1;
-	if(*where && (toupper(*where)=='S' && toupper(where[1])=='E')) return 0; //Èç¹ûÊÇselect,²»×÷´¦Àí
+	if(*where && (toupper(*where)=='S' && toupper(where[1])=='E')) return 0; //å¦‚æœæ˜¯select,ä¸ä½œå¤„ç†
 	if(!srmp->tp) return FORMATERR;
 	if(*where) {
                 whp=strdup(where);
@@ -104,9 +104,9 @@ char *whp=0;
 	}
 	p+=strlen(p);
 	p=stpcpy(p," FROM ");
-		
+
 	p1=stptok(srmp->tabname,0,0," ,.");
-	if(!*p1) {			//¼òµ¥±íÃû 
+	if(!*p1) {			//ç®€å•è¡¨å
 	      	if(DBOWN && *DBOWN) {
        			p=stpcpy(p, DBOWN);
 				*p++='.';
@@ -126,7 +126,7 @@ char *whp=0;
 	}
 	return 0;
 }
-// Éú³É°ë¸ö update Óï¾ä 
+// ç”ŸæˆåŠä¸ª update è¯­å¥
 char * SRM_mk_update(SRM *srmp,char *DBOWN,char *where)
 {
 register char *p;
@@ -155,7 +155,7 @@ register char *p;
 	return p;
 }
 
-/* ¶ÔÑ¡ÔñµÄÁĞ¹¹½¨updateÓï¾ä£¬Èç¹ûchooseÎª¿Õ£¬È«²¿ÁĞ ,·µ»ØÎ²²¿ */
+/* å¯¹é€‰æ‹©çš„åˆ—æ„å»ºupdateè¯­å¥ï¼Œå¦‚æœchooseä¸ºç©ºï¼Œå…¨éƒ¨åˆ— ,è¿”å›å°¾éƒ¨ */
 char * SRM_mk_upd_col(SRM *srmp,char *DBOWN,const char *choose,char *stmt)
 {
 char *p,*p1;
@@ -191,7 +191,7 @@ int SRM_mk_delete(SRM *srmp,char *DBOWN,char *where)
 register char *p,*whp;
 
 	whp=0;
-	if(*where && (toupper(*where)=='D')) return 0;//Èç¹ûÊÇdelete,²»×÷´¦Àí
+	if(*where && (toupper(*where)=='D')) return 0;//å¦‚æœæ˜¯delete,ä¸ä½œå¤„ç†
         if(*where) {
           	whp=strdup(where);
           	if(!whp) {

@@ -1,0 +1,8 @@
+dn: dc=easyway,dc=net
+dc: easyway
+objectClass: top
+objectClass: domain
+
+dn: ou=people,dc=easyway,dc=net
+ou: people
+objectClass: organizationalUnit

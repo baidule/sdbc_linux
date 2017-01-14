@@ -15,7 +15,7 @@ typedef struct {
 	int lock;
 	pthread_mutex_t mut;
 	pthread_cond_t cond;
-} cmd_node;	
+} cmd_node;
 
 static int cmd_cmp(void *s,void *d,int len)
 {
@@ -42,7 +42,7 @@ T_Tree *trp;
 	json=json_tokener_parse(head->data);
 	if(!json) {
 err:
-		sprintf(msg,"ÇëÇóµÄJSON ¸ñÊ½´í");
+		sprintf(msg,"è¯·æ±‚çš„JSON æ ¼å¼é”™");
                 json_object_array_add(err_json,jerr(100,msg));
 		head->ERRNO1=FORMATERR;
 		head->ERRNO2=conn->status>0?PACK_NOANSER:-1;
@@ -68,7 +68,7 @@ err:
 		envp=getenv("SO_USE");
 		if(envp) sprintf(so_name,"%s/lib%s.so",envp,node.cmd_name);
 		else sprintf(so_name,"lib%s.so",node.cmd_name);
-		
+
 		node.lock=1;
 		node.handle = dlopen(so_name, RTLD_NOW);
 		if(node.handle) {
@@ -91,14 +91,14 @@ err:
 			node.cmd=NULL;
 			nodep=&node;
 		}
-		
+
 	} else {
 		nodep=(cmd_node *)trp->Content;
 		pthread_mutex_lock(&nodep->mut);
 		nodep->lock++;
 		pthread_mutex_unlock(&nodep->mut);
 	}
-	
+
 	pthread_rwlock_unlock(&dmlock);
 
 	ret=0;
@@ -124,7 +124,7 @@ err:
 		json_object_object_add(result,"status",err_json);
 		head->data=(char *)json_object_to_json_string(result);
 		head->ERRNO1=0;
-		head->ERRNO2=conn->status>0?PACK_STATUS:0; 
+		head->ERRNO2=conn->status>0?PACK_STATUS:0;
 	}
 
 	if(ret==0 && head->ERRNO2!=PACK_NOANSER) {
@@ -166,7 +166,7 @@ T_Tree *trp;
 	pthread_rwlock_wrlock(&dmlock);
 	ret=system(msg);
 	if(ret >> 8) {
-		strcat(msg,":ÒÆ¶¯Ô­Ä£¿éÊ§°Ü");
+		strcat(msg,":ç§»åŠ¨åŽŸæ¨¡å—å¤±è´¥");
                 json_object_array_add(err_json,jerr(105,msg));
 		head->ERRNO1=SYSERR;
 		goto err1;
@@ -182,8 +182,8 @@ T_Tree *trp;
 	sprintf(msg,"cp -f %s %s",so_lib,so_use);
 
 	ret=system(msg);
-	if(ret >> 8) { //Ê§°Ü
-		strcat(msg,":¿½±´Ê§°Ü");
+	if(ret >> 8) { //å¤±è´¥
+		strcat(msg,":æ‹·è´å¤±è´¥");
                 json_object_array_add(err_json,jerr(105,msg));
 		sprintf(msg,"mv -f %s.bak %s",so_use,so_use);
 		system(msg);
@@ -199,7 +199,7 @@ err1:
 	}
 	cmd_node node;
 	strcpy(node.cmd_name,model_name);
-	
+
 	trp=BB_Tree_Find(cmd_tree,&node,sizeof(node),cmd_cmp);
 	if(!trp) {
 		sprintf(msg,"no such model[%s]",model_name);
@@ -211,7 +211,7 @@ err1:
 	pthread_mutex_lock(&nodep->mut);
 	while(nodep->lock>0) {
 		pthread_cond_wait(&nodep->cond,&nodep->mut);
-	} 
+	}
 	pthread_mutex_unlock(&nodep->mut);
 	if(nodep->destruct) nodep->destruct(gp);
 	do {
@@ -227,7 +227,7 @@ err1:
 		sprintf(msg,"model %s unloaded flg=%d",model_name,flg);
 	    ShowLog(2,"%s:%s",__FUNCTION__,msg);
             json_object_array_add(err_json,jerr(ret,msg));
-	
+
 	    head->data=(char *)json_object_to_json_string(err_json);
 	    head->ERRNO1=0;
 	    head->ERRNO2=0;

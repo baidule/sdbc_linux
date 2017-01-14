@@ -1,9 +1,9 @@
 /*****************************************************
  * For SDBC 4.0
- * Êı¾İ¿âÕÊºÅ¿ÚÁîµÄ»ñÈ¡º¯Êı
- * SDBC·â×°ÁËÊı¾İ¿âµÄÕÊºÅ¿ÚÁî¡£
- * ¿Í»§¶ËĞèÒªÒÔÁ¬½Ó´®¹ØÁªÊı¾İ¿â
- * ±¾³ÌĞò¾ÍÊÇÀûÓÃLDAP£¬ÒÔÁ¬½Ó´®ÌáÈ¡ÕÊºÅ¿ÚÁî¡£
+ * æ•°æ®åº“å¸å·å£ä»¤çš„è·å–å‡½æ•°
+ * SDBCå°è£…äº†æ•°æ®åº“çš„å¸å·å£ä»¤ã€‚
+ * å®¢æˆ·ç«¯éœ€è¦ä»¥è¿æ¥ä¸²å…³è”æ•°æ®åº“
+ * æœ¬ç¨‹åºå°±æ˜¯åˆ©ç”¨LDAPï¼Œä»¥è¿æ¥ä¸²æå–å¸å·å£ä»¤ã€‚
  *****************************************************/
 
 #include <stdlib.h>
@@ -56,7 +56,7 @@ int i,rc;
     	ldap_msgfree(result);
 		return (-2);
 	}
-    
+
     //Iterate through each attribute in the entry
     for(p=ldap_first_attribute(ld,e,&ber);p!=NULL;p=ldap_next_attribute(ld,e,ber)) {
     	//for each attribute ,print the attribute name and values
@@ -90,4 +90,3 @@ int i,rc;
     ldap_msgfree(result);
     return(0);
 }
-

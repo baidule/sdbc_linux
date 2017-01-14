@@ -9,9 +9,9 @@ enigma.o enigma2.o : $(INCDIR)/enigma.h
 crc.o:$(INCDIR)/crc.h
 crc32.o:$(INCDIR)/crc32.h
 
-#enigma¼ÓÃÜ²âÊÔ 
-teni: teni.o 
+#enigmaåŠ å¯†æµ‹è¯•
+teni: teni.o
 	$(CC) -m64 -o teni teni.o -L$(SDBCDIR)/lib -lscbase
 
-tnum: tnum.o 
+tnum: tnum.o
 	$(CC) -m64 -o tnum tnum.o -L$(SDBCDIR)/lib -lsc -lsc

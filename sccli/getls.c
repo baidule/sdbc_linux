@@ -13,7 +13,7 @@ int ret;
 	NetHead->ERRNO2=0;
 	NetHead->PROTO_NUM=get_srv_no(conn->Var,"filels");
         if(NetHead->PROTO_NUM==1) {
-                ShowLog(1,"%s:·þÎñ²»´æÔÚ",__FUNCTION__);
+                ShowLog(1,"%s:æœåŠ¡ä¸å­˜åœ¨",__FUNCTION__);
                 return FORMATERR;
         }
 

@@ -66,7 +66,7 @@ int main()
 
          float timeuse;
 
-        
+
 
          gettimeofday(&tpstart,NULL);
 
@@ -98,7 +98,7 @@ int main()
 
          }
 
-        
+
 
          gettimeofday(&tpend,NULL);
 
@@ -115,23 +115,3 @@ int main()
          return 0;
 
 }
-
-
-
-/*
-测试结果很是诱人：
-
-[root@localhost test]# g++ 1.c -o 1 -lpthread
-
-[root@localhost test]# ./1
-
-Used Time:5.336594
-
-[root@localhost test]# g++ 1.c -o 1 -lpthread -ltcmalloc_minimal
-
-[root@localhost test]# ./1
-
-Used Time:0.208050
-
-*/
-

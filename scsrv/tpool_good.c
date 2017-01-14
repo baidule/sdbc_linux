@@ -1,5 +1,5 @@
 /***********************************************
- * Ïß³Ì³Ø·şÎñÆ÷ 
+ * çº¿ç¨‹æ± æœåŠ¡å™¨
  ***********************************************/
 
 #include <sys/socket.h>
@@ -25,7 +25,7 @@ static void *thread_work(void *param);
 
 static int g_epoll_fd=-1;
 
-// SDBC task control block for epoll event 
+// SDBC task control block for epoll event
 typedef struct event_node {
 	struct event_node *next;
 	int events;
@@ -38,7 +38,7 @@ typedef struct event_node {
 	sdbcfunc call_back;
 	INT64 timestamp;
 	int timeout;
-	volatile int status; //-1 Î´Á¬½Ó£¬0:Î´µÇÂ¼£¬1£ºÒÑµÇÂ¼
+	volatile int status; //-1 æœªè¿æ¥ï¼Œ0:æœªç™»å½•ï¼Œ1ï¼šå·²ç™»å½•
 } TCB;
 
 static int do_epoll(TCB *task,int op,int flg);
@@ -48,20 +48,20 @@ typedef  struct {
 	pthread_cond_t cond;
 	TCB *queue;
 	int svc_num;
-	char flg;	//ÎŞÊØ»¤Ïß³Ì0£¬ÓĞ1
+	char flg;	//æ— å®ˆæŠ¤çº¿ç¨‹0ï¼Œæœ‰1
 } Qpool;
 
-//¾ÍĞ÷¶ÓÁĞ
+//å°±ç»ªé˜Ÿåˆ—
 static Qpool rpool={PTHREAD_MUTEX_INITIALIZER,PTHREAD_COND_INITIALIZER,NULL,-1,0};
 
-//Ïß³Ì³Ø½Úµã
+//çº¿ç¨‹æ± èŠ‚ç‚¹
 typedef struct {
 	pthread_t tid;
 	int status;
 	ucontext_t tc;
 	INT64 timestamp;
 } resource;
-//Ïß³Ì³Ø
+//çº¿ç¨‹æ± 
 static struct {
 	pthread_mutex_t mut;
 	int num;
@@ -69,7 +69,7 @@ static struct {
 	resource *pool;
 	pthread_attr_t attr;
 } tpool={PTHREAD_MUTEX_INITIALIZER,0,1,NULL};
-//ÈÎÎñ³Ø
+//ä»»åŠ¡æ± 
 static  struct {
 	pthread_mutex_t mut;
 	pthread_cond_t cond;
@@ -91,8 +91,8 @@ TCB *en;
 	en=&client_q.pool[TCBno];
 //	en->timestamp=now_usec();
 	if(en->next) {
-		ShowLog(1,"%s:TCB:%d ÒÑ¾­ÔÚ¶ÓÁĞÖĞ",__FUNCTION__,TCBno);
-		return;//²»¿ÉÒÔÔÚÆäËû¶ÓÁĞ
+		ShowLog(1,"%s:TCB:%d å·²ç»åœ¨é˜Ÿåˆ—ä¸­",__FUNCTION__,TCBno);
+		return;//ä¸å¯ä»¥åœ¨å…¶ä»–é˜Ÿåˆ—
 	}
 	if(!rp) {
 		pthread_mutex_lock(&rpool.mut);
@@ -102,14 +102,14 @@ TCB *en;
 		*rp=en;
 		en->next=en;
 	} else {
-		en->next=(*rp)->next;//Á¬½Ó¶ÓÍ·
-		(*rp)->next=en;//¹Òµ½Á´Î²
-		*rp=en;//Ö¸Ïòµ½Á´Î²
+		en->next=(*rp)->next;//è¿æ¥é˜Ÿå¤´
+		(*rp)->next=en;//æŒ‚åˆ°é“¾å°¾
+		*rp=en;//æŒ‡å‘åˆ°é“¾å°¾
 	}
 	if(*rp==rpool.queue) {
 		pthread_mutex_unlock(&rpool.mut);
 //ShowLog(1,"%s:TCB:%d,tid=%lX",__FUNCTION__,TCBno,pthread_self());
-		pthread_cond_signal(&rpool.cond); //»½ĞÑ¹¤×÷Ïß³Ì	
+		pthread_cond_signal(&rpool.cond); //å”¤é†’å·¥ä½œçº¿ç¨‹
 	}
 }
 
@@ -117,13 +117,13 @@ int TCB_get(TCB **rp)
 {
 TCB *enp;
 	if(!rp || !*rp) return -1;
-	enp=(*rp)->next;//ÕÒµ½¶ÓÍ·
+	enp=(*rp)->next;//æ‰¾åˆ°é˜Ÿå¤´
 	if(!enp->next) {
-		ShowLog(1,"%s:TCB=%d,´í£¬Î´ÔÚ¶ÓÁĞÖĞ£¡",__FUNCTION__,enp->conn.TCB_no);
+		ShowLog(1,"%s:TCB=%d,é”™ï¼Œæœªåœ¨é˜Ÿåˆ—ä¸­ï¼",__FUNCTION__,enp->conn.TCB_no);
 		return -2;
 	}
-	if(enp->next == enp) *rp=NULL;//×îºóÒ»¸öÁË
-	else (*rp)->next=enp->next;//ĞÂµÄ¶ÓÍ·
+	if(enp->next == enp) *rp=NULL;//æœ€åä¸€ä¸ªäº†
+	else (*rp)->next=enp->next;//æ–°çš„é˜Ÿå¤´
 	enp->next=NULL;
 	return enp->sv.TCB_no;
 }
@@ -142,9 +142,9 @@ TCB *task;
 }
 /**
  * unset_callback
- * Çå³ıÓÃ»§×Ô¶¨Òå»Øµ÷º¯Êış
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return Ô­»Øµ÷º¯Êı
+ * æ¸…é™¤ç”¨æˆ·è‡ªå®šä¹‰å›è°ƒå‡½æ•°ï¿½
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return åŸå›è°ƒå‡½æ•°
  */
 sdbcfunc unset_callback(int TCB_no)
 {
@@ -155,15 +155,15 @@ TCB *task;
 	old=task->call_back;
         task->call_back=NULL;
         task->timeout=task->conn.timeout;
-	
+
         return old;
 }
 
 /**
  * get_callback
- * È¡ÓÃ»§×Ô¶¨Òå»Øµ÷º¯Êış
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return »Øµ÷º¯Êı
+ * å–ç”¨æˆ·è‡ªå®šä¹‰å›è°ƒå‡½æ•°ï¿½
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return å›è°ƒå‡½æ•°
  */
 sdbcfunc get_callback(int TCB_no)
 {
@@ -186,7 +186,7 @@ void tpool_free()
 {
 int i;
 	if(client_q.pool) {
-		if(client_q.pool[0].ctx) 
+		if(client_q.pool[0].ctx)
 			free(client_q.pool[0].ctx);
 		for(i=0;i<client_q.max_client;i++) {
 			client_q.pool[i].conn.Var=NULL;
@@ -213,7 +213,7 @@ int i;
 	return ;
 }
 
-//½¨Á¢ĞÂÏß³Ì
+//å»ºç«‹æ–°çº¿ç¨‹
 static int new_wt(int n)
 {
 pthread_t tid;
@@ -259,7 +259,7 @@ TCB *task;
 
 	p=getenv("MAXCLT");
 	if(!p || !isdigit(*p)) {
-		ShowLog(4,"%s:È±ÉÙ»·¾³±äÁ¿MAXCLT,ÉèÖÃÎª2",__FUNCTION__);
+		ShowLog(4,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡MAXCLT,è®¾ç½®ä¸º2",__FUNCTION__);
 		client_q.max_client=2;
 	} else {
 		client_q.max_client=atoi(p);
@@ -278,7 +278,7 @@ TCB *task;
 		} else ;
 	else client_q.pool[0].ctx=NULL;
 	client_q.free_q=NULL;
-	
+
 	task=client_q.pool;
 	for(i=0;i<=client_q.max_client;i++,task++) {
 		initconnect(&task->conn);
@@ -310,7 +310,7 @@ TCB *task;
 	p=getenv("MAXTHREAD");
 	if(!p || !isdigit(*p)) {
 		tpool.num=tpool.rdy_num+1;
-		ShowLog(4,"%s:È±ÉÙ»·¾³±äÁ¿MAXTHREAD,ÉèÖÃÎª%d",__FUNCTION__,tpool.num);
+		ShowLog(4,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡MAXTHREAD,è®¾ç½®ä¸º%d",__FUNCTION__,tpool.num);
 	} else tpool.num=atoi(p);
 	if(NULL==(tpool.pool=(resource *)malloc(tpool.num * sizeof(resource)))) {
 		if(client_q.pool) {
@@ -323,13 +323,13 @@ TCB *task;
         if(ret) {
                 ShowLog(1,"%s:can not init pthread attr %s",__FUNCTION__,strerror(ret));
         } else {
-//ÉèÖÃ·ÖÀëÏß³Ì
+//è®¾ç½®åˆ†ç¦»çº¿ç¨‹
         	ret=pthread_attr_setdetachstate(&tpool.attr,PTHREAD_CREATE_DETACHED);
         	if(ret) {
                	 ShowLog(1,"%s:can't set pthread attr PTHREAD_CREATE_DETACHED:%s",
 		 	__FUNCTION__,strerror(ret));
        		}
-//ÉèÖÃÏß³Ì¶ÑÕ»±£»¤Çø 256K
+//è®¾ç½®çº¿ç¨‹å †æ ˆä¿æŠ¤åŒº 256K
 		pthread_attr_setguardsize(&tpool.attr,(size_t)(1024 * 256));
 	}
 	for(i=0;i<tpool.num;i++) {
@@ -340,7 +340,7 @@ TCB *task;
 		tpool.pool[i].tc.uc_stack.ss_size=0;
 		tpool.pool[i].tc.uc_stack.ss_sp=NULL;
 		tpool.pool[i].tc.uc_link=NULL;
-	}	
+	}
 	rpool.queue=NULL;
 //ShowLog(5,"%s:maxfd=%d,maxclt=%d",__FUNCTION__,limit,client_q.max_client);
 	if( 0 <= (g_epoll_fd=epoll_create(limit>0?limit<(client_q.max_client<<1)?limit:client_q.max_client<<1:client_q.max_client))) {
@@ -355,8 +355,8 @@ TCB *task;
 /*
 static void rdy_add(TCB *en)
 {
-	if(en->next) { //TCB ÒÑ¾­ÔÚ¶ÓÁĞÖĞ
-		ShowLog(1,"%s:TCB:%d ÒÑ¾­ÔÚ¶ÓÁĞÖĞ",__FUNCTION__,en->conn.TCB_no);
+	if(en->next) { //TCB å·²ç»åœ¨é˜Ÿåˆ—ä¸­
+		ShowLog(1,"%s:TCB:%d å·²ç»åœ¨é˜Ÿåˆ—ä¸­",__FUNCTION__,en->conn.TCB_no);
 		return;
 	}
 	if(!rpool.queue) {
@@ -387,12 +387,12 @@ TCB *enp;
 }
 /**
  * set_event
- * ÓÃ»§×Ô¶¨ÒåÊÂ¼ş
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @param fd ÊÂ¼şfd Ö»Ö§³Ö¶ÁÊÂ¼ş 
- * @param call_back ·¢ÉúÊÂ¼şµÄ»Øµ÷º¯Êı
- * @param timeout fdµÄ³¬Ê±Ãë,Ö»ÔÊĞíÉèÖÃsocket fd
- * @return ³É¹¦ 0
+ * ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @param fd äº‹ä»¶fd åªæ”¯æŒè¯»äº‹ä»¶
+ * @param call_back å‘ç”Ÿäº‹ä»¶çš„å›è°ƒå‡½æ•°
+ * @param timeout fdçš„è¶…æ—¶ç§’,åªå…è®¸è®¾ç½®socket fd
+ * @return æˆåŠŸ 0
  */
 int set_event(int TCB_no,int fd,sdbcfunc call_back,int timeout)
 {
@@ -409,9 +409,9 @@ TCB *task;
 
 /**
  * clr_event
- * Çå³ıÓÃ»§×Ô¶¨ÒåÊÂ¼ş
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ³É¹¦ 0
+ * æ¸…é™¤ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return æˆåŠŸ 0
  */
 int clr_event(int TCB_no)
 {
@@ -435,9 +435,9 @@ int ret;
 
 /**
  * get_event_fd
- * È¡ÊÂ¼şfd
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ÊÂ¼şfd
+ * å–äº‹ä»¶fd
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return äº‹ä»¶fd
  */
 int get_event_fd(int TCB_no)
 {
@@ -446,9 +446,9 @@ int get_event_fd(int TCB_no)
 }
 /**
  * get_event_status
- * È¡ÊÂ¼ş×´Ì¬
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ÊÂ¼ş×´Ì¬
+ * å–äº‹ä»¶çŠ¶æ€
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return äº‹ä»¶çŠ¶æ€
  */
 int get_event_status(int TCB_no)
 {
@@ -458,9 +458,9 @@ int get_event_status(int TCB_no)
 
 /**
  * get_event_status
- * È¡TCB×´Ì¬
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return TCB×´Ì¬
+ * å–TCBçŠ¶æ€
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return TCBçŠ¶æ€
  */
 int get_TCB_status(int TCB_no)
 {
@@ -491,18 +491,18 @@ struct linger so_linger;
 	pthread_mutex_lock(&client_q.mut);
 	TCB_add(&client_q.free_q,task->conn.TCB_no);
 	pthread_mutex_unlock(&client_q.mut);
-	pthread_cond_signal(&client_q.cond); //»½ĞÑÖ÷Ïß³Ì	
+	pthread_cond_signal(&client_q.cond); //å”¤é†’ä¸»çº¿ç¨‹
 	if(status>-1) ShowLog(3,"%s:tid=%lX,TCB:%d deleted!",__FUNCTION__,pthread_self(),task->conn.TCB_no);
 }
 
-//¼ÓÈëĞÂÁ¬½Ó
+//åŠ å…¥æ–°è¿æ¥
 static int do_epoll(TCB *task,int op,int flg)
 {
 struct epoll_event epv = {0, {0}};
 int  status,ret;
 	if(task->fd<0) return FORMATERR;
 	if(task->next) {
-		ShowLog(1,"%s:tid=%lX,TCB:%d ÒÑ¾­ÔÚ¶ÓÁĞÖĞ,fd=%d,Sock=%d",__FUNCTION__,
+		ShowLog(1,"%s:tid=%lX,TCB:%d å·²ç»åœ¨é˜Ÿåˆ—ä¸­,fd=%d,Sock=%d",__FUNCTION__,
 			pthread_self(),task->conn.TCB_no,task->fd,task->conn.Socket);
 		return -1;
 	}
@@ -511,11 +511,11 @@ int  status,ret;
 	epv.events |= EPOLLONESHOT;
 	epv.data.ptr = task;
 	task->events=0;
-	if(op) 
+	if(op)
 		ret=epoll_ctl(g_epoll_fd,op,task->fd,&epv);
 	else {
 		ret=epoll_ctl(g_epoll_fd,EPOLL_CTL_MOD,task->fd,&epv);
-		if(ret < 0 && errno==ENOENT) 
+		if(ret < 0 && errno==ENOENT)
 			ret=epoll_ctl(g_epoll_fd,EPOLL_CTL_ADD,task->fd,&epv);
 	}
 	if(ret<0 || op==EPOLL_CTL_DEL) {
@@ -524,7 +524,7 @@ int  status,ret;
 				pthread_self(),task->conn.TCB_no, task->fd,op,ret,errno,strerror(errno));
 		} else {
 			task->fd=-1;
-			if(task->status>-1) 
+			if(task->status>-1)
 			   ShowLog(3,"%s:tid=%lX epoll_ctl fd[%d]=%d,deleted,op=%d",__FUNCTION__,
 				pthread_self(),task->conn.TCB_no, task->fd,op);
 		}
@@ -547,7 +547,7 @@ int ret;
 	return ret;
 }
 
-//¹¤×÷Ïß³Ì
+//å·¥ä½œçº¿ç¨‹
 static int do_work(TCB *task)
 {
 int ret;
@@ -555,39 +555,39 @@ T_Connect *conn;
 void (*init)(T_Connect *,T_NetHead *);
 T_SRV_Var *ctx=&task->sv;
 
-	ctx->tid=pthread_self();//±êÖ¾¶àÏß³Ì·şÎñ
+	ctx->tid=pthread_self();//æ ‡å¿—å¤šçº¿ç¨‹æœåŠ¡
 	conn=&task->conn;
 	conn->Var=ctx;
 	conn->TCB_no=ctx->TCB_no;
 	ret=0;
-	if(!task->call_back) { //SDBC±ê×¼ÊÂ¼ş 
-//Ğ­ÉÌÃÜÔ¿
+	if(!task->call_back) { //SDBCæ ‡å‡†äº‹ä»¶
+//åå•†å¯†é’¥
 		if(task->status==-1) {
 			init=(void (*)())conn->only_do;
 			conn->only_do=0;
 			ret=mk_clikey(conn->Socket,&conn->t,conn->family,conn->TCB_no);
 			if(ret<0) {
-				if(ret!=SYSERR) { 
+				if(ret!=SYSERR) {
 				char addr[16];
 					peeraddr(conn->Socket,addr);
-					ShowLog(1,"%s:tid=%lX,TCB:%d,Ğ­ÉÌÃÜÔ¿Ê§°Ü!,addr=%s,ret=%d",__FUNCTION__,
+					ShowLog(1,"%s:tid=%lX,TCB:%d,åå•†å¯†é’¥å¤±è´¥!,addr=%s,ret=%d",__FUNCTION__,
 							ctx->tid,task->conn.TCB_no,addr,ret);
 				}
-	//ÊÍ·ÅÁ¬½Ó
+	//é‡Šæ”¾è¿æ¥
 				return -1;
-			} 
+			}
 			conn->CryptFlg=ret;
 			task->status=0;
 			if(init) init(conn,&task->head);
-			task->timeout=60;//60ÃëÄÚ±ØĞëµÇÂ¼
+			task->timeout=60;//60ç§’å†…å¿…é¡»ç™»å½•
 			return 0;
 		}
-	
+
 		if(task->status>0) set_showid(task->ctx);
 		ret=RecvPack(conn,&task->head);
 		task->timestamp=now_usec();
 		if(ret) {
-			ShowLog(1,"%s:TCB:%d,½ÓÊÕ´íÎó,tid=%lX,err=%d,%s,event=%08X",__FUNCTION__,
+			ShowLog(1,"%s:TCB:%d,æ¥æ”¶é”™è¯¯,tid=%lX,err=%d,%s,event=%08X",__FUNCTION__,
 				task->conn.TCB_no,ctx->tid,errno,strerror(errno),task->events);
 			return -1;
 		}
@@ -595,7 +595,7 @@ T_SRV_Var *ctx=&task->sv;
 			__FUNCTION__,ctx->tid,task->conn.TCB_no,
 	                task->head.PROTO_NUM,task->head.PKG_LEN,task->head.T_LEN,
 			task->timestamp);
-	
+
 		if(task->head.PROTO_NUM==65535) {
 			ShowLog(3,"%s: disconnect by client",__FUNCTION__);
 			return -1;
@@ -609,7 +609,7 @@ T_SRV_Var *ctx=&task->sv;
 					if(ret==1) task->timeout=conn->timeout;
 				}
 	                } else {
-	                        ShowLog(1,"%s:TCB:%d,Î´µÇÂ¼",__FUNCTION__,task->conn.TCB_no);
+	                        ShowLog(1,"%s:TCB:%d,æœªç™»å½•",__FUNCTION__,task->conn.TCB_no);
 	                        return -1;
 	                }
 		} else if (conn->only_do) {
@@ -618,7 +618,7 @@ T_SRV_Var *ctx=&task->sv;
 			if(task->head.PROTO_NUM==0) {
 				ret=get_srvname(conn,&task->head);
 			} else if(task->head.PROTO_NUM>rpool.svc_num) {
-	                         ShowLog(1,"%s:Ã»ÓĞÕâ¸ö·şÎñºÅ %d",__FUNCTION__,task->head.PROTO_NUM);
+	                         ShowLog(1,"%s:æ²¡æœ‰è¿™ä¸ªæœåŠ¡å· %d",__FUNCTION__,task->head.PROTO_NUM);
 	                         ret=-1;
 	                } else {
 	                        ret=Function[task->head.PROTO_NUM].funcaddr(conn,&task->head);
@@ -627,9 +627,9 @@ T_SRV_Var *ctx=&task->sv;
 						task->conn.TCB_no);
 			}
 		}
-	} else { //ÓÃ»§×Ô¶¨ÒåÊÂ¼ş
+	} else { //ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶
 		task->timestamp=now_usec();
-		set_showid(task->ctx);//Showid Ó¦¸ÃÔÚ»á»°ÉÏÏÂÎÄ½á¹¹Àï 
+		set_showid(task->ctx);//Showid åº”è¯¥åœ¨ä¼šè¯ä¸Šä¸‹æ–‡ç»“æ„é‡Œ
 		ShowLog(5,"%s:call_back tid=%lX,USEC=%llu",__FUNCTION__,ctx->tid,task->timestamp);
 		ret=task->call_back(conn,&task->head);
 		if(task->status==0)  //finish_login,return 0 or 1
@@ -657,12 +657,12 @@ struct epoll_event event;
 			rs->tc.uc_stack.ss_size=4096;
 			swapcontext(&rs->tc,&rs->tc); //==setjmp();
 		} else mthr_showid_del(rs->tid);
-//´Ó¾ÍĞ÷¶ÓÁĞÈ¡Ò»¸öÈÎÎñ
+//ä»å°±ç»ªé˜Ÿåˆ—å–ä¸€ä¸ªä»»åŠ¡
 		pthread_mutex_lock(&rpool.mut);
 		while(!(task=rdy_get())) {
 			if(rpool.flg >= tpool.rdy_num) break;
 			rpool.flg++;
-			ret=pthread_cond_wait(&rpool.cond,&rpool.mut); //Ã»ÓĞÈÎÎñ£¬µÈ´ı
+			ret=pthread_cond_wait(&rpool.cond,&rpool.mut); //æ²¡æœ‰ä»»åŠ¡ï¼Œç­‰å¾…
  			rpool.flg--;
 		}
 		pthread_mutex_unlock(&rpool.mut);
@@ -678,21 +678,21 @@ struct epoll_event event;
 			task->timeout=0;
 			if(task->events == 0X10||task->fd==-1) {
 				ShowLog(1,"%s:task already timeout",__FUNCTION__);
-				continue;//ÒÑ¾­½øÈë³¬Ê±×´Ì¬
+				continue;//å·²ç»è¿›å…¥è¶…æ—¶çŠ¶æ€
 			}
 			task->events=event.events;
 		}
 		rs->timestamp=now_usec();
-		
+
 		task->uc.uc_link=&rs->tc;
 		if(task->uc.uc_stack.ss_size) {//fiber task
-			set_showid(task->ctx);//Showid Ó¦¸ÃÔÚ»á»°ÉÏÏÂÎÄ½á¹¹Àï 
+			set_showid(task->ctx);//Showid åº”è¯¥åœ¨ä¼šè¯ä¸Šä¸‹æ–‡ç»“æ„é‡Œ
 ShowLog(5,"%s:send to fiber",__FUNCTION__);
 			setcontext(&task->uc);	//== longjmp()
 			continue;//no action,logic only
 		}
-		ret=do_work(task); //½øĞĞÄãµÄ·şÎñ
-		task->timestamp=now_usec();//taskÓërsµÄ²î¾ÍÊÇÓ¦ÓÃÈÎÎñÖ´ĞĞÊ±¼ä
+		ret=do_work(task); //è¿›è¡Œä½ çš„æœåŠ¡
+		task->timestamp=now_usec();//taskä¸rsçš„å·®å°±æ˜¯åº”ç”¨ä»»åŠ¡æ‰§è¡Œæ—¶é—´
 		switch(ret) {
 		case -1:
 			do_epoll(task,EPOLL_CTL_DEL,0);
@@ -700,7 +700,7 @@ ShowLog(5,"%s:send to fiber",__FUNCTION__);
 		case THREAD_ESCAPE:
 			break;
 		default:
-			if(!task->timeout) task->timeout=timeout; //timeout Ã»ÓĞ±»Ó¦ÓÃÉèÖÃ¹ı
+			if(!task->timeout) task->timeout=timeout; //timeout æ²¡æœ‰è¢«åº”ç”¨è®¾ç½®è¿‡
 			if(do_epoll(task,EPOLL_CTL_MOD,0) && errno != EEXIST) {
 				ShowLog(1,"%s:cancel by server",__FUNCTION__);
 				client_del(task);
@@ -728,7 +728,7 @@ ucontext_t * get_uc(int TCB_no)
 	return &client_q.pool[TCB_no].uc;
 }
 
-//¼ì²é³¬Ê±µÄÁ¬½Ó
+//æ£€æŸ¥è¶…æ—¶çš„è¿æ¥
 int check_TCB_timeout()
 {
 int i,cltnum=client_q.max_client;
@@ -760,7 +760,7 @@ struct timespec abstime;
 	abstime.tv_sec=0;
 	pthread_mutex_lock(&client_q.mut);
 	while(0>(i=TCB_get(&client_q.free_q))) {
-		if(abstime.tv_sec==0) ShowLog(1,"%s:³¬¹ı×î´óÁ¬½ÓÊı£¡",__FUNCTION__);
+		if(abstime.tv_sec==0) ShowLog(1,"%s:è¶…è¿‡æœ€å¤§è¿æ¥æ•°ï¼",__FUNCTION__);
 		clock_gettime(CLOCK_REALTIME, &abstime);
 		abstime.tv_sec+=5;
 		ret=pthread_cond_timedwait(&client_q.cond,&client_q.mut,&abstime);
@@ -776,8 +776,8 @@ struct timespec abstime;
 }
 
 /***************************************************************
- * Ïß³Ì³ØÄ£ĞÍµÄÈë¿Úº¯Êı£¬Ö÷Ïß³ÌÖ÷Òª¸ºÔğ×ÊÔ´¹ÜÀí
- *Ó¦ÓÃ²å¼şµÄ·şÎñº¯ÊıÔÚ
+ * çº¿ç¨‹æ± æ¨¡å‹çš„å…¥å£å‡½æ•°ï¼Œä¸»çº¿ç¨‹ä¸»è¦è´Ÿè´£èµ„æºç®¡ç†
+ *åº”ç”¨æ’ä»¶çš„æœåŠ¡å‡½æ•°åœ¨
  * extern srvfunc Function[];
  */
 int TPOOL_srv(void (*conn_init)(T_Connect *,T_NetHead *),void (*quit)(int),void (*poolchk)(void),int sizeof_gda)
@@ -803,13 +803,13 @@ struct linger so_linger;
 
 	p=getenv("SERVICE");
 	if(!p || !*p) {
-		ShowLog(1,"È±ÉÙ»·¾³±äÁ¿ SERVICE ,²»ÖªÊØºòÄÄ¸ö¶Ë¿Ú£¡");
+		ShowLog(1,"ç¼ºå°‘ç¯å¢ƒå˜é‡ SERVICE ,ä¸çŸ¥å®ˆå€™å“ªä¸ªç«¯å£ï¼");
 		quit(3);
 	}
-//²âÊÔ¶Ë¿ÚÊÇ·ñ±»Õ¼ÓÃ 
+//æµ‹è¯•ç«¯å£æ˜¯å¦è¢«å ç”¨
 	sock=tcpopen("localhost",p);
 	if(sock>-1) {
-		ShowLog(1,"¶Ë¿Ú %s ÒÑ¾­±»Õ¼ÓÃ",p);
+		ShowLog(1,"ç«¯å£ %s å·²ç»è¢«å ç”¨",p);
 		close(sock);
 		sock=-1;
 		quit(255);
@@ -843,7 +843,7 @@ struct linger so_linger;
 	bind(sock,(struct sockaddr *)&sin,sizeof(sin));
 	leng=1;
 	setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&leng,sizeof(leng));
-//±ÜÃâ TIME_WAIT
+//é¿å… TIME_WAIT
         so_linger.l_onoff=1;
         so_linger.l_linger=0;
         ret=setsockopt(sock, SOL_SOCKET, SO_LINGER, &so_linger, sizeof so_linger);
@@ -852,7 +852,7 @@ struct linger so_linger;
 	listen(sock,client_q.max_client);
 
 	ShowLog(0,"main start tid=%lX sock=%d",pthread_self(),sock);
-	
+
 	int repeat=0;
 	leng=sizeof(cin);
 
@@ -860,7 +860,7 @@ struct linger so_linger;
 		do {
 			FD_ZERO(&efds);
 			FD_SET(sock, &efds);
-//½¡¿µ¼ì²éÖÜÆÚ
+//å¥åº·æ£€æŸ¥å‘¨æœŸ
 			tm.tv_sec=15;
 			tm.tv_usec=0;
 			ret=select(sock+1,&efds,NULL,&efds,&tm);
@@ -881,7 +881,7 @@ struct linger so_linger;
 			ShowLog(1,"%s:accept err=%d,%s",__FUNCTION__,errno,strerror(errno));
                        	client_del(task);
 			switch(errno) {
-			case EMFILE:	//fdÓÃÍêÁË,ÆäËûÏß³Ì»¹Òª¼ÌĞø¹¤×÷£¬Ö÷Ïß³ÌĞİÏ¢Ò»ÏÂ¡£  
+			case EMFILE:	//fdç”¨å®Œäº†,å…¶ä»–çº¿ç¨‹è¿˜è¦ç»§ç»­å·¥ä½œï¼Œä¸»çº¿ç¨‹ä¼‘æ¯ä¸€ä¸‹ã€‚
 			case ENFILE:
 				sleep(30);
 				continue;
@@ -899,11 +899,10 @@ struct linger so_linger;
 		task->timeout=60;
 		task->status=-1;
 		task->conn.only_do=(int (*)())conn_init;
-		ret=do_epoll(task,EPOLL_CTL_ADD,0);//ÈÎÎñ½»¸øÆäËûÏß³Ì×ö
+		ret=do_epoll(task,EPOLL_CTL_ADD,0);//ä»»åŠ¡äº¤ç»™å…¶ä»–çº¿ç¨‹åš
 	}
-	
+
 	close(sock);
 	tpool_free();
 	return (0);
 }
-

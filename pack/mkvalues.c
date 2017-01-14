@@ -1,9 +1,9 @@
 
 /************************************************
  *  For SDBC 4.0
- * ±¾³ÌĞò×éÍê³É ´®ĞĞÊı¾İ¶ÔÊı¾İ¿âSQLÓï¾äµÄÓ³Éä¡£
- * ÓÉÓÚ±¾×é³ÌĞò²»Ö§³Ö°ó¶¨±äÁ¿£¬Òò´Ë²»½¨ÒéÊ¹ÓÃ
- * ÒÔDAU³ÌĞòÈ¡´úÖ®
+ * æœ¬ç¨‹åºç»„å®Œæˆ ä¸²è¡Œæ•°æ®å¯¹æ•°æ®åº“SQLè¯­å¥çš„æ˜ å°„ã€‚
+ * ç”±äºæœ¬ç»„ç¨‹åºä¸æ”¯æŒç»‘å®šå˜é‡ï¼Œå› æ­¤ä¸å»ºè®®ä½¿ç”¨
+ * ä»¥DAUç¨‹åºå–ä»£ä¹‹
  *  For ORACLE
  ************************************************/
 
@@ -14,7 +14,7 @@ extern int strcpy_esc(char *dest,char *src,int len,char CURDML);
 
 extern char * ext_copy(char *dest,const char *src);
 
-/* Éú³ÉÒ»¸öVALUESÏî£¬×¢Òâ £¬typÊÇÄ£°åÖĞµÄÒ»¸öµ¥Ïî */
+/* ç”Ÿæˆä¸€ä¸ªVALUESé¡¹ï¼Œæ³¨æ„ ï¼Œtypæ˜¯æ¨¡æ¿ä¸­çš„ä¸€ä¸ªå•é¡¹ */
 char *mkvalue(char *vp,char *tmp,T_PkgType *typ)
 {
 int len,ccodd,clen;
@@ -62,7 +62,7 @@ do_char:
 if((unsigned char)*p < ' '||*p==0x7f) {
 	vp+=sprintf(vp,"'||CHR(%d)||'",*p++);
 	continue;
-} else 
+} else
 */
 			if((*p)=='\'') *vp++=*p;
 			*vp++=*p;
@@ -70,7 +70,7 @@ if((unsigned char)*p < ' '||*p==0x7f) {
 		if(ccodd) {
 			if(clen<typ->len-1)
 				*vp++=' ';
-			else vp[-1] &= 0x7f; 
+			else vp[-1] &= 0x7f;
 		}
 		*vp++='\'';
 		*vp=0;
@@ -82,7 +82,7 @@ if((unsigned char)*p < ' '||*p==0x7f) {
 	}
 	return vp;
 }
-/* Ö±½Ó´Ó½á¹¹ÖĞÉú³ÉValues 
+/* ç›´æ¥ä»ç»“æ„ä¸­ç”ŸæˆValues
 */
 
 char *mk_values(char *values,void  *data, T_PkgType *tp)
@@ -114,11 +114,11 @@ char *mkvalues(char *values,char *str, T_PkgType *tp)
 char tmp[4096],tmp1[4096];
 T_PkgType *typ;
 char *cp,*vp;
-	
+
 	if(!values || !str || !*str || !tp) return str;
 	vp=values;
 	cp=str;
-	
+
 	if(tp->offset<0) set_offset(tp);
 	for(typ=tp;typ->type > -1;typ++) {
 		if(!*cp) break;
@@ -147,11 +147,10 @@ char *mkupdate(char *str,char *data,T_PkgType *tp)
 	strcat(str," FROM DUAL)");
 	return str;
 }
-/* Ö±½Ó´Ó½á¹¹ÖĞÉú³É Update 
+/* ç›´æ¥ä»ç»“æ„ä¸­ç”Ÿæˆ Update
 */
 char *mk_update(char *str,void  *data,T_PkgType *tp)
 {
 	if(!data || !str || !tp) return str;
 	return stpcpy(mk_values(stpcpy(mkset(stpcpy(str,"SET("),tp),")=(SELECT "),data,tp)," FROM DUAL)");
 }
-

@@ -12,7 +12,7 @@ int middle,start=0,end=data_count-1,val;
 	if (val>=0) end = middle - 1;
 	else start = middle + 1;
     }
-    return -1;//²»´æÔÚ
+    return -1;//ä¸å­˜åœ¨
 }
 // >key
 int upperBound(void *key,void *data,int data_count,int (*compare)(void *key,void *data,int n))

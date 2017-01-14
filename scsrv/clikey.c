@@ -31,7 +31,7 @@ u_int key[8]; //256bit key
 	memcpy(keybuf,key,sizeof(key));
 	return keybuf;
 }
-//·şÎñÆ÷ÓÃ£¬Óë¿Í»§¶ËĞ­ÉÌÃÜÔ¿¡£ 
+//æœåŠ¡å™¨ç”¨ï¼Œä¸å®¢æˆ·ç«¯åå•†å¯†é’¥ã€‚
 int mk_clikey(int socket,ENIGMA2 *tc,u_int *family)
 {
 ENIGMA2 t;
@@ -60,7 +60,7 @@ char addr[16];
 	crc=gencrc((unsigned char *)buf,24);
 	recv_crc=ntohs(*(short *)(buf+24));
 	if(crc != recv_crc) {
-		ShowLog(1,"%s %s:PKGERR crc´í!",__FUNCTION__,addr);
+		ShowLog(1,"%s %s:PKGERR crcé”™!",__FUNCTION__,addr);
 		return FORMATERR;
 	}
 	buf[24]=0;
@@ -93,7 +93,7 @@ ShowLog(5,"%s:hex axy=%s",__FUNCTION__,strhex(4,ay,buf));
 
 		prikey128(keybuf,ay,family);
 		enigma2_init(&t,keybuf,0);
-//ÕÒa
+//æ‰¾a
 		kw=family[31&cli_k[17]];
        		i=family[31&cli_k[16]];
        		if(!i) i=65537;
@@ -111,7 +111,7 @@ ShowLog(5,"%s:ay=%s",__FUNCTION__,buf);
 /*
 cp=buf;
 for(i=0;i<32;i++) {
-	cp+=sprintf(cp,"%02X ",255& *(cli_k+16+i));	
+	cp+=sprintf(cp,"%02X ",255& *(cli_k+16+i));
 }
 ShowLog(5,"%s:clikey=%s",__FUNCTION__,buf);
 */
@@ -125,7 +125,6 @@ ShowLog(5,"%s:clikey=%s",__FUNCTION__,buf);
 	cli_k[49]=crymode;
 	byte_a64(keybuf,cli_k,50);
 	SendNet(socket,keybuf,68,0);
-	
+
 	return crymode;
 }
-

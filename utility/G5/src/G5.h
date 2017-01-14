@@ -65,32 +65,32 @@ demo :
 	remove rule webdog2 ;
 */
 
-#define FOUND				9	/* ÕÒµ½ */
-#define NOT_FOUND			4	/* ÕÒ²»µ½ */
+#define FOUND				9	/* æ‰¾åˆ° */
+#define NOT_FOUND			4	/* æ‰¾ä¸åˆ° */
 
-#define MATCH				1	/* Æ¥Åä */
-#define NOT_MATCH			-1	/* ²»Æ¥Åä */
+#define MATCH				1	/* åŒ¹é… */
+#define NOT_MATCH			-1	/* ä¸åŒ¹é… */
 
-#define RULE_ID_MAXLEN			64	/* ×î³¤×ª·¢¹æÔòÃû³¤¶È */
-#define RULE_MODE_MAXLEN		2	/* ×î³¤×ª·¢¹æÔòÄ£Ê½³¤¶È */
+#define RULE_ID_MAXLEN			64	/* æœ€é•¿è½¬å‘è§„åˆ™åé•¿åº¦ */
+#define RULE_MODE_MAXLEN		2	/* æœ€é•¿è½¬å‘è§„åˆ™æ¨¡å¼é•¿åº¦ */
 
-#define FORWARD_RULE_MODE_G		"G"	/* ¹ÜÀí¶Ë¿Ú */
-#define FORWARD_RULE_MODE_MS		"MS"	/* Ö÷±¸Ä£Ê½ */
-#define FORWARD_RULE_MODE_RR		"RR"	/* ÂÖÑ¯Ä£Ê½ */
-#define FORWARD_RULE_MODE_LC		"LC"	/* ×îÉÙÁ¬½ÓÄ£Ê½ */
-#define FORWARD_RULE_MODE_RT		"RT"	/* ×îĞ¡ÏìÓ¦Ê±¼äÄ£Ê½ */
-#define FORWARD_RULE_MODE_RD		"RD"	/* Ëæ»úÄ£Ê½ */
-#define FORWARD_RULE_MODE_HS		"HS"	/* HASHÄ£Ê½ */
+#define FORWARD_RULE_MODE_G		"G"	/* ç®¡ç†ç«¯å£ */
+#define FORWARD_RULE_MODE_MS		"MS"	/* ä¸»å¤‡æ¨¡å¼ */
+#define FORWARD_RULE_MODE_RR		"RR"	/* è½®è¯¢æ¨¡å¼ */
+#define FORWARD_RULE_MODE_LC		"LC"	/* æœ€å°‘è¿æ¥æ¨¡å¼ */
+#define FORWARD_RULE_MODE_RT		"RT"	/* æœ€å°å“åº”æ—¶é—´æ¨¡å¼ */
+#define FORWARD_RULE_MODE_RD		"RD"	/* éšæœºæ¨¡å¼ */
+#define FORWARD_RULE_MODE_HS		"HS"	/* HASHæ¨¡å¼ */
 
-#define RULE_CLIENT_MAXCOUNT		10	/* µ¥Ìõ¹æÔòÖĞ×î´ó¿Í»§¶ËÅäÖÃÊıÁ¿ */
-#define RULE_FORWARD_MAXCOUNT		3	/* µ¥Ìõ¹æÔòÖĞ×î´ó×ª·¢¶ËÅäÖÃÊıÁ¿ */
-#define RULE_SERVER_MAXCOUNT		100	/* µ¥Ìõ¹æÔòÖĞ×î´ó·şÎñ¶ËÅäÖÃÊıÁ¿ */
+#define RULE_CLIENT_MAXCOUNT		10	/* å•æ¡è§„åˆ™ä¸­æœ€å¤§å®¢æˆ·ç«¯é…ç½®æ•°é‡ */
+#define RULE_FORWARD_MAXCOUNT		3	/* å•æ¡è§„åˆ™ä¸­æœ€å¤§è½¬å‘ç«¯é…ç½®æ•°é‡ */
+#define RULE_SERVER_MAXCOUNT		100	/* å•æ¡è§„åˆ™ä¸­æœ€å¤§æœåŠ¡ç«¯é…ç½®æ•°é‡ */
 
-#define DEFAULT_FORWARD_RULE_MAXCOUNT	100	/* È±Ê¡×î´ó×ª·¢¹æÔòÊıÁ¿ */
-#define DEFAULT_CONNECTION_MAXCOUNT	1024	/* È±Ê¡×î´óÁ¬½ÓÊıÁ¿ */ /* ×î´ó×ª·¢»á»°ÊıÁ¿ = ×î´óÁ¬½ÓÊıÁ¿ * 3 */
-#define DEFAULT_TRANSFER_BUFSIZE	4096	/* È±Ê¡Í¨Ñ¶×ª·¢»º³åÇø´óĞ¡ */
+#define DEFAULT_FORWARD_RULE_MAXCOUNT	100	/* ç¼ºçœæœ€å¤§è½¬å‘è§„åˆ™æ•°é‡ */
+#define DEFAULT_CONNECTION_MAXCOUNT	1024	/* ç¼ºçœæœ€å¤§è¿æ¥æ•°é‡ */ /* æœ€å¤§è½¬å‘ä¼šè¯æ•°é‡ = æœ€å¤§è¿æ¥æ•°é‡ * 3 */
+#define DEFAULT_TRANSFER_BUFSIZE	4096	/* ç¼ºçœé€šè®¯è½¬å‘ç¼“å†²åŒºå¤§å° */
 
-/* ÍøÂçµØÖ·ĞÅÏ¢½á¹¹ */
+/* ç½‘ç»œåœ°å€ä¿¡æ¯ç»“æ„ */
 struct NetAddress
 {
 	char			ip[ 64 + 1 ] ;
@@ -98,21 +98,21 @@ struct NetAddress
 	struct sockaddr_in	sockaddr ;
 } ;
 
-/* ¿Í»§¶ËĞÅÏ¢½á¹¹ */
+/* å®¢æˆ·ç«¯ä¿¡æ¯ç»“æ„ */
 struct ClientNetAddress
 {
 	struct NetAddress	netaddr ;
 	int			sock ;
 } ;
 
-/* ×ª·¢¶ËĞÅÏ¢½á¹¹ */
+/* è½¬å‘ç«¯ä¿¡æ¯ç»“æ„ */
 struct ForwardNetAddress
 {
 	struct NetAddress	netaddr ;
 	int			sock ;
 } ;
 
-/* ·şÎñ¶ËĞÅÏ¢½á¹¹ */
+/* æœåŠ¡ç«¯ä¿¡æ¯ç»“æ„ */
 struct ServerNetAddress
 {
 	struct NetAddress	netaddr ;
@@ -121,22 +121,22 @@ struct ServerNetAddress
 
 #define SERVER_UNABLE_IGNORE_COUNT	100
 
-/* ×ª·¢¹æÔò½á¹¹ */
+/* è½¬å‘è§„åˆ™ç»“æ„ */
 struct ForwardRule
 {
 	char				rule_id[ RULE_ID_MAXLEN + 1 ] ;
 	char				rule_mode[ RULE_MODE_MAXLEN + 1 ] ;
-	
+
 	struct ClientNetAddress		client_addr[ RULE_CLIENT_MAXCOUNT ] ;
 	unsigned long			client_count ;
 	struct ForwardNetAddress	forward_addr[ RULE_FORWARD_MAXCOUNT ] ;
 	unsigned long			forward_count ;
 	struct ServerNetAddress		server_addr[ RULE_SERVER_MAXCOUNT ] ;
 	unsigned long			server_count ;
-	
+
 	unsigned long			select_index ;
 	unsigned long			connection_count[ RULE_SERVER_MAXCOUNT ] ;
-	
+
 	union
 	{
 		struct
@@ -157,38 +157,38 @@ struct ForwardRule
 	} status ;
 } ;
 
-#define FORWARD_SESSION_TYPE_UNUSED	0	/* ×ª·¢»á»°Î´ÓÃµ¥Ôª */
-#define FORWARD_SESSION_TYPE_MANAGE	1	/* ¹ÜÀíÁ¬½Ó»á»° */
-#define FORWARD_SESSION_TYPE_LISTEN	2	/* ÕìÌı·şÎñ»á»° */
-#define FORWARD_SESSION_TYPE_CLIENT	3	/* ¿Í»§¶ËÁ¬½Ó»á»° */
-#define FORWARD_SESSION_TYPE_SERVER	4	/* ·şÎñ¶ËÁ¬½Ó */
+#define FORWARD_SESSION_TYPE_UNUSED	0	/* è½¬å‘ä¼šè¯æœªç”¨å•å…ƒ */
+#define FORWARD_SESSION_TYPE_MANAGE	1	/* ç®¡ç†è¿æ¥ä¼šè¯ */
+#define FORWARD_SESSION_TYPE_LISTEN	2	/* ä¾¦å¬æœåŠ¡ä¼šè¯ */
+#define FORWARD_SESSION_TYPE_CLIENT	3	/* å®¢æˆ·ç«¯è¿æ¥ä¼šè¯ */
+#define FORWARD_SESSION_TYPE_SERVER	4	/* æœåŠ¡ç«¯è¿æ¥ */
 
-#define CONNECT_STATUS_CONNECTING	0	/* Òì²½Á¬½Ó·şÎñ¶ËÖĞ */
-#define CONNECT_STATUS_CONNECTED	1	/* Óë·şÎñ¶ËÒÑ½¨Á¢Á¬½Ó */
+#define CONNECT_STATUS_CONNECTING	0	/* å¼‚æ­¥è¿æ¥æœåŠ¡ç«¯ä¸­ */
+#define CONNECT_STATUS_CONNECTED	1	/* ä¸æœåŠ¡ç«¯å·²å»ºç«‹è¿æ¥ */
 
-#define MANAGE_INPUT_BUFSIZE		1024	/* ¹ÜÀíÃüÁîÊäÈë»º³åÇø */
-#define MANAGE_OUTPUT_BUFSIZE		1024	/* ¹ÜÀíÃüÁîÊä³ö»º³åÇø */
+#define MANAGE_INPUT_BUFSIZE		1024	/* ç®¡ç†å‘½ä»¤è¾“å…¥ç¼“å†²åŒº */
+#define MANAGE_OUTPUT_BUFSIZE		1024	/* ç®¡ç†å‘½ä»¤è¾“å‡ºç¼“å†²åŒº */
 
-#define TRY_CONNECT_MAXCOUNT		5	/* Òì²½³¢ÊÔÁ¬½Ó·şÎñ¶Ë×î´ó´ÎÊı */
+#define TRY_CONNECT_MAXCOUNT		5	/* å¼‚æ­¥å°è¯•è¿æ¥æœåŠ¡ç«¯æœ€å¤§æ¬¡æ•° */
 
-/* ÕìÌı»á»°½á¹¹ */
+/* ä¾¦å¬ä¼šè¯ç»“æ„ */
 struct ListenNetAddress
 {
 	struct NetAddress	netaddr ;
 	int			sock ;
-	
+
 	char			rule_mode[ 2 + 1 ] ;
 } ;
 
-/* ×ª·¢»á»°½á¹¹ */
+/* è½¬å‘ä¼šè¯ç»“æ„ */
 struct ForwardSession
 {
 	char				forward_session_type ;
-	
+
 	struct ListenNetAddress		listen_addr ;
 	char				manage_input_buffer[ MANAGE_OUTPUT_BUFSIZE + 1 ] ;
 	unsigned long			manage_input_buflen ;
-	
+
 	struct ClientNetAddress		client_addr ;
 	unsigned long			client_index ;
 	struct ServerNetAddress		server_addr ;
@@ -198,42 +198,42 @@ struct ForwardSession
 	unsigned long			try_connect_count ;
 } ;
 
-/* ÃüÁîĞĞ²ÎÊı½á¹¹ */
+/* å‘½ä»¤è¡Œå‚æ•°ç»“æ„ */
 struct CommandParam
 {
 	char				*config_pathfilename ; /* -f */
-	
+
 	unsigned long			forward_rule_maxcount ; /* -r */
 	unsigned long			forward_session_maxcount ; /* -c */
 	unsigned long			transfer_bufsize ; /* -b */
-	
+
 	char				debug_flag ; /* -d */
 } ;
 
-/* ÄÚ²¿»º´æ½á¹¹ */
+/* å†…éƒ¨ç¼“å­˜ç»“æ„ */
 struct ServerCache
 {
 	struct timeval			tv ;
 } ;
 
-/* ·şÎñÆ÷»·¾³ */
+/* æœåŠ¡å™¨ç¯å¢ƒ */
 struct ServerEnv
 {
 	struct CommandParam		cmd_para ;
-	
+
 	struct ForwardRule		*forward_rule ;
 	unsigned long			forward_rule_count ;
-	
+
 	int				event_env ;
 	struct ForwardSession		*forward_session ;
 	unsigned long			forward_session_maxcount ;
 	unsigned long			forward_session_count ;
 	unsigned long			forward_session_use_offsetpos ;
-	
+
 	struct ServerCache		server_cache ;
 } ;
 
-#define WAIT_EVENTS_COUNT		1024	/* µÈ´ıÊÂ¼ş¼¯ºÏÊıÁ¿ */
+#define WAIT_EVENTS_COUNT		1024	/* ç­‰å¾…äº‹ä»¶é›†åˆæ•°é‡ */
 
 int G5( struct ServerEnv *pse );
 

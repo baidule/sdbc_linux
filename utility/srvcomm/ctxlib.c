@@ -1,8 +1,8 @@
 /***************************************************
- * Զ����֤���� SDBC 7.0
- * �����ڵ���������������Զ����֤
- * �����ΪTPC��TPOOLģʽ����һ���ڴ����ݿ�.
- * �������֤��ϢӦ��¼�����ݿ���
+ * 远程认证程序 SDBC 7.0
+ * 适用于单机，单服务器的远程认证
+ * 这里仅为TPC、TPOOL模式管理一个内存数据库.
+ * 多机的认证信息应记录在数据库里
  * *************************************************/
 
 #include <ctxlib.h>
@@ -25,7 +25,7 @@ static int ctx_cmp(void *s,void *d,int len)
 	if(len==sizeof(CTX_stu)) {
 		return ((CTX_stu *)s)->ctx_id == ((CTX_stu *)d)->ctx_id?0:
 			((CTX_stu *)s)->ctx_id > ((CTX_stu *)d)->ctx_id?1:-1;
-			
+
 //ShowLog(5,"%s:s=%d,d=%d,ret=%d",__FUNCTION__,((CTX_stu *)s)->ctx_id, ((CTX_stu *)d)->ctx_id,ret);
 	} else return (*(CTX_stu **)s)->ctx_id == (*(CTX_stu **)d)->ctx_id?0:
 		(*(CTX_stu **)s)->ctx_id > (*(CTX_stu **)d)->ctx_id?1:-1;
@@ -40,7 +40,7 @@ static int del_count(T_Tree *sp,void *d)
 {
 CTX_stu *ctxp=(CTX_stu *)sp->Content;
 del_node *dp=(del_node *)d;
-	if(3600<(dp->now - ctxp->usetime)) {//����1Сʱ
+	if(3600<(dp->now - ctxp->usetime)) {//超过1小时
 		*dp->del_tree=BB_Tree_Add(*dp->del_tree,&ctxp,sizeof(CTX_stu *),ctx_cmp,NULL);
 		return 1;
 	}
@@ -71,11 +71,11 @@ del_node delctx;
 int count;
 	delctx.del_tree=&del;
 	delctx.now=now_sec();
-//�ѷ���ɾ�������ļ�¼�ռ���del
+//把符合删除条件的记录收集到del
 	count=BB_Tree_Count(ctxlib,&delctx,del_count);
 	if(count>0) {
 		pthread_rwlock_wrlock(&rwlock);
-//ɾ����Щ��¼
+//删除这些记录
 		BB_Tree_Free(&del,del_ctxlib);
 		pthread_rwlock_unlock(&rwlock);
 		ShowLog(2,"%s:free %d CTX's",__FUNCTION__,count);

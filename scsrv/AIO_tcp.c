@@ -1,7 +1,7 @@
 /**********************************************
  * @(#) SDBC 7.1 TCP SERVER Tools                      *
  * to suport Fiberized.IO
- * ÷ÿ‘ÿ socket/tcp.c
+ * ÈáçËΩΩ socket/tcp.c
  **********************************************/
 #include <sys/socket.h>
 #include <sys/time.h>
@@ -13,7 +13,7 @@
 #define MIN(a,b) ((a)<(b))?(a):(b)
 #endif
 
-//timeout for second 
+//timeout for second
 int RecvNet(int socket,char *buf,int n,int timeout)
 {
 int bcount=0,br,ret;
@@ -23,7 +23,7 @@ int fflag=-1;
 	if(socket<0) return SYSERR;
 	if(!buf && n<0) return 0;
 	fflag=fcntl(socket,F_GETFL,0);
-	if(fflag!=-1) fcntl(socket,F_SETFL,fflag|O_ASYNC|O_NONBLOCK); //“Ï≤Ω≤Ÿ◊˜
+	if(fflag!=-1) fcntl(socket,F_SETFL,fflag|O_ASYNC|O_NONBLOCK); //ÂºÇÊ≠•Êìç‰Ωú
 
 	*buf=0;
 	br=0;
@@ -41,7 +41,7 @@ int fflag=-1;
 			ShowLog(1,"%s:br=%d,err=%d,%s",__FUNCTION__,br,errno,strerror(errno));
 		    break;
 		}
-		if(bcount < n && fflag!=-1) { //«–ªª»ŒŒÒ
+		if(bcount < n && fflag!=-1) { //ÂàáÊç¢‰ªªÂä°
 			if(repeat++>3) return -errno;
 //ShowLog(5,"%s:tid=%lX,socket=%d,yield to schedle bcount=%d/%d",__FUNCTION__,pthread_self(),socket,bcount,n);
 			i=do_event(socket,0,timeout);//yield by EPOOLIN
@@ -71,7 +71,7 @@ size_t SendSize;
 
 	if(socket<0) return SYSERR;
 	fflag=fcntl(socket,F_GETFL,0);
-	if(fflag != -1) fcntl(socket,F_SETFL,fflag|O_NONBLOCK); //“Ï≤Ω≤Ÿ◊˜
+	if(fflag != -1) fcntl(socket,F_SETFL,fflag|O_NONBLOCK); //ÂºÇÊ≠•Êìç‰Ωú
 	bcount=0;
 	bw=0;
 	if(MTU>500) SendSize=MTU;
@@ -86,7 +86,7 @@ size_t SendSize;
 			ShowLog(1,"%s:err=%d,%s",__FUNCTION__,errno,strerror(errno));
 			break;
 		}
-		if(bw < sz && fflag != -1) { //«–ªª»ŒŒÒ
+		if(bw < sz && fflag != -1) { //ÂàáÊç¢‰ªªÂä°
 ShowLog(5,"%s:tid=%lX,socket=%d,yield bw=%d/%d",__FUNCTION__,pthread_self(),socket,bw,sz);
 		    i=do_event(socket,1,0); //yield by EPOLLOUT
 		    if(i<0) {
@@ -98,4 +98,3 @@ ShowLog(5,"%s:tid=%lX,socket=%d,yield bw=%d/%d",__FUNCTION__,pthread_self(),sock
 	if(fflag != -1)  fcntl(socket,F_SETFL,fflag);
 	return bcount==0?-1:bcount;
 }
-

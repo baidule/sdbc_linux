@@ -1,5 +1,5 @@
 /****************************************
- * Ò»¸ö´®ÖéÄ£ĞÍ 
+ * ä¸€ä¸ªä¸²ç æ¨¡å‹
  ***************************************/
 #include <time.h>
 #include <fcntl.h>
@@ -10,7 +10,7 @@
 extern void quit(int n);
 
 #define longaddr(s) LongAddr(s)
-//µÚÈı¸öÖé×Ó£»´Ó·şÎñÆ÷ÊÕ°ü·¢Íù¿Í»§¶Ë
+//ç¬¬ä¸‰ä¸ªç å­ï¼›ä»æœåŠ¡å™¨æ”¶åŒ…å‘å¾€å®¢æˆ·ç«¯
 static int from_server(T_Connect *client,T_NetHead *NetHead)
 {
 int ret=0,i,t_cont;
@@ -37,7 +37,7 @@ GDA *gp=(GDA *)srvp->var;
 		NetHead->ERRNO2=-1;
 err1:
 		if(-2==clr_event(srvp->TCB_no)) {
-			ShowLog(1,"%s:TCB:%d err1 Çå³ıÊÂ¼ş´í!",__FUNCTION__,srvp->TCB_no);
+			ShowLog(1,"%s:TCB:%d err1 æ¸…é™¤äº‹ä»¶é”™!",__FUNCTION__,srvp->TCB_no);
 		}
 		NetHead->ERRNO1=errno;
  	   	ShowLog(1,"%s:tid=%lu,TCB:%d %s",__FUNCTION__,pthread_self(),srvp->TCB_no,tmp);
@@ -58,11 +58,11 @@ T_CLI_Var *clip=(T_CLI_Var *)gp->server->Var;
 //T_CLI_Var *clip=(T_CLI_Var *)gp->server->Var;
 	i=get_event_status(srvp->TCB_no);
 	if(i!=1) { //EPOLLIN
-		sprintf(tmp,"ºô½Ğ·şÎñÆ÷·µ»Ø³¬Ê±,event=0X%08X",i);
+		sprintf(tmp,"å‘¼å«æœåŠ¡å™¨è¿”å›è¶…æ—¶,event=0X%08X",i);
 		NetHead->ERRNO2=-1;
 err:
 		if(-2==clr_event(srvp->TCB_no)) {
-			ShowLog(1,"%s:TCB:%d err Çå³ıÊÂ¼ş´í!",__FUNCTION__,srvp->TCB_no);
+			ShowLog(1,"%s:TCB:%d err æ¸…é™¤äº‹ä»¶é”™!",__FUNCTION__,srvp->TCB_no);
 		}
 		release_SC_connect(&gp->server,srvp->TCB_no,srvp->poolno);
  	   	ShowLog(1,"%s:tid=%lu,TCB:%d %s",__FUNCTION__,pthread_self(),srvp->TCB_no,tmp);
@@ -76,7 +76,7 @@ err:
 		NetHead->ERRNO2=i;
 		if(clip) clip->Errno=-1;
 		goto err;
-	} 
+	}
 	t_cont=NetHead->ERRNO2;
 	ShowLog(3,"%s:TCB:%d,tid=%lu,Recv from server %s PROTO_NUM=0X%04X,ERRNO1=%d,ERRNO2=%d,PKG_LEN=%d,T_LEN=%d,t_cont=%08X",
 		__FUNCTION__,srvp->TCB_no,pthread_self(),
@@ -87,29 +87,29 @@ err:
 //ShowLog(5,"SendPack to client i=%d",i);
 
 	if(t_cont==PACK_CONTINUE) {
-//Èç¹û·şÎñÆ÷ÒªÇóÁ¬Ğø´«ËÍ£¬¾Í²»Çå³ıÊÂ¼ş£¬ºóĞø¼ÌĞøÓÉÕâ¸öº¯Êı´¦Àí¡£		
-//ÏÂÒ»¸öÖé×ÓÈÔÈ»ÊÇ:from_server,ÏÂÒ»¸öÁ´×ÓÊÇ£ºÖ÷ÈÎÎñ¶ÓÁĞ
+//å¦‚æœæœåŠ¡å™¨è¦æ±‚è¿ç»­ä¼ é€ï¼Œå°±ä¸æ¸…é™¤äº‹ä»¶ï¼Œåç»­ç»§ç»­ç”±è¿™ä¸ªå‡½æ•°å¤„ç†ã€‚
+//ä¸‹ä¸€ä¸ªç å­ä»ç„¶æ˜¯:from_server,ä¸‹ä¸€ä¸ªé“¾å­æ˜¯ï¼šä¸»ä»»åŠ¡é˜Ÿåˆ—
 		return 0;
 	}
-//ÏÂÒ»¸öÖé×ÓÊÇ:SDBC±ê×¼½ÓÊÕ,ÏÂÒ»¸öÁ´×ÓÊÇ£ºÖ÷ÈÎÎñ¶ÓÁĞ
+//ä¸‹ä¸€ä¸ªç å­æ˜¯:SDBCæ ‡å‡†æ¥æ”¶,ä¸‹ä¸€ä¸ªé“¾å­æ˜¯ï¼šä¸»ä»»åŠ¡é˜Ÿåˆ—
 	ret=conn_lock(srvp->poolno,clip->NativeError);
 	i=clr_event(srvp->TCB_no);
 	if(-2==i) {
-		ShowLog(1,"%s:TCB:%d,Çå³ıÊÂ¼ş´í!",__FUNCTION__,srvp->TCB_no);
+		ShowLog(1,"%s:TCB:%d,æ¸…é™¤äº‹ä»¶é”™!",__FUNCTION__,srvp->TCB_no);
 	}
-//Õû¸ö´®ÖéµÄÁ÷³ÌÒÑ¾­Íê³É,ÊÍ·Å¹«¹²×ÊÔ´¡£
+//æ•´ä¸ªä¸²ç çš„æµç¨‹å·²ç»å®Œæˆ,é‡Šæ”¾å…¬å…±èµ„æºã€‚
 	release_SC_connect(&gp->server,srvp->TCB_no,srvp->poolno);
 	i=conn_unlock(srvp->poolno,clip->NativeError);
 //ShowLog(5,"%s:lock=%d,unlock=%d",__FUNCTION__,ret,i);
 	return 0;
 }
-//µÚ¶ş¸öÖé×Ó£º´Ó¿Í»§¶ËÊÕ°ü£¬·¢Íù·şÎñÆ÷
+//ç¬¬äºŒä¸ªç å­ï¼šä»å®¢æˆ·ç«¯æ”¶åŒ…ï¼Œå‘å¾€æœåŠ¡å™¨
 int do_Transfer(T_Connect *client,T_NetHead *NetHead)
 {
 T_SRV_Var *srvp=(T_SRV_Var *)client->Var;
 GDA *gp=(GDA *)srvp->var;
 int ret,i;
-T_Connect *server; 
+T_Connect *server;
 char tmp[256];
 int proto_num=NetHead->PROTO_NUM;
 int t_cont;
@@ -148,7 +148,7 @@ errret:
 		NetHead->PKG_LEN=strlen(NetHead->data);
 		i=SendPack(client,NetHead);
 		return -1;
-	} 
+	}
 	while(t_cont==PACK_CONTINUE) {
     		i=RecvPack(client,NetHead);
 		if(i) {
@@ -173,9 +173,9 @@ errret:
 		ShowLog(2,"%s:tid=%lu,TCB:%d,PACK_NOANSER",__FUNCTION__,srvp->TCB_no);
 		release_SC_connect(&gp->server,srvp->TCB_no,srvp->poolno);
 		return 0;
-	}  
+	}
 T_CLI_Var *clip=(T_CLI_Var *)server->Var;
-//ÏÂÒ»¸öÖé×ÓÊÇ:from_server,ÏÂÒ»¸öÁ´×ÓÊÇ£ºÖ÷ÈÎÎñ¶ÓÁĞ
+//ä¸‹ä¸€ä¸ªç å­æ˜¯:from_server,ä¸‹ä¸€ä¸ªé“¾å­æ˜¯ï¼šä¸»ä»»åŠ¡é˜Ÿåˆ—
 	ret=conn_lock(srvp->poolno,clip->NativeError);
 	i=set_event(srvp->TCB_no,server->Socket,from_server,10);
 /*
@@ -189,24 +189,24 @@ T_CLI_Var *clip=(T_CLI_Var *)server->Var;
 		ShowLog(1,"%s:share_lnk ret=%d",__FUNCTION__,i);
 	}
 //ShowLog(5,"%s:lock=%d,unlock=%d",__FUNCTION__,ret,i);
-	return -5;//ÊÍ·Å±¾Ïß³Ì
+	return -5;//é‡Šæ”¾æœ¬çº¿ç¨‹
 }
-//µÚÒ»¸öÖé×Ó£ºÀ´×ÔSDBCÖ÷½ÓÊÕ³ÌĞò£¬È¡Á¬½Ó³Ø
+//ç¬¬ä¸€ä¸ªç å­ï¼šæ¥è‡ªSDBCä¸»æ¥æ”¶ç¨‹åºï¼Œå–è¿æ¥æ± 
 int Transfer(T_Connect *client,T_NetHead *NetHead)
 {
 T_SRV_Var *srvp=(T_SRV_Var *)client->Var;
 GDA *gp=(GDA *)srvp->var;
 int ret,TCBno;
 char tmp[256];
-	
+
 	if(!srvp) {
 		sprintf(tmp,"srvp is null");
 	} else {
 		TCBno=srvp->TCB_no;
-//ÏÂÒ»¸öÖé×ÓÊÇ:do_Transfer,ÏÂÒ»¸öÁ´×ÓÊÇ£ºÁ¬½Ó³ØµÈ´ı¶ÓÁĞ
+//ä¸‹ä¸€ä¸ªç å­æ˜¯:do_Transfer,ä¸‹ä¸€ä¸ªé“¾å­æ˜¯ï¼šè¿æ¥æ± ç­‰å¾…é˜Ÿåˆ—
 		ret=get_s_connect(TCBno,srvp->poolno,&gp->server,do_Transfer);
-		if(0==ret) return do_Transfer(client,NetHead);//³ØÒÑ¾­ÓĞÁË£¬Ö±½Óµ÷ÓÃ
-		if(ret==1) return -5; //ÊÍ·Å±¾Ïß³Ì
+		if(0==ret) return do_Transfer(client,NetHead);//æ± å·²ç»æœ‰äº†ï¼Œç›´æ¥è°ƒç”¨
+		if(ret==1) return -5; //é‡Šæ”¾æœ¬çº¿ç¨‹
 		sprintf(tmp,"get connect pool fail!");
 	}
 
@@ -219,4 +219,3 @@ char tmp[256];
 	ret=SendPack(client,NetHead);
 	return -1;
 }
-

@@ -1,0 +1,34 @@
+NL-08014: Message 8014 not found; No message file for product=network, facility=NL	   []
+ NL-08015: Message 8015 not found; No message file for product=network, facility=NL
+  ORA-48165: Message 48165 not found; No message file for product=RDBMS, facility=ORA
+User inputted base directory is invalid [48187] [/app/oracle]
+
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.247.53.49)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=CMS)(CID=(PROGRAM=mkpatt@mtrlin)(HOST=mtrlin)(USER=sdbc))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 11.2.0.3.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 11.2.0.3.0 - Production
+  Time: 07-AUG-2014 10:22:01
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: Message 12541 not found; No message file for product=network, facility=TNS
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Message 511 not found; No message file for product=network, facility=TNS
+    nt secondary err code: 111
+    nt OS err code: 0
+NL-08014: Message 8014 not found; No message file for product=network, facility=NL	   []
+ NL-08015: Message 8015 not found; No message file for product=network, facility=NL
+  ORA-48165: Message 48165 not found; No message file for product=RDBMS, facility=ORA
+User inputted base directory is invalid [48187] [/app/oracle]
+
+NL-08014: Message 8014 not found; No message file for product=network, facility=NL	   []
+ NL-08015: Message 8015 not found; No message file for product=network, facility=NL
+  ORA-48165: Message 48165 not found; No message file for product=RDBMS, facility=ORA
+User inputted base directory is invalid [48187] [/app/oracle]
+

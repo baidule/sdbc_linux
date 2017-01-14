@@ -24,7 +24,7 @@ T_PkgType login_type[]={
 	{CH_CHAR,17,"uid"},
 	{CH_CHAR,14,"pwd"},
 	{-1,0}
-};	
+};
 
 static int login_finish(T_Connect *conn,T_NetHead *NetHead);
 
@@ -55,7 +55,7 @@ ShowLog(5,"%s:TCB:%d Client IP Addr=%s,Net_login %s",__FUNCTION__,up->TCB_no,cli
 
 	cp=getenv("KEYFILE");
 	if(!cp||!*cp) {
-		strcpy(tmp1,"È±ÉÙ»·¾³±äÁ¿ KEYFILE");
+		strcpy(tmp1,"ç¼ºå°‘çŽ¯å¢ƒå˜é‡ KEYFILE");
 errret:
 		ShowLog(1,"%s:Error %s",__FUNCTION__,tmp1);
 		NetHead->ERRNO1=-1;
@@ -82,7 +82,7 @@ reopen:
 	key=getdw(crc,&dw);
 	if(!key) {
 		freedw(&dw);
-                sprintf(tmp1,"ÎÞÐ§µÄ DEVID");
+                sprintf(tmp1,"æ— æ•ˆçš„ DEVID");
                 goto errret;
         }
 
@@ -124,12 +124,12 @@ err1:
 		frenz_decode(egm,tmp,ret);
 		tmp[ret]=0;
 		if(strcmp(tmp,logrec.CA)) {
-			sprintf(tmp1,"CA ´íÎó");
+			sprintf(tmp1,"CA é”™è¯¯");
 ShowLog(1,"%s:%s CA=%s log=%s len=%d",__FUNCTION__,tmp1,tmp,logrec.CA,ret);
 			goto err1;
 		}
 	}
-    } else {   //Î´×¢²á¿Í»§¶Ë×¢²á
+    } else {   //æœªæ³¨å†Œå®¢æˆ·ç«¯æ³¨å†Œ
 	char *p;
 	char *keyD;
 /* REGISTER label|CA|devfile|CHK_Code| */
@@ -148,11 +148,11 @@ ShowLog(2,"REGISTER %s",logrec.uid);
 		sprintf(tmp1,"REGISTER:devfile CHK Code error! ");//, crc,ret);
 		goto err1;
 	}
-	p=stptok(logrec.uid,logrec.devid,sizeof(logrec.devid),".");//logrec.devid=×¼±¸×¢²áµÄDEVID
+	p=stptok(logrec.uid,logrec.devid,sizeof(logrec.devid),".");//logrec.devid=å‡†å¤‡æ³¨å†Œçš„DEVID
 	crc=ssh_crc32((unsigned char *)logrec.devid,strlen(logrec.devid));
 	keyD=getdw(crc,&dw);
 	if(!keyD) {
-		sprintf(tmp1,"×¢²áÊ§°Ü,%s:Ã»ÓÐÕâ¸öÉè±¸£¡",
+		sprintf(tmp1,"æ³¨å†Œå¤±è´¥,%s:æ²¡æœ‰è¿™ä¸ªè®¾å¤‡ï¼",
 				logrec.devid);
 		goto err1;
 	}
@@ -167,15 +167,15 @@ ShowLog(5,"REGISTER:%s",tmp);
 		frenz_decode(egm,tmp,ret);
 		tmp[ret]=0;
 		if(strcmp(tmp,logrec.CA)) {
-			sprintf(tmp1,"×¢²áÊ§°Ü,%s ÒÑ±»×¢²á,Ê¹ÓÃÖÐ¡£",
+			sprintf(tmp1,"æ³¨å†Œå¤±è´¥,%s å·²è¢«æ³¨å†Œ,ä½¿ç”¨ä¸­ã€‚",
 					logrec.devid);
 			goto err1;
 		}
 	} else if(errno != 2) {
-		sprintf(tmp1,"CA ´íÎó");
+		sprintf(tmp1,"CA é”™è¯¯");
 		goto err1;
 	}
-/*°ÑÉè±¸ÌØÕ÷ÂëÐ´ÈëÎÄ¼þ*/
+/*æŠŠè®¾å¤‡ç‰¹å¾ç å†™å…¥æ–‡ä»¶*/
 	fd=fopen(tmp,"w");
 	if(fd) {
 	int len=strlen(logrec.CA);
@@ -191,7 +191,7 @@ ShowLog(5,"REGISTER:%s",tmp);
 	sprintf(tmp,"%s/%s",cp,logrec.uid);
 	fd=fopen(tmp,"r");
 	if(!fd) {
-		sprintf(tmp1,"REGISTER ´ò²»¿ªÎÄ¼þ %s err=%d,%s",
+		sprintf(tmp1,"REGISTER æ‰“ä¸å¼€æ–‡ä»¶ %s err=%d,%s",
 					logrec.CA,errno,strerror(errno));
 		goto errret;
 	}
@@ -209,18 +209,18 @@ ShowLog(5,"REGISTER:%s",tmp);
 	NetHead->PKG_REC_NUM=0;
     	SendPack(conn,NetHead);
 	return -1;
-    } //Î´×¢²á¿Í»§¶Ë×¢²áÍê³É
+    } //æœªæ³¨å†Œå®¢æˆ·ç«¯æ³¨å†Œå®Œæˆ
 
 	freedw(&dw);
 	up->poolno=get_scpool_no(NetHead->D_NODE);
 	if(up->poolno<0) {
-		sprintf(tmp1,"·Ç·¨µÄD_NODE %d",NetHead->D_NODE);
+		sprintf(tmp1,"éžæ³•çš„D_NODE %d",NetHead->D_NODE);
 		goto errret;
 	}
 	ret=get_s_connect(up->TCB_no,up->poolno,&gp->server,login_finish);
 	if(ret==0) return login_finish(conn,NetHead);
 	else if(ret==1) return -5;
-	sprintf(tmp1,"´íÎóµÄ²ÎÊý");
+	sprintf(tmp1,"é”™è¯¯çš„å‚æ•°");
 	goto errret;
 }
 
@@ -234,10 +234,10 @@ char tmp[30],tmp1[256];
 
 	unset_callback(up->TCB_no);
 //	up->poolno=get_scpool_no(NetHead->D_NODE);
-/* ÔõÃ´ÈÏÖ¤»¹µÃÏë°ì·¨
+/* æ€Žä¹ˆè®¤è¯è¿˜å¾—æƒ³åŠžæ³•
 	cp=get_LABEL(up->poolno);
 	if(!cp || strcmp(cp,logrec.label)) {
-		sprintf(tmp1,"´íÎóµÄDBLABEL %s",logrec.label);
+		sprintf(tmp1,"é”™è¯¯çš„DBLABEL %s",logrec.label);
 		goto errret;
 	}
 */
@@ -276,4 +276,3 @@ ShowLog(5,"%s:TCB:%d,poolno=%d,Errno=%d",__FUNCTION__,up->TCB_no,up->poolno,clip
     	SendPack(conn,NetHead);
 	return 1;
 }
-

@@ -1,0 +1,27 @@
+#-------------------------------------------------------------------------------
+# This file has been generated on 06.10.2009 at 14:04 from 192.168.36.9:389
+# by Softerra LDAP Browser 2.5 (http://www.ldapbrowser.com)
+#-------------------------------------------------------------------------------
+dn: ou=people,dc=easyway,dc=net
+ou: people
+objectClass: organizationalUnit
+
+dn: cn=Jerry Smith,ou=people,dc=easyway,dc=net
+cn: Jerry Smith
+sn: Smith
+mail: jerry@126.com
+telephoneNumber: 371-6338-3523
+objectClass: inetOrgPerson
+
+dn: cn=Tom Black,ou=people,dc=easyway,dc=net
+cn: Tom Black
+sn: Black
+objectClass: inetOrgPerson
+mobile: 13426307787
+telephoneNumber: 010-82001010
+userPassword: secret
+
+dn: cn=John Doe,ou=people,dc=easyway,dc=net
+objectClass: person
+cn: John Doe
+sn: Doe

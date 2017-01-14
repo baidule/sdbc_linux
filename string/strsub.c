@@ -1,12 +1,11 @@
 #include <stdlib.h>
 
 /************************************************************************/
-/*function:strsub ½ØÈ¡×Ö·û´®º¯Êı                                        */
-/*description:'src'ÖĞ½ØÈ¡´Óstart¿ªÊ¼µÄcnt¸ö×Ö·ûµ½'dest'ÖĞ               */
+/*function:strsub æˆªå–å­—ç¬¦ä¸²å‡½æ•°                                        */
+/*description:'src'ä¸­æˆªå–ä»startå¼€å§‹çš„cntä¸ªå­—ç¬¦åˆ°'dest'ä¸­               */
 /************************************************************************/
 void strsub(char *dest, const char *src,int start,int cnt)
 {
     strncpy(dest, src + start, cnt);
     dest[cnt] = '\0';
 }
-

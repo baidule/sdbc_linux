@@ -1,5 +1,5 @@
 /**************************************************
- * SDBCÁ¬½Ó³Ø¹ÜÀí
+ * SDBCè¿æ¥æ± ç®¡ç†
  **************************************************/
 #include <ctype.h>
 #include <sys/utsname.h>
@@ -63,7 +63,7 @@ typedef struct {
 
 static int SCPOOLNUM=0;
 static pool *scpool=NULL;
-//ÊÍ·ÅÁ¬½Ó³Ø  
+//é‡Šæ”¾è¿æ¥æ± 
 void scpool_free()
 {
 int i,n;
@@ -85,7 +85,7 @@ int i,n;
 	scpool=NULL;
 }
 
-//³õÊ¼»¯Á¬½Ó³Ø  
+//åˆå§‹åŒ–è¿æ¥æ± 
 int scpool_init()
 {
 int n,i,ret;
@@ -98,7 +98,7 @@ SCPOOL_stu node;
 	if(scpool) return 0;
 	p=getenv("SCPOOLCFG");
 	if(!p||!*p) {
-		ShowLog(1,"%s:È±ÉÙ»·¾³±äÁ¿SCPOOLCFG!",__FUNCTION__);
+		ShowLog(1,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡SCPOOLCFG!",__FUNCTION__);
 		return -1;
 	}
 	fd=fopen((const char *)p,"r");
@@ -145,7 +145,7 @@ SCPOOL_stu node;
 		json_object_put(cfg);
 		return -12;
 	}
-	
+
 	if(0!=(i=pthread_cond_init(&scpool[n].cond,NULL))) {
 		ShowLog(1,"%s:cond init  err %s",__FUNCTION__,
 			strerror(i));
@@ -179,7 +179,7 @@ SCPOOL_stu node;
 	return SCPOOLNUM;
 }
 
-//Á¬½Ó
+//è¿æ¥
 static int sc_connect(pool *p1,resource *rs)
 {
 int ret=-1;
@@ -228,14 +228,14 @@ log_stu logs;
 	net_dispack(&logs,Head.data,log_tpl);
 	strcpy(rs->cli.DBOWN,logs.DBOWN);
 	strcpy(rs->cli.UID,logs.DBUSER);
-//È¡·şÎñÃû
+//å–æœåŠ¡å
 	ret=init_svc_no(&rs->Conn);
 	rs->cli.Errno=ret;
 	*rs->cli.ErrMsg=0;
 	return ret;
 }
 
-//È¡Á¬½Ó  
+//å–è¿æ¥
 T_Connect * get_SC_connect(int TCBno,int n,int flg)
 {
 int i,num;
@@ -246,7 +246,7 @@ pthread_t tid=pthread_self();
 	if(!scpool || n<0 || n>=SCPOOLNUM) return NULL;
 	pl=&scpool[n];
 	if(!pl->lnk) {
-		ShowLog(1,"%s:ÎŞĞ§µÄÁ¬½Ó³Ø[%d]",__FUNCTION__,n);
+		ShowLog(1,"%s:æ— æ•ˆçš„è¿æ¥æ± [%d]",__FUNCTION__,n);
 		return NULL;
 	}
 	num=pl->resource_num;
@@ -259,7 +259,7 @@ pthread_t tid=pthread_self();
 			case -1:
 			case -2:
 			case -3:
-				ShowLog(1,"%s:scpool[%d].%d Á¬½Ó%s/%s´í:err=%d,%s",
+				ShowLog(1,"%s:scpool[%d].%d è¿æ¥%s/%sé”™:err=%d,%s",
 					__FUNCTION__,n,i,pl->log.HOST,pl->log.PORT,
 					rs->cli.Errno, rs->cli.ErrMsg);
 				pthread_mutex_unlock(&pl->mut);
@@ -268,12 +268,12 @@ pthread_t tid=pthread_self();
 				break;
 			default:
 				rs->cli.Errno=-1;
-				ShowLog(1,"%s:scpool[%d].%d Á¬½Ó%s/%s´í:err=%d,%s",
+				ShowLog(1,"%s:scpool[%d].%d è¿æ¥%s/%sé”™:err=%d,%s",
 					__FUNCTION__,n,i,pl->log.HOST,pl->log.PORT,
 					rs->cli.Errno, rs->cli.ErrMsg);
 				continue;
-			} 
-		} 
+			}
+		}
 		rs->TCBno=TCBno;
 		rs->timestamp=now_usec();
 		pthread_mutex_unlock(&pl->mut);
@@ -288,11 +288,11 @@ pthread_t tid=pthread_self();
 		return NULL;
 	}
 	if(log_level) ShowLog(log_level,"%s tid=%lu pool[%d] suspend",__FUNCTION__,pthread_self(),n);
-	pthread_cond_wait(&pl->cond,&pl->mut); //Ã»ÓĞ×ÊÔ´£¬µÈ´ı 
+	pthread_cond_wait(&pl->cond,&pl->mut); //æ²¡æœ‰èµ„æºï¼Œç­‰å¾…
 	if(log_level) ShowLog(log_level,"%s tid=%lu pool[%d] weakup",__FUNCTION__,pthread_self(),n);
     }
 }
-//¹é»¹Êı¾İ¿âÁ¬½Ó  
+//å½’è¿˜æ•°æ®åº“è¿æ¥
 void release_SC_connect(T_Connect **Connect,int TCBno,int n)
 {
 int i,num;
@@ -302,7 +302,7 @@ resource *rs;
 T_CLI_Var *clip;
 //ShowLog(5,"%s:TCB:%d,poolno=%d",__FUNCTION__,TCBno,n);
 	if(!Connect || !scpool || n<0 || n>=SCPOOLNUM) {
-		ShowLog(1,"%s:TCB:%d,poolno=%d,´íÎóµÄ²ÎÊı",__FUNCTION__,TCBno,n);
+		ShowLog(1,"%s:TCB:%d,poolno=%d,é”™è¯¯çš„å‚æ•°",__FUNCTION__,TCBno,n);
 		return;
 	}
 	if(!*Connect) {
@@ -313,7 +313,7 @@ T_CLI_Var *clip;
 	pl=&scpool[n];
 	rs=pl->lnk;
 	if(!rs) {
-		ShowLog(1,"%s:ÎŞĞ§µÄÁ¬½Ó³Ø[%d]",__FUNCTION__,n);
+		ShowLog(1,"%s:æ— æ•ˆçš„è¿æ¥æ± [%d]",__FUNCTION__,n);
 		return;
 	}
 	num=pl->resource_num;
@@ -329,13 +329,13 @@ if(*Connect != &rs->Conn) {
 if(clip != &rs->cli) {
 	ShowLog(1,"%s:TCB:%d,clip not equal!",__FUNCTION__,TCBno);
 }
-		if(rs->cli.Errno==-1) {  //Á¬½ÓÊ§Ğ§
+		if(rs->cli.Errno==-1) {  //è¿æ¥å¤±æ•ˆ
 ShowLog(1,"%s:scpool[%d].%d fail!",__FUNCTION__,n,i);
 			disconnect(&rs->Conn);
 		}
 		rs->TCBno=-1;
 		pthread_mutex_unlock(&pl->mut);
-		pthread_cond_signal(&pl->cond); //Èç¹ûÓĞµÈ´ıÁ¬½ÓµÄÏß³Ì¾Í»½ĞÑËü 
+		pthread_cond_signal(&pl->cond); //å¦‚æœæœ‰ç­‰å¾…è¿æ¥çš„çº¿ç¨‹å°±å”¤é†’å®ƒ
   		rs->timestamp=now_usec();
 		clip->Errno=0;
 		*clip->ErrMsg=0;
@@ -344,12 +344,12 @@ ShowLog(1,"%s:scpool[%d].%d fail!",__FUNCTION__,n,i);
 				tid,TCBno,n,i);
 		return;
 	}
-ShowLog(1,"%s:ÔÚpool[%d]ÖĞÎ´·¢ÏÖ¸ÃTCBno:%d",__FUNCTION__,n,TCBno);
+ShowLog(1,"%s:åœ¨pool[%d]ä¸­æœªå‘ç°è¯¥TCBno:%d",__FUNCTION__,n,TCBno);
 	clip->Errno=0;
 	*clip->ErrMsg=0;
 	*Connect=NULL;
 }
-//Á¬½Ó³Ø¼à¿Ø 
+//è¿æ¥æ± ç›‘æ§
 void scpool_check()
 {
 int n,i,num;
@@ -371,7 +371,7 @@ T_Connect *conn=NULL;
 		pthread_mutex_lock(&pl->mut);
 		for(i=0;i<num;i++,rs++) if(rs->TCBno<0) {
 			if(rs->Conn.Socket>-1 && (now-rs->timestamp)>299000000) {
-//¿ÕÏĞÊ±¼äÌ«³¤ÁË     
+//ç©ºé—²æ—¶é—´å¤ªé•¿äº†
 				disconnect(&rs->Conn);
 				rs->cli.Errno=-1;
 				ShowLog(5,"%s:Close SCpool[%d].lnk[%d],since %s",__FUNCTION__,
@@ -379,9 +379,9 @@ T_Connect *conn=NULL;
 			}
 		} else {
 			if(rs->Conn.Socket>-1 && (now-rs->timestamp)>299000000) {
-//Õ¼ÓÃÊ±¼äÌ«³¤ÁË     
+//å ç”¨æ—¶é—´å¤ªé•¿äº†
 				if(-1==get_TCB_status(rs->TCBno)) {
-				//TCBÒÑ¾­½áÊø£¬ÊÍ·ÅÖ®
+				//TCBå·²ç»ç»“æŸï¼Œé‡Šæ”¾ä¹‹
 					ShowLog(3,"%s:scpool[%d].lnk[%d] TCB:%d to be release",
 						__FUNCTION__,n,i,rs->TCBno);
 					rs->cli.Errno=-1;
@@ -398,8 +398,8 @@ T_Connect *conn=NULL;
 	}
 }
 /**
- * ¸ù¾İd_nodeÈ¡Á¬½Ó³ØºÅ  
- * Ê§°Ü·µ»Ø-1
+ * æ ¹æ®d_nodeå–è¿æ¥æ± å·
+ * å¤±è´¥è¿”å›-1
  */
 int get_scpool_no(int d_node)
 {
@@ -421,4 +421,3 @@ char *get_LABEL(poolno)
 	if(poolno<0 || poolno>=SCPOOLNUM) return NULL;
 	return scpool[poolno].log.LABEL;
 }
-

@@ -1,4 +1,4 @@
-//连接
+//杩炴帴
 static int sc_connect(pool *p1,resource *rs)
 {
 int ret=-1;
@@ -47,7 +47,7 @@ log_stu logs;
 	net_dispack(&logs,Head.data,log_tpl);
 	strcpy(rs->cli.DBOWN,logs.DBOWN);
 	strcpy(rs->cli.UID,logs.DBUSER);
-//取服务名
+//鍙栨湇鍔″悕
 	ret=init_svc_no(&rs->Conn);
 	rs->cli.Errno=ret;
 	*rs->cli.ErrMsg=0;

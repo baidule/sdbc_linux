@@ -9,102 +9,102 @@
 
 #include "G5.h"
 
-/* ÈÕÖ¾Êä³ö */
+/* æ—¥å¿—è¾“å‡º */
 static void DebugOutput( struct ServerEnv *pse , char *format , ... )
 {
 	va_list		valist ;
-	
+
 	if( pse->cmd_para.debug_flag == 0 )
 		return;
-	
+
 	va_start( valist , format );
 	vfprintf( stdout , format , valist );
 	va_end( valist );
-	
+
 	return;
 }
 
 static void InfoOutput( struct ServerEnv *pse , char *format , ... )
 {
 	va_list		valist ;
-	
+
 	va_start( valist , format );
 	vfprintf( stdout , format , valist );
 	va_end( valist );
-	
+
 	return;
 }
 
 static void ErrorOutput( struct ServerEnv *pse , char *format , ... )
 {
 	va_list		valist ;
-	
+
 	va_start( valist , format );
 	vfprintf( stderr , format , valist );
 	va_end( valist );
-	
+
 	return;
 }
 
-/* È¡Ëæ»úÊı¹¤¾ßº¯Êı */
+/* å–éšæœºæ•°å·¥å…·å‡½æ•° */
 static int FetchRand( int min, int max )
 {
 	return ( rand() % ( max - min + 1 ) ) + min ;
 }
 
-/* ¼ÆËã×Ö·û´®HASH¹¤¾ßº¯Êı */
+/* è®¡ç®—å­—ç¬¦ä¸²HASHå·¥å…·å‡½æ•° */
 static unsigned long CalcHash( char *str )
 {
 	unsigned long	hashval ;
 	unsigned char	*puc = NULL ;
-	
+
 	hashval = 19791007 ;
 	for( puc = (unsigned char *)str ; *puc ; puc++ )
 	{
 		hashval = hashval * 19830923 + (*puc) ;
 	}
-	
+
 	return hashval;
 }
 
-/* ÉèÖÃsockÖØÓÃÑ¡Ïî */
+/* è®¾ç½®socké‡ç”¨é€‰é¡¹ */
 static int SetReuseAddr( int sock )
 {
 	int	on ;
-	
+
 	on = 1 ;
 	setsockopt( sock , SOL_SOCKET , SO_REUSEADDR , (void *) & on, sizeof(on) );
-	
+
 	return 0;
 }
 
-/* ÉèÖÃsock·Ç¶ÂÈûÑ¡Ïî */
+/* è®¾ç½®sockéå µå¡é€‰é¡¹ */
 static int SetNonBlocking( int sock )
 {
 	int	opts;
-	
+
 	opts = fcntl( sock , F_GETFL ) ;
 	if( opts < 0 )
 	{
 		return -1;
 	}
-	
+
 	opts = opts | O_NONBLOCK;
 	if( fcntl( sock , F_SETFL , opts ) < 0 )
 	{
 		return -2;
 	}
-	
+
 	return 0;
 }
 
-/* ´ÓepollÁ¬½Ó³ØÈ¡Ò»¸öÎ´ÓÃµ¥Ôª */
+/* ä»epollè¿æ¥æ± å–ä¸€ä¸ªæœªç”¨å•å…ƒ */
 static int GetForwardSessionUnusedUnit( struct ServerEnv *pse , struct ForwardSession **pp_forward_session )
 {
 	unsigned long		index ;
 	unsigned long		count ;
 	struct ForwardSession	*p_forward_session = NULL ;
-	
+
 	for( count = 0 , index = pse->forward_session_use_offsetpos , p_forward_session = & (pse->forward_session[pse->forward_session_use_offsetpos])
 		; count < pse->forward_session_maxcount
 		; count++ , index++ , p_forward_session++ )
@@ -114,7 +114,7 @@ static int GetForwardSessionUnusedUnit( struct ServerEnv *pse , struct ForwardSe
 			index = 0 ;
 			p_forward_session = & (pse->forward_session[0]) ;
 		}
-		
+
 		if( p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_UNUSED )
 		{
 			memset( p_forward_session , 0x00 , sizeof(struct ForwardSession) );
@@ -123,23 +123,23 @@ static int GetForwardSessionUnusedUnit( struct ServerEnv *pse , struct ForwardSe
 			return FOUND;
 		}
 	}
-	
+
 	return NOT_FOUND;
 }
 
-/* °ÑÒ»¸öepollÁ¬½Ó³Øµ¥ÔªÉèÖÃÎªÎ´ÓÃ×´Ì¬ */
+/* æŠŠä¸€ä¸ªepollè¿æ¥æ± å•å…ƒè®¾ç½®ä¸ºæœªç”¨çŠ¶æ€ */
 static int SetForwardSessionUnitUnused( struct ForwardSession *p_forward_session )
 {
 	memset( p_forward_session , 0x00 , sizeof(struct ForwardSession) );
 	return 0;
 }
 
-/* ²éÑ¯×ª·¢¹æÔò */
+/* æŸ¥è¯¢è½¬å‘è§„åˆ™ */
 static int QueryForwardRule( struct ServerEnv *pse , char *rule_id , struct ForwardRule **pp_forward_rule , unsigned long *p_index )
 {
 	unsigned long		index ;
 	struct ForwardRule	*p_forward_rule = NULL ;
-	
+
 	for( index = 0 , p_forward_rule = & (pse->forward_rule[0]) ; index < pse->forward_rule_count ; index++ , p_forward_rule++ )
 	{
 		if( strcmp( p_forward_rule->rule_id , rule_id ) == 0 )
@@ -151,16 +151,16 @@ static int QueryForwardRule( struct ServerEnv *pse , char *rule_id , struct Forw
 			return FOUND;
 		}
 	}
-	
+
 	return NOT_FOUND;
 }
 
-/* °´×ª·¢¹æÔòÇ¿ÖÆ¶Ï¿ªËùÓĞÏà¹ØÍøÂçÁ¬½Ó */
+/* æŒ‰è½¬å‘è§„åˆ™å¼ºåˆ¶æ–­å¼€æ‰€æœ‰ç›¸å…³ç½‘ç»œè¿æ¥ */
 static int CloseSocketWithRuleForcely( struct ServerEnv *pse , struct ForwardRule *p_forward_rule )
 {
 	unsigned long		index ;
 	struct ForwardSession	*p_forward_session = NULL ;
-	
+
 	for( index = 0 , p_forward_session = & (pse->forward_session[0])
 		; index < pse->forward_session_maxcount
 		; index++ , p_forward_session++ )
@@ -183,27 +183,27 @@ static int CloseSocketWithRuleForcely( struct ServerEnv *pse , struct ForwardRul
 			}
 		}
 	}
-	
+
 	return 0;
 }
 
-/* Èç¹ûÃ»ÓĞ°ó¶¨ÕìÌı¶Ë¿Ú£¬°ó¶¨Ö®£¬²¢µÇ¼Çµ½epoll³Ø */
+/* å¦‚æœæ²¡æœ‰ç»‘å®šä¾¦å¬ç«¯å£ï¼Œç»‘å®šä¹‹ï¼Œå¹¶ç™»è®°åˆ°epollæ±  */
 static int BinListenSocket( struct ServerEnv *pse , struct ForwardRule *p_forward_rule , struct ForwardNetAddress *p_forward_addr )
 {
 	unsigned long		forward_session_index ;
 	struct ForwardSession	*p_forward_session = NULL ;
 	struct epoll_event	event ;
-	
+
 	int			nret = 0 ;
-	
-	/* ÅĞ¶ÏÊÇ·ñÌ«¶à×ª·¢¹æÔò */
+
+	/* åˆ¤æ–­æ˜¯å¦å¤ªå¤šè½¬å‘è§„åˆ™ */
 	if( pse->forward_session_count >= pse->forward_session_maxcount )
 	{
 		ErrorOutput( pse , "too many listen addr\n" );
 		return -91;
 	}
-	
-	/* ÅĞ¶ÏÊÇ·ñÓĞÖØ¸´×ª·¢¹æÔò */
+
+	/* åˆ¤æ–­æ˜¯å¦æœ‰é‡å¤è½¬å‘è§„åˆ™ */
 	for( forward_session_index = 0 , p_forward_session = & ( pse->forward_session[0] )
 		; forward_session_index < pse->forward_session_maxcount
 		; forward_session_index++ , p_forward_session++ )
@@ -218,69 +218,69 @@ static int BinListenSocket( struct ServerEnv *pse , struct ForwardRule *p_forwar
 			}
 		}
 	}
-	
-	/* ´´½¨ÕìÌı¶Ë¿Ú£¬µÇ¼Ç×ª·¢»á»°£¬µÇ¼Çepoll³Ø */
+
+	/* åˆ›å»ºä¾¦å¬ç«¯å£ï¼Œç™»è®°è½¬å‘ä¼šè¯ï¼Œç™»è®°epollæ±  */
 	nret = GetForwardSessionUnusedUnit( pse , & p_forward_session ) ;
 	if( nret != FOUND )
 	{
 		ErrorOutput( pse , "too many listen addr\n" );
 		return -92;
 	}
-	
+
 	strcpy( p_forward_session->listen_addr.rule_mode , p_forward_rule->rule_mode );
 	strcpy( p_forward_session->listen_addr.netaddr.ip , p_forward_addr->netaddr.ip );
 	strcpy( p_forward_session->listen_addr.netaddr.port , p_forward_addr->netaddr.port );
-	
+
 	p_forward_session->listen_addr.sock = socket( AF_INET , SOCK_STREAM , IPPROTO_TCP );
 	if( p_forward_session->listen_addr.sock < 0 )
 	{
 		ErrorOutput( pse , "socket failed[%d]errno[%d]\n" , p_forward_session->listen_addr.sock , errno );
 		return -93;
 	}
-	
+
 	SetReuseAddr( p_forward_session->listen_addr.sock );
 	SetNonBlocking( p_forward_session->listen_addr.sock );
-	
+
 	memset( & (p_forward_session->listen_addr.netaddr.sockaddr) , 0x00 , sizeof(p_forward_session->listen_addr.netaddr.sockaddr) );
 	p_forward_session->listen_addr.netaddr.sockaddr.sin_family = AF_INET ;
 	inet_aton( p_forward_session->listen_addr.netaddr.ip , & (p_forward_session->listen_addr.netaddr.sockaddr.sin_addr) );
 	p_forward_session->listen_addr.netaddr.sockaddr.sin_port = htons( (unsigned short)atoi(p_forward_session->listen_addr.netaddr.port) );
-	
+
 	bind( p_forward_session->listen_addr.sock , (struct sockaddr *) & (p_forward_session->listen_addr.netaddr.sockaddr) , sizeof(struct sockaddr) );
 	listen( p_forward_session->listen_addr.sock , 1024 );
-	
+
 	p_forward_session->forward_session_type = FORWARD_SESSION_TYPE_LISTEN ;
-	
+
 	memset( & event , 0x00 , sizeof(event) );
 	event.data.ptr = p_forward_session ;
 	event.events = EPOLLIN | EPOLLET ;
 	epoll_ctl( pse->event_env , EPOLL_CTL_ADD , p_forward_session->listen_addr.sock , & event );
-	
+
 	pse->forward_session_count++;
-	
+
 	p_forward_addr->sock = p_forward_session->listen_addr.sock ;
-	
+
 	return 0;
 }
 
-/* ĞÂÔöÒ»Ìõ×ª·¢¹æÔò */
+/* æ–°å¢ä¸€æ¡è½¬å‘è§„åˆ™ */
 static int AddForwardRule( struct ServerEnv *pse , struct ForwardRule *p_forward_rule )
 {
 	int		nret = 0 ;
-	
+
 	if( pse->forward_rule_count >= pse->cmd_para.forward_rule_maxcount )
 	{
 		ErrorOutput( pse , "too many forward rule\n" );
 		return -1;
 	}
-	
+
 	nret = QueryForwardRule( pse , p_forward_rule->rule_id , NULL , NULL ) ;
 	if( nret == FOUND )
 	{
 		ErrorOutput( pse , "forward rule rule_id[%s] found\n" , p_forward_rule->rule_id );
 		return -2;
 	}
-	
+
 	if( strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_G ) == 0 )
 	{
 		nret = BinListenSocket( pse , p_forward_rule , p_forward_rule->forward_addr ) ;
@@ -290,27 +290,27 @@ static int AddForwardRule( struct ServerEnv *pse , struct ForwardRule *p_forward
 			return -3;
 		}
 	}
-	
+
 	memcpy( & (pse->forward_rule[pse->forward_rule_count]) , p_forward_rule , sizeof(struct ForwardRule) );
 	pse->forward_rule_count++;
-	
+
 	return 0;
 }
 
-/* ĞŞ¸ÄÒ»Ìõ×ª·¢¹æÔò */
+/* ä¿®æ”¹ä¸€æ¡è½¬å‘è§„åˆ™ */
 static int ModifyForwardRule( struct ServerEnv *pse , struct ForwardRule *p_forward_rule )
 {
 	struct ForwardRule	*p = NULL ;
-	
+
 	int			nret = 0 ;
-	
+
 	nret = QueryForwardRule( pse , p_forward_rule->rule_id , & p , NULL ) ;
 	if( nret == NOT_FOUND )
 	{
 		ErrorOutput( pse , "forward rule rule_id[%s] not found\n" , p_forward_rule->rule_id );
 		return -1;
 	}
-	
+
 	if( strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_G ) == 0 )
 	{
 		nret = BinListenSocket( pse , p_forward_rule , p_forward_rule->forward_addr ) ;
@@ -324,83 +324,83 @@ static int ModifyForwardRule( struct ServerEnv *pse , struct ForwardRule *p_forw
 			InfoOutput( pse , "LISTEN #%d#\n" , p_forward_rule->forward_addr->sock );
 		}
 	}
-	
+
 	CloseSocketWithRuleForcely( pse , p );
-	
+
 	memcpy( p , p_forward_rule , sizeof(struct ForwardRule) );
-	
+
 	return 0;
 }
 
-/* É¾³ıÒ»Ìõ×ª·¢¹æÔò */
+/* åˆ é™¤ä¸€æ¡è½¬å‘è§„åˆ™ */
 static int RemoveForwardRule( struct ServerEnv *pse , char *rule_id )
 {
 	struct ForwardRule	*p_forward_rule = NULL ;
 	unsigned long		index ;
-	
+
 	int			nret = 0 ;
-	
+
 	if( pse->forward_rule_count == 0 )
 	{
 		ErrorOutput( pse , "no forward rule exist\n" );
 		return -1;
 	}
-	
+
 	nret = QueryForwardRule( pse , rule_id , & p_forward_rule , & index ) ;
 	if( nret == NOT_FOUND )
 	{
 		ErrorOutput( pse , "forward rule rule_id[%s] not found\n" , rule_id );
 		return -2;
 	}
-	
+
 	CloseSocketWithRuleForcely( pse , p_forward_rule );
-	
+
 	memmove( & (pse->forward_rule[index]) , & (pse->forward_rule[index+1]) , sizeof(struct ForwardRule) * (pse->forward_rule_count-index-1) );
 	memset( & (pse->forward_rule[pse->forward_rule_count-1]) , 0x00 , sizeof(struct ForwardRule) );
 	pse->forward_rule_count--;
-	
+
 	return 0;
 }
 
-/* ´ÓÅäÖÃ¶ÎÖĞ½âÎöÍøÂçµØÖ· */
+/* ä»é…ç½®æ®µä¸­è§£æç½‘ç»œåœ°å€ */
 static int ParseIpAndPort( char *ip_and_port , struct NetAddress *paddr )
 {
 	char		*p_colon = NULL ;
-	
+
 	p_colon = strchr( ip_and_port , ':' ) ;
 	if( p_colon == NULL )
 		return -1;
-	
+
 	strncpy( paddr->ip , ip_and_port , p_colon - ip_and_port );
 	strcpy( paddr->port , p_colon + 1 );
-	
+
 	return 0;
 }
 
-/* ×°ÔØµ¥Ìõ×ª·¢ÅäÖÃ */
+/* è£…è½½å•æ¡è½¬å‘é…ç½® */
 static int LoadForwardConfig( struct ServerEnv *pse , char *buffer , struct ForwardRule *p_forward_rule )
 {
 	char				*p_remark = NULL ;
-	
+
 	char				*p_begin = NULL ;
-	
+
 	unsigned long			client_index ;
 	struct ClientNetAddress		*p_client_addr = NULL ;
 	unsigned long			forward_index ;
 	struct ForwardNetAddress	*p_forward_addr = NULL ;
 	unsigned long			server_index ;
 	struct ServerNetAddress		*p_server_addr = NULL ;
-	
+
 	int				nret = 0 ;
-	
+
 	p_remark = strchr( buffer , '#' ) ;
 	if( p_remark )
 	{
 		(*p_remark) = '\0' ;
 	}
-	
+
 	memset( p_forward_rule , 0x00 , sizeof(struct ForwardRule) );
-	
+
 	p_begin = strtok( buffer , " \t\r\n" ) ;
 	if( p_begin == NULL )
 	{
@@ -412,7 +412,7 @@ static int LoadForwardConfig( struct ServerEnv *pse , char *buffer , struct Forw
 		return -12;
 	}
 	strcpy( p_forward_rule->rule_id , p_begin );
-	
+
 	p_begin = strtok( NULL , " \t\r\n" ) ;
 	if( p_begin == NULL )
 	{
@@ -425,7 +425,7 @@ static int LoadForwardConfig( struct ServerEnv *pse , char *buffer , struct Forw
 		return -22;
 	}
 	strcpy( p_forward_rule->rule_mode , p_begin );
-	
+
 	if( strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_G )
 		&& strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_MS )
 		&& strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_RR )
@@ -437,9 +437,9 @@ static int LoadForwardConfig( struct ServerEnv *pse , char *buffer , struct Forw
 		ErrorOutput( pse , "rule rule_mode [%s] invalid\n" , p_forward_rule->rule_mode );
 		return -23;
 	}
-	
+
 	InfoOutput( pse , "%s %s" , p_forward_rule->rule_id , p_forward_rule->rule_mode );
-	
+
 	for( client_index = 0 , p_client_addr = & (p_forward_rule->client_addr[0]) ; client_index < RULE_CLIENT_MAXCOUNT ; client_index++ , p_client_addr++ , p_forward_rule->client_count++ )
 	{
 		p_begin = strtok( NULL , " \t\r\n" ) ;
@@ -448,24 +448,24 @@ static int LoadForwardConfig( struct ServerEnv *pse , char *buffer , struct Forw
 			ErrorOutput( pse , "expect client addr\n" );
 			return -31;
 		}
-		
+
 		if( strcmp( p_begin , "-" ) == 0 || strcmp( p_begin , ";" ) == 0 )
 			break;
-		
+
 		nret = ParseIpAndPort( p_begin , & (p_client_addr->netaddr) ) ;
 		if( nret )
 		{
 			ErrorOutput( pse , "client addr invalid[%d]\n" , nret );
 			return -32;
 		}
-		
+
 		InfoOutput( pse , " %s:%s" , p_client_addr->netaddr.ip , p_client_addr->netaddr.port );
 	}
-	
+
 	if( strcmp( p_begin , ";" ) != 0 )
 	{
 		printf( " -" );
-		
+
 		for( forward_index = 0 , p_forward_addr = & (p_forward_rule->forward_addr[0]) ; forward_index < RULE_CLIENT_MAXCOUNT ; forward_index++ , p_forward_addr++ , p_forward_rule->forward_count++ )
 		{
 			p_begin = strtok( NULL , " \t\r\n" ) ;
@@ -474,19 +474,19 @@ static int LoadForwardConfig( struct ServerEnv *pse , char *buffer , struct Forw
 				ErrorOutput( pse , "expect forward addr\n" );
 				return -41;
 			}
-			
+
 			if( strcmp( p_begin , ">" ) == 0 || strcmp( p_begin , ";" ) == 0 )
 				break;
-			
+
 			nret = ParseIpAndPort( p_begin , & (p_forward_addr->netaddr) ) ;
 			if( nret )
 			{
 				ErrorOutput( pse , "forward addr invalid[%d]\n" , nret );
 				return -42;
 			}
-			
+
 			InfoOutput( pse , " %s:%s" , p_forward_addr->netaddr.ip , p_forward_addr->netaddr.port );
-			
+
 			nret = BinListenSocket( pse , p_forward_rule , p_forward_addr ) ;
 			if( nret < 0 )
 			{
@@ -497,11 +497,11 @@ static int LoadForwardConfig( struct ServerEnv *pse , char *buffer , struct Forw
 				InfoOutput( pse , "(LISTEN)#%d#" , p_forward_addr->sock );
 			}
 		}
-		
+
 		if( strcmp( p_begin , ";" ) != 0 )
 		{
 			printf( " >" );
-			
+
 			for( server_index = 0 , p_server_addr = & (p_forward_rule->server_addr[0]) ; server_index < RULE_CLIENT_MAXCOUNT ; server_index++ , p_server_addr++ , p_forward_rule->server_count++ )
 			{
 				p_begin = strtok( NULL , " \t\r\n" ) ;
@@ -510,24 +510,24 @@ static int LoadForwardConfig( struct ServerEnv *pse , char *buffer , struct Forw
 					fprintf( stderr , "expect server addr\n" );
 					return -51;
 				}
-				
+
 				if( strcmp( p_begin , ";" ) == 0 )
 					break;
-				
+
 				nret = ParseIpAndPort( p_begin , & (p_server_addr->netaddr) ) ;
 				if( nret )
 				{
 					fprintf( stderr , "server addr invalid[%d]\n" , nret );
 					return -52;
 				}
-				
+
 				InfoOutput( pse , " %s:%s" , p_server_addr->netaddr.ip , p_server_addr->netaddr.port );
 			}
 		}
 	}
-	
+
 	InfoOutput( pse , " ;\n" );
-	
+
 	if( strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_G ) == 0 )
 	{
 		if( p_forward_rule->server_count > 0 )
@@ -549,27 +549,27 @@ static int LoadForwardConfig( struct ServerEnv *pse , char *buffer , struct Forw
 			return -63;
 		}
 	}
-	
+
 	return 0;
 }
 
-/* ×°ÔØËùÓĞÅäÖÃ */
+/* è£…è½½æ‰€æœ‰é…ç½® */
 static int LoadConfig( struct ServerEnv *pse )
 {
 	FILE				*fp = NULL ;
 	char				buffer[ 1024 + 1 ] ;
-	
+
 	struct ForwardRule		forward_rule ;
-	
+
 	int				nret = 0 ;
-	
+
 	fp = fopen( pse->cmd_para.config_pathfilename , "r" ) ;
 	if( fp == NULL )
 	{
 		ErrorOutput( pse , "can't open config file [%s]\n" , pse->cmd_para.config_pathfilename );
 		return -1;
 	}
-	
+
 	while( fgets( buffer , sizeof(buffer)-1 , fp ) )
 	{
 		nret = LoadForwardConfig( pse , buffer , & forward_rule ) ;
@@ -593,13 +593,13 @@ static int LoadConfig( struct ServerEnv *pse )
 			}
 		}
 	}
-	
+
 	fclose(fp);
-	
+
 	return 0;
 }
 
-/* ÅĞ¶Ï×Ö·û´®Æ¥ÅäĞÔ */
+/* åˆ¤æ–­å­—ç¬¦ä¸²åŒ¹é…æ€§ */
 static int IsMatchString(char *pcMatchString, char *pcObjectString, char cMatchMuchCharacters, char cMatchOneCharacters)
 {
 	int el=strlen(pcMatchString);
@@ -648,17 +648,17 @@ static int IsMatchString(char *pcMatchString, char *pcObjectString, char cMatchM
 		while(pcMatchString[ie])
 			if(pcMatchString[ie++]!=cMatchMuchCharacters)
 				return -2;
-	} 
+	}
 
 	return 0;
 }
 
-/* ÅĞ¶Ï¿Í»§¶ËÍøÂçµØÖ·ÊÇ·ñÆ¥Åä */
+/* åˆ¤æ–­å®¢æˆ·ç«¯ç½‘ç»œåœ°å€æ˜¯å¦åŒ¹é… */
 static int MatchClientAddr( struct ClientNetAddress *p_client_addr , struct ForwardRule *p_forward_rule )
 {
 	unsigned long			match_addr_index ;
 	struct ClientNetAddress		*p_match_addr = NULL ;
-	
+
 	for( match_addr_index = 0 , p_match_addr = & (p_forward_rule->client_addr[0])
 		; match_addr_index < p_forward_rule->client_count
 		; match_addr_index++ , p_match_addr++ )
@@ -671,16 +671,16 @@ static int MatchClientAddr( struct ClientNetAddress *p_client_addr , struct Forw
 			return MATCH;
 		}
 	}
-	
+
 	return NOT_MATCH;
 }
 
-/* ÅĞ¶Ï±¾µØÕìÌı¶ËÍøÂçµØÖ·ÊÇ·ñÆ¥Åä */
+/* åˆ¤æ–­æœ¬åœ°ä¾¦å¬ç«¯ç½‘ç»œåœ°å€æ˜¯å¦åŒ¹é… */
 static int MatchForwardAddr( struct ListenNetAddress *p_listen_addr , struct ForwardRule *p_forward_rule )
 {
 	unsigned long			match_addr_index ;
 	struct ForwardNetAddress	*p_match_addr = NULL ;
-	
+
 	for( match_addr_index = 0 , p_match_addr = & (p_forward_rule->forward_addr[0])
 		; match_addr_index < p_forward_rule->forward_count
 		; match_addr_index++ , p_match_addr++ )
@@ -693,16 +693,16 @@ static int MatchForwardAddr( struct ListenNetAddress *p_listen_addr , struct For
 			return MATCH;
 		}
 	}
-	
+
 	return NOT_MATCH;
 }
 
-/* ÅĞ¶Ï×ª·¢¹æÔòÊÇ·ñÆ¥Åä */
+/* åˆ¤æ–­è½¬å‘è§„åˆ™æ˜¯å¦åŒ¹é… */
 static int MatchForwardRule( struct ServerEnv *pse , struct ClientNetAddress *p_client_addr , struct ListenNetAddress *p_listen_addr , struct ForwardRule **pp_forward_rule )
 {
 	unsigned long		forward_no ;
 	struct ForwardRule	*p_forward_rule = NULL ;
-	
+
 	for( forward_no = 0 , p_forward_rule = & (pse->forward_rule[0]) ; forward_no < pse->forward_rule_count ; forward_no++ , p_forward_rule++ )
 	{
 		if( MatchForwardAddr( p_listen_addr , p_forward_rule ) == MATCH && MatchClientAddr( p_client_addr , p_forward_rule ) == MATCH )
@@ -711,11 +711,11 @@ static int MatchForwardRule( struct ServerEnv *pse , struct ClientNetAddress *p_
 			return FOUND;
 		}
 	}
-	
+
 	return NOT_FOUND;
 }
 
-/* ´ÓÄ¿±êÍøÂçµØÖ·ÖĞ¸ù¾İ²»Í¬Ëã·¨Ñ¡ÔñÒ»¸öÄ¿±êÍøÂçµØÖ· */
+/* ä»ç›®æ ‡ç½‘ç»œåœ°å€ä¸­æ ¹æ®ä¸åŒç®—æ³•é€‰æ‹©ä¸€ä¸ªç›®æ ‡ç½‘ç»œåœ°å€ */
 static int SelectServerAddress( struct ServerEnv *pse , struct ClientNetAddress *p_client_addr , struct ForwardRule *p_forward_rule , char *ip , char *port )
 {
 	if( strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_MS ) == 0 )
@@ -731,16 +731,16 @@ static int SelectServerAddress( struct ServerEnv *pse , struct ClientNetAddress 
 			{
 				strcpy( ip , p_forward_rule->server_addr[p_forward_rule->select_index].netaddr.ip );
 				strcpy( port , p_forward_rule->server_addr[p_forward_rule->select_index].netaddr.port );
-				
+
 				p_forward_rule->select_index = ( (p_forward_rule->select_index+1) % p_forward_rule->server_count ) ;
-				
+
 				return 0;
 			}
 			else
 			{
 				p_forward_rule->status.RR[p_forward_rule->select_index].server_unable--;
 			}
-			
+
 			p_forward_rule->select_index++;
 			if( p_forward_rule->select_index >= p_forward_rule->server_count )
 				p_forward_rule->select_index = 0 ;
@@ -750,7 +750,7 @@ static int SelectServerAddress( struct ServerEnv *pse , struct ClientNetAddress 
 	{
 		unsigned long		index ;
 		unsigned long		connection_count ;
-		
+
 		p_forward_rule->select_index = -1 ;
 		connection_count = ULONG_MAX ;
 		while( p_forward_rule->select_index == -1 )
@@ -765,13 +765,13 @@ static int SelectServerAddress( struct ServerEnv *pse , struct ClientNetAddress 
 						connection_count = p_forward_rule->connection_count[index] ;
 					}
 				}
-				else 
+				else
 				{
 					p_forward_rule->status.LC[index].server_unable--;
 				}
 			}
 		}
-		
+
 		strcpy( ip , p_forward_rule->server_addr[p_forward_rule->select_index].netaddr.ip );
 		strcpy( port , p_forward_rule->server_addr[p_forward_rule->select_index].netaddr.port );
 	}
@@ -780,7 +780,7 @@ static int SelectServerAddress( struct ServerEnv *pse , struct ClientNetAddress 
 		unsigned long		dtt ;
 		unsigned long		index ;
 		unsigned long		dt ;
-		
+
 		p_forward_rule->select_index = -1 ;
 		dtt = ULONG_MAX ;
 		while( p_forward_rule->select_index == -1 )
@@ -794,7 +794,7 @@ static int SelectServerAddress( struct ServerEnv *pse , struct ClientNetAddress 
 						p_forward_rule->select_index = index ;
 						break;
 					}
-					
+
 					p_forward_rule->status.RT[index].dtv.tv_sec = abs( p_forward_rule->status.RT[index].tv1.tv_sec - p_forward_rule->status.RT[index].tv2.tv_sec ) ;
 					p_forward_rule->status.RT[index].dtv.tv_usec = abs( p_forward_rule->status.RT[index].tv1.tv_usec - p_forward_rule->status.RT[index].tv2.tv_usec ) ;
 					dt = p_forward_rule->status.RT[index].dtv.tv_sec * 1000000 + p_forward_rule->status.RT[index].dtv.tv_usec ;
@@ -810,21 +810,21 @@ static int SelectServerAddress( struct ServerEnv *pse , struct ClientNetAddress 
 				}
 			}
 		}
-		
+
 		strcpy( ip , p_forward_rule->server_addr[p_forward_rule->select_index].netaddr.ip );
 		strcpy( port , p_forward_rule->server_addr[p_forward_rule->select_index].netaddr.port );
 	}
 	else if( strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_RD ) == 0 )
 	{
 		p_forward_rule->select_index = FetchRand( 0 , p_forward_rule->server_count - 1 ) ;
-		
+
 		strcpy( ip , p_forward_rule->server_addr[p_forward_rule->select_index].netaddr.ip );
 		strcpy( port , p_forward_rule->server_addr[p_forward_rule->select_index].netaddr.port );
 	}
 	else if( strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_HS ) == 0 )
 	{
 		p_forward_rule->select_index = CalcHash( p_client_addr->netaddr.ip ) % p_forward_rule->server_count ;
-		
+
 		strcpy( ip , p_forward_rule->server_addr[p_forward_rule->select_index].netaddr.ip );
 		strcpy( port , p_forward_rule->server_addr[p_forward_rule->select_index].netaddr.port );
 	}
@@ -833,11 +833,11 @@ static int SelectServerAddress( struct ServerEnv *pse , struct ClientNetAddress 
 		ErrorOutput( pse , "'rule_mode'[%s] invalid\n" , p_forward_rule->rule_mode );
 		return -1;
 	}
-	
+
 	return 0;
 }
 
-/* µ±Ä¿±êÍøÂçµØÖ·²»¿ÉÓÃÊ±£¬¸ù¾İ²»Í¬Ëã·¨×öÏàÓ¦´¦Àí */
+/* å½“ç›®æ ‡ç½‘ç»œåœ°å€ä¸å¯ç”¨æ—¶ï¼Œæ ¹æ®ä¸åŒç®—æ³•åšç›¸åº”å¤„ç† */
 static int OnServerUnable( struct ServerEnv *pse , struct ForwardRule *p_forward_rule )
 {
 	if( strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_MS ) == 0 )
@@ -867,49 +867,49 @@ static int OnServerUnable( struct ServerEnv *pse , struct ForwardRule *p_forward
 		ErrorOutput( pse , "'rule_mode'[%s] invalid\n" , p_forward_rule->rule_mode );
 		return -1;
 	}
-	
+
 	return 0;
 }
 
-/* Á¬½Óµ½Ä¿±êÍøÂçµØÖ· */
+/* è¿æ¥åˆ°ç›®æ ‡ç½‘ç»œåœ°å€ */
 static int ConnectToRemote( struct ServerEnv *pse , struct epoll_event *p_event , struct ForwardSession *p_forward_session , struct ForwardRule *p_forward_rule , struct ClientNetAddress *p_client_addr , unsigned long try_connect_count )
 {
 	socklen_t		addr_len = sizeof(struct sockaddr_in) ;
-	
+
 	struct epoll_event	client_event ;
-	
+
 	struct ServerNetAddress	server_addr ;
 	struct epoll_event	server_event ;
-	
+
 	struct ForwardSession	*p_forward_session_client = NULL ;
 	struct ForwardSession	*p_forward_session_server = NULL ;
-	
+
 	int			nret = 0 ;
-	
-	/* ´´½¨¿Í»§¶Ësock */
+
+	/* åˆ›å»ºå®¢æˆ·ç«¯sock */
 	server_addr.sock = socket( AF_INET , SOCK_STREAM , IPPROTO_TCP );
 	if( server_addr.sock < 0 )
 	{
 		ErrorOutput( pse , "socket failed[%d]errno[%d]\n" , server_addr.sock , errno );
 		return 1;
 	}
-	
+
 	SetNonBlocking( server_addr.sock );
 	SetReuseAddr( server_addr.sock );
-	
-	/* ¸ù¾İ×ª·¢¹æÔò£¬Ñ¡ÔñÄ¿±êÍøÂçµØÖ· */
+
+	/* æ ¹æ®è½¬å‘è§„åˆ™ï¼Œé€‰æ‹©ç›®æ ‡ç½‘ç»œåœ°å€ */
 	nret = SelectServerAddress( pse , p_client_addr , p_forward_rule , server_addr.netaddr.ip , server_addr.netaddr.port ) ;
 	if( nret )
 	{
 		return nret;
 	}
-	
+
 	memset( & (server_addr.netaddr.sockaddr) , 0x00 , sizeof(server_addr.netaddr.sockaddr) );
 	server_addr.netaddr.sockaddr.sin_family = AF_INET ;
 	inet_aton( server_addr.netaddr.ip , & (server_addr.netaddr.sockaddr.sin_addr) );
 	server_addr.netaddr.sockaddr.sin_port = htons( (unsigned short)atoi(server_addr.netaddr.port) );
-	
-	/* Á¬½ÓÄ¿±êÍøÂçµØÖ· */
+
+	/* è¿æ¥ç›®æ ‡ç½‘ç»œåœ°å€ */
 	nret = connect( server_addr.sock , ( struct sockaddr *) & (server_addr.netaddr.sockaddr) , addr_len );
 	if( nret < 0 )
 	{
@@ -919,8 +919,8 @@ static int ConnectToRemote( struct ServerEnv *pse , struct epoll_event *p_event 
 			close( server_addr.sock );
 			return 1;
 		}
-		
-		/* µÇ¼Ç·şÎñ¶Ë×ª·¢»á»°£¬µÇ¼Çepoll³Ø */
+
+		/* ç™»è®°æœåŠ¡ç«¯è½¬å‘ä¼šè¯ï¼Œç™»è®°epollæ±  */
 		nret = GetForwardSessionUnusedUnit( pse , & p_forward_session_server ) ;
 		if( nret != FOUND )
 		{
@@ -928,41 +928,41 @@ static int ConnectToRemote( struct ServerEnv *pse , struct epoll_event *p_event 
 			close( server_addr.sock );
 			return 1;
 		}
-		
+
 		p_forward_session_server->forward_session_type = FORWARD_SESSION_TYPE_SERVER ;
-		
+
 		strcpy( p_forward_session_server->client_addr.netaddr.ip , p_client_addr->netaddr.ip );
 		strcpy( p_forward_session_server->client_addr.netaddr.port , p_client_addr->netaddr.port );
 		p_forward_session_server->client_addr.sock = p_client_addr->sock ;
 		memcpy( & (p_forward_session_server->client_addr.netaddr) , & (p_client_addr->netaddr) , sizeof(struct sockaddr_in) );
 		p_forward_session_server->client_index = 0 ;
-		
+
 		strcpy( p_forward_session_server->listen_addr.netaddr.ip , p_forward_session->listen_addr.netaddr.ip );
 		strcpy( p_forward_session_server->listen_addr.netaddr.port , p_forward_session->listen_addr.netaddr.port );
 		p_forward_session_server->listen_addr.sock = p_forward_session->listen_addr.sock ;
 		memcpy( & (p_forward_session_server->listen_addr.netaddr) , & (p_forward_session->listen_addr.netaddr) , sizeof(struct sockaddr_in) );
 		strcpy( p_forward_session_server->listen_addr.rule_mode , p_forward_rule->rule_mode );
-		
+
 		strcpy( p_forward_session_server->server_addr.netaddr.ip , server_addr.netaddr.ip );
 		strcpy( p_forward_session_server->server_addr.netaddr.port , server_addr.netaddr.port );
 		p_forward_session_server->server_addr.sock = server_addr.sock ;
 		memcpy( & (p_forward_session_server->server_addr.netaddr) , & (server_addr.netaddr) , sizeof(struct sockaddr_in) );
 		p_forward_session_server->server_index = p_forward_session_server - & (pse->forward_session[0]) ;
-		
+
 		p_forward_session_server->p_forward_rule = p_forward_rule ;
 		p_forward_session_server->connect_status = CONNECT_STATUS_CONNECTING ;
 		p_forward_session_server->try_connect_count = try_connect_count ;
-		
+
 		memset( & (server_event) , 0x00 , sizeof(server_event) );
 		server_event.data.ptr = p_forward_session_server ;
 		server_event.events = EPOLLOUT | EPOLLERR | EPOLLET ;
 		epoll_ctl( pse->event_env , EPOLL_CTL_ADD , p_forward_session_server->server_addr.sock , & server_event );
-		
+
 		p_forward_session_server->p_forward_rule->connection_count[p_forward_session_server->p_forward_rule->select_index]++;
 	}
 	else
 	{
-		/* µÇ¼Ç¿Í»§¶Ë×ª·¢»á»°£¬µÇ¼Çepoll³Ø */
+		/* ç™»è®°å®¢æˆ·ç«¯è½¬å‘ä¼šè¯ï¼Œç™»è®°epollæ±  */
 		nret = GetForwardSessionUnusedUnit( pse , & p_forward_session_client ) ;
 		if( nret != FOUND )
 		{
@@ -970,36 +970,36 @@ static int ConnectToRemote( struct ServerEnv *pse , struct epoll_event *p_event 
 			close( server_addr.sock );
 			return 1;
 		}
-		
+
 		p_forward_session_client->forward_session_type = FORWARD_SESSION_TYPE_CLIENT ;
-		
+
 		strcpy( p_forward_session_client->client_addr.netaddr.ip , p_client_addr->netaddr.ip );
 		strcpy( p_forward_session_client->client_addr.netaddr.port , p_client_addr->netaddr.port );
 		p_forward_session_client->client_addr.sock = p_client_addr->sock ;
 		memcpy( & (p_forward_session_client->client_addr.netaddr) , & (p_client_addr->netaddr) , sizeof(struct sockaddr_in) );
 		p_forward_session_client->client_index = p_forward_session_client - & (pse->forward_session[0]) ;
-		
+
 		strcpy( p_forward_session_client->listen_addr.netaddr.ip , p_forward_session->listen_addr.netaddr.ip );
 		strcpy( p_forward_session_client->listen_addr.netaddr.port , p_forward_session->listen_addr.netaddr.port );
 		p_forward_session_client->listen_addr.sock = p_forward_session->listen_addr.sock ;
 		memcpy( & (p_forward_session_client->listen_addr.netaddr) , & (p_forward_session->listen_addr.netaddr) , sizeof(struct sockaddr_in) );
 		strcpy( p_forward_session_client->listen_addr.rule_mode , p_forward_rule->rule_mode );
-		
+
 		strcpy( p_forward_session_client->server_addr.netaddr.ip , server_addr.netaddr.ip );
 		strcpy( p_forward_session_client->server_addr.netaddr.port , server_addr.netaddr.port );
 		p_forward_session_client->server_addr.sock = server_addr.sock ;
 		memcpy( & (p_forward_session_client->server_addr.netaddr) , & (server_addr.netaddr) , sizeof(struct sockaddr_in) );
 		p_forward_session_client->server_index = p_forward_session_server - & (pse->forward_session[0]) ;
-		
+
 		p_forward_session_client->p_forward_rule = p_forward_rule ;
 		p_forward_session_client->connect_status = CONNECT_STATUS_CONNECTED ;
-		
+
 		memset( & (client_event) , 0x00 , sizeof(client_event) );
 		client_event.data.ptr = p_forward_session_client ;
 		client_event.events = EPOLLIN | EPOLLERR | EPOLLET ;
 		epoll_ctl( pse->event_env , EPOLL_CTL_ADD , p_forward_session_client->client_addr.sock , & client_event );
-		
-		/* µÇ¼Ç·şÎñ¶Ë×ª·¢»á»°£¬µÇ¼Çepoll³Ø */
+
+		/* ç™»è®°æœåŠ¡ç«¯è½¬å‘ä¼šè¯ï¼Œç™»è®°epollæ±  */
 		nret = GetForwardSessionUnusedUnit( pse , & p_forward_session_server ) ;
 		if( nret != FOUND )
 		{
@@ -1007,73 +1007,73 @@ static int ConnectToRemote( struct ServerEnv *pse , struct epoll_event *p_event 
 			close( server_addr.sock );
 			return 1;
 		}
-		
+
 		p_forward_session_server->forward_session_type = FORWARD_SESSION_TYPE_SERVER ;
-		
+
 		strcpy( p_forward_session_server->client_addr.netaddr.ip , p_client_addr->netaddr.ip );
 		strcpy( p_forward_session_server->client_addr.netaddr.port , p_client_addr->netaddr.port );
 		p_forward_session_server->client_addr.sock = p_client_addr->sock ;
 		memcpy( & (p_forward_session_server->client_addr.netaddr) , & (p_client_addr->netaddr) , sizeof(struct sockaddr_in) );
 		p_forward_session_server->client_index = p_forward_session_server - & (pse->forward_session[0]) ;
-		
+
 		strcpy( p_forward_session_server->server_addr.netaddr.ip , server_addr.netaddr.ip );
 		strcpy( p_forward_session_server->server_addr.netaddr.port , server_addr.netaddr.port );
 		p_forward_session_server->server_addr.sock = server_addr.sock ;
 		memcpy( & (p_forward_session_server->server_addr.netaddr) , & (server_addr.netaddr) , sizeof(struct sockaddr_in) );
 		p_forward_session_server->server_index = p_forward_session_server - & (pse->forward_session[0]) ;
-		
+
 		p_forward_session_server->p_forward_rule = p_forward_rule ;
 		p_forward_session_server->connect_status = CONNECT_STATUS_CONNECTED ;
-		
+
 		memset( & (server_event) , 0x00 , sizeof(server_event) );
 		server_event.data.ptr = p_forward_session_server ;
 		server_event.events = EPOLLIN | EPOLLERR | EPOLLET ;
 		epoll_ctl( pse->event_env , EPOLL_CTL_ADD , p_forward_session_server->server_addr.sock , & server_event );
-		
+
 		p_forward_session_server->p_forward_rule->connection_count[p_forward_session_server->p_forward_rule->select_index]++;
-		
+
 		DebugOutput( pse , "accept [%s:%s]#%d# - [%s:%s]#%d# > [%s:%s]#%d#\n"
 			, p_forward_session_client->client_addr.netaddr.ip , p_forward_session_client->client_addr.netaddr.port , p_forward_session_client->client_addr.sock
 			, p_forward_session->listen_addr.netaddr.ip , p_forward_session->listen_addr.netaddr.port , p_forward_session->listen_addr.sock
 			, p_forward_session_client->server_addr.netaddr.ip , p_forward_session_client->server_addr.netaddr.port , p_forward_session_client->server_addr.sock );
 	}
-	
+
 	return 0;
 }
 
-/* ½ÓÊÜ¹ÜÀí¶Ë¿ÚÁ¬½Ó */
+/* æ¥å—ç®¡ç†ç«¯å£è¿æ¥ */
 static int AcceptManageSocket( struct ServerEnv *pse , struct epoll_event *p_event , struct ForwardSession *p_forward_session )
 {
 	socklen_t		addr_len = sizeof(struct sockaddr_in) ;
-	
+
 	struct ClientNetAddress	client_addr ;
 	struct epoll_event	client_event ;
-	
+
 	struct ForwardSession	*p_forward_session_client = NULL ;
-	
+
 	int			nret = 0 ;
-	
-	/* Ñ­»·½ÓÊÜ¹ÜÀí¶Ë¿ÚÁ¬½Ó */
+
+	/* å¾ªç¯æ¥å—ç®¡ç†ç«¯å£è¿æ¥ */
 	while(1)
 	{
-		/* ½ÓÊÜ¹ÜÀí¶Ë¿ÚÁ¬½Ó */
+		/* æ¥å—ç®¡ç†ç«¯å£è¿æ¥ */
 		client_addr.sock = accept( p_forward_session->listen_addr.sock , (struct sockaddr *) & (client_addr.netaddr.sockaddr) , & addr_len ) ;
 		if( client_addr.sock < 0 )
 		{
 			if( errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNABORTED || errno == EPROTO )
 				break;
-			
+
 			ErrorOutput( pse , "accept[%d] failed[%d]errno[%d]\n" , p_forward_session->listen_addr.sock , client_addr.sock  , errno );
 			return 1;
 		}
-		
+
 		SetNonBlocking( client_addr.sock );
 		SetReuseAddr( client_addr.sock );
-		
+
 		strcpy( client_addr.netaddr.ip , inet_ntoa( client_addr.netaddr.sockaddr.sin_addr ) );
 		sprintf( client_addr.netaddr.port , "%ld" , (unsigned long)ntohs( client_addr.netaddr.sockaddr.sin_port ) );
-		
-		/* µÇ¼Ç×ª·¢»á»°¡¢µÇ¼Çepoll³Ø */
+
+		/* ç™»è®°è½¬å‘ä¼šè¯ã€ç™»è®°epollæ±  */
 		nret = GetForwardSessionUnusedUnit( pse , & p_forward_session_client ) ;
 		if( nret != FOUND )
 		{
@@ -1081,68 +1081,68 @@ static int AcceptManageSocket( struct ServerEnv *pse , struct epoll_event *p_eve
 			close( client_addr.sock );
 			return 1;
 		}
-		
+
 		p_forward_session_client->forward_session_type = FORWARD_SESSION_TYPE_MANAGE ;
-		
+
 		strcpy( p_forward_session_client->client_addr.netaddr.ip , client_addr.netaddr.ip );
 		strcpy( p_forward_session_client->client_addr.netaddr.port , client_addr.netaddr.port );
 		p_forward_session_client->client_addr.sock = client_addr.sock ;
 		memcpy( & (p_forward_session_client->client_addr.netaddr) , & (client_addr.netaddr) , sizeof(struct sockaddr_in) );
 		p_forward_session_client->client_index = p_forward_session_client - & (pse->forward_session[0]) ;
-		
+
 		strcpy( p_forward_session_client->listen_addr.netaddr.ip , p_forward_session->listen_addr.netaddr.ip );
 		strcpy( p_forward_session_client->listen_addr.netaddr.port , p_forward_session->listen_addr.netaddr.port );
 		p_forward_session_client->listen_addr.sock = p_forward_session->listen_addr.sock ;
 		memcpy( & (p_forward_session_client->listen_addr.netaddr) , & (p_forward_session->listen_addr.netaddr) , sizeof(struct sockaddr_in) );
 		strcpy( p_forward_session_client->listen_addr.rule_mode , p_forward_session->listen_addr.rule_mode );
-		
+
 		memset( & (client_event) , 0x00 , sizeof(client_event) );
 		client_event.data.ptr = p_forward_session_client ;
 		client_event.events = EPOLLIN | EPOLLERR | EPOLLET ;
 		epoll_ctl( pse->event_env , EPOLL_CTL_ADD , p_forward_session_client->client_addr.sock , & client_event );
-		
+
 		DebugOutput( pse , "accept [%s:%s]#%d# - [%s:%s]#%d# manage\n"
 			, p_forward_session_client->client_addr.netaddr.ip , p_forward_session_client->client_addr.netaddr.port , p_forward_session_client->client_addr.sock
 			, p_forward_session->listen_addr.netaddr.ip , p_forward_session->listen_addr.netaddr.port , p_forward_session->listen_addr.sock );
-		
+
 		send( p_forward_session_client->client_addr.sock , "> " , 2 , 0 );
 	}
-	
+
 	return 0;
 }
 
-/* ½ÓÊÜ×ª·¢¶Ë¿ÚÁ¬½Ó */
+/* æ¥å—è½¬å‘ç«¯å£è¿æ¥ */
 static int AcceptForwardSocket( struct ServerEnv *pse , struct epoll_event *p_event , struct ForwardSession *p_forward_session )
 {
 	socklen_t		addr_len = sizeof(struct sockaddr_in) ;
-	
+
 	struct ClientNetAddress	client_addr ;
-	
+
 	struct ForwardRule	*p_forward_rule = NULL ;
-	
+
 	int			nret = 0 ;
-	
-	/* Ñ­»·½ÓÊÜ×ª·¢¶Ë¿ÚÁ¬½Ó */
+
+	/* å¾ªç¯æ¥å—è½¬å‘ç«¯å£è¿æ¥ */
 	while(1)
 	{
-		/* ½ÓÊÜ×ª·¢¶Ë¿ÚÁ¬½Ó */
+		/* æ¥å—è½¬å‘ç«¯å£è¿æ¥ */
 		client_addr.sock = accept( p_forward_session->listen_addr.sock , (struct sockaddr *) & (client_addr.netaddr.sockaddr) , & addr_len ) ;
 		if( client_addr.sock < 0 )
 		{
 			if( errno == EAGAIN || errno == EWOULDBLOCK || errno == ECONNABORTED || errno == EPROTO )
 				break;
-			
+
 			ErrorOutput( pse , "accept[%d] failed[%d]errno[%d]\n" , p_forward_session->listen_addr.sock , client_addr.sock  , errno );
 			return 1;
 		}
-		
+
 		SetNonBlocking( client_addr.sock );
 		SetReuseAddr( client_addr.sock );
-		
+
 		strcpy( client_addr.netaddr.ip , inet_ntoa( client_addr.netaddr.sockaddr.sin_addr ) );
 		sprintf( client_addr.netaddr.port , "%ld" , (unsigned long)ntohs( client_addr.netaddr.sockaddr.sin_port ) );
-		
-		/* Æ¥Åä×ª·¢¹æÔò */
+
+		/* åŒ¹é…è½¬å‘è§„åˆ™ */
 		nret = MatchForwardRule( pse , & client_addr , & (p_forward_session->listen_addr) , & p_forward_rule ) ;
 		if( nret != FOUND )
 		{
@@ -1150,8 +1150,8 @@ static int AcceptForwardSocket( struct ServerEnv *pse , struct epoll_event *p_ev
 			close( client_addr.sock );
 			return 1;
 		}
-		
-		/* Á¬½ÓÄ¿±êÍøÂçµØÖ· */
+
+		/* è¿æ¥ç›®æ ‡ç½‘ç»œåœ°å€ */
 		nret = ConnectToRemote( pse , p_event , p_forward_session , p_forward_rule , & client_addr , TRY_CONNECT_MAXCOUNT ) ;
 		if( nret )
 		{
@@ -1159,28 +1159,28 @@ static int AcceptForwardSocket( struct ServerEnv *pse , struct epoll_event *p_ev
 			return nret;
 		}
 	}
-	
+
 	return 0;
 }
 
-/* ×ª·¢Í¨Ñ¶Êı¾İ */
+/* è½¬å‘é€šè®¯æ•°æ® */
 static int TransferSocketData( struct ServerEnv *pse , struct epoll_event *p_event , struct ForwardSession *p_forward_session )
 {
 	int			in_sock ;
 	int			out_sock ;
-	
+
 	static char		*buf = NULL ;
 	char			*p = NULL ;
 	ssize_t			recv_len ;
 	ssize_t			send_len ;
 	ssize_t			len ;
-	
+
 	unsigned long		client_index ;
 	unsigned long		server_index ;
-	
+
 	if( buf == NULL )
 	{
-		/* ³õÊ¼»¯Í¨Ñ¶Êı¾İ×ª·¢»º³åÇø */
+		/* åˆå§‹åŒ–é€šè®¯æ•°æ®è½¬å‘ç¼“å†²åŒº */
 		buf = (char*)malloc( pse->cmd_para.transfer_bufsize + 1 ) ;
 		if( buf == NULL )
 		{
@@ -1189,7 +1189,7 @@ static int TransferSocketData( struct ServerEnv *pse , struct epoll_event *p_eve
 		}
 		memset( buf , 0x00 , pse->cmd_para.transfer_bufsize + 1 );
 	}
-	
+
 	if( p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_CLIENT )
 	{
 		in_sock = p_forward_session->client_addr.sock ;
@@ -1202,10 +1202,10 @@ static int TransferSocketData( struct ServerEnv *pse , struct epoll_event *p_eve
 	}
 	client_index = p_forward_session->client_index ;
 	server_index = p_forward_session->server_index ;
-	
+
 	while(1)
 	{
-		/* ½ÓÊÕÍ¨Ñ¶Êı¾İ */
+		/* æ¥æ”¶é€šè®¯æ•°æ® */
 		memset( buf , 0x00 , pse->cmd_para.transfer_bufsize );
 		recv_len = recv( in_sock , buf , pse->cmd_para.transfer_bufsize , 0 ) ;
 		if( recv_len < 0 )
@@ -1241,7 +1241,7 @@ static int TransferSocketData( struct ServerEnv *pse , struct epoll_event *p_eve
 		}
 		else if( recv_len == 0 )
 		{
-			/* Í¨Ñ¶Á¬½Ó¶Ï¿ª´¦Àí */
+			/* é€šè®¯è¿æ¥æ–­å¼€å¤„ç† */
 			pse->forward_session[server_index].p_forward_rule->connection_count[p_forward_session->p_forward_rule->select_index]--;
 			epoll_ctl( pse->event_env , EPOLL_CTL_DEL , in_sock , NULL );
 			epoll_ctl( pse->event_env , EPOLL_CTL_DEL , out_sock , NULL );
@@ -1252,8 +1252,8 @@ static int TransferSocketData( struct ServerEnv *pse , struct epoll_event *p_eve
 			SetForwardSessionUnitUnused( & (pse->forward_session[server_index]) );
 			return 0;
 		}
-		
-		/* RTÄ£Ê½¶îÍâ´¦Àí */
+
+		/* RTæ¨¡å¼é¢å¤–å¤„ç† */
 		if( strcmp( pse->forward_session[server_index].p_forward_rule->rule_mode , FORWARD_RULE_MODE_RT ) == 0 )
 		{
 			if( p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_CLIENT )
@@ -1265,8 +1265,8 @@ static int TransferSocketData( struct ServerEnv *pse , struct epoll_event *p_eve
 				pse->forward_session[server_index].p_forward_rule->status.RT[pse->forward_session[server_index].p_forward_rule->select_index].tv2 = pse->server_cache.tv ;
 			}
 		}
-		
-		/* ·¢ËÍÍ¨Ñ¶Êı¾İ */
+
+		/* å‘é€é€šè®¯æ•°æ® */
 		p = buf ;
 		send_len = recv_len ;
 		while( send_len )
@@ -1291,33 +1291,33 @@ static int TransferSocketData( struct ServerEnv *pse , struct epoll_event *p_eve
 					return 0;
 				}
 			}
-			
+
 			p += len ;
 			send_len -= len ;
 		}
-		
+
 		DebugOutput( pse , "transfer #%d# [%d]bytes to #%d#\n" , in_sock , recv_len , out_sock );
 	}
-	
+
 	return 0;
 }
 
-/* ´¦Àí¹ÜÀíÃüÁî */
+/* å¤„ç†ç®¡ç†å‘½ä»¤ */
 static int ProcessManageCommand( struct ServerEnv *pse , int out_sock , struct ForwardSession *p_forward_session )
 {
 	char		buf[ MANAGE_OUTPUT_BUFSIZE + 1 ] ;
-	
+
 	char		cmd1[ 64 + 1 ] ;
 	char		cmd2[ 64 + 1 ] ;
 	char		cmd3[ 64 + 1 ] ;
-	
+
 	memset( cmd1 , 0x00 , sizeof(cmd1) );
 	memset( cmd2 , 0x00 , sizeof(cmd2) );
 	sscanf( p_forward_session->manage_input_buffer , "%64s %64s %64s" , cmd1 , cmd2 , cmd3 );
-	
+
 	if( strcmp( cmd1 , "ver" ) == 0 )
 	{
-		/* ÏÔÊ¾°æ±¾ */
+		/* æ˜¾ç¤ºç‰ˆæœ¬ */
 		memset( buf , 0x00 , sizeof(buf) );
 		snprintf( buf , sizeof(buf)-1 , "version v%s build %s %s\n" , VERSION , __DATE__ , __TIME__ );
 		send( out_sock , buf , strlen(buf) , 0 );
@@ -1326,47 +1326,47 @@ static int ProcessManageCommand( struct ServerEnv *pse , int out_sock , struct F
 	{
 		unsigned long			forward_rule_index ;
 		struct ForwardRule		*p_forward_rule = NULL ;
-		
+
 		unsigned long			client_index ;
 		struct ClientNetAddress		*p_client_addr = NULL ;
 		unsigned long			forward_index ;
 		struct ForwardNetAddress	*p_forward_addr = NULL ;
 		unsigned long			server_index ;
 		struct ServerNetAddress		*p_server_addr = NULL ;
-		
-		/* ÁĞ±íËùÓĞ×ª·¢¹æÔò */
+
+		/* åˆ—è¡¨æ‰€æœ‰è½¬å‘è§„åˆ™ */
 		for( forward_rule_index = 0 , p_forward_rule = & (pse->forward_rule[0]) ; forward_rule_index < pse->forward_rule_count ; forward_rule_index++ , p_forward_rule++ )
 		{
 			snprintf( buf , sizeof(buf)-1 , "%6ld : %s %s" , forward_rule_index+1 , p_forward_rule->rule_id , p_forward_rule->rule_mode );
 			send( out_sock , buf , strlen(buf) , 0 );
-			
+
 			for( client_index = 0 , p_client_addr = & (p_forward_rule->client_addr[0]) ; client_index < p_forward_rule->client_count ; client_index++ , p_client_addr++ )
 			{
 				snprintf( buf , sizeof(buf)-1 , " %s:%s" , p_client_addr->netaddr.ip , p_client_addr->netaddr.port );
 				send( out_sock , buf , strlen(buf) , 0 );
 			}
-			
+
 			snprintf( buf , sizeof(buf)-1 , " -" );
 			send( out_sock , buf , strlen(buf) , 0 );
-			
+
 			for( forward_index = 0 , p_forward_addr = & (p_forward_rule->forward_addr[0]) ; forward_index < p_forward_rule->forward_count ; forward_index++ , p_forward_addr++ )
 			{
 				snprintf( buf , sizeof(buf)-1 , " %s:%s" , p_forward_addr->netaddr.ip , p_forward_addr->netaddr.port );
 				send( out_sock , buf , strlen(buf) , 0 );
 			}
-			
+
 			if( strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_G ) != 0 )
 			{
 				snprintf( buf , sizeof(buf)-1 , " >" );
 				send( out_sock , buf , strlen(buf) , 0 );
-				
+
 				for( server_index = 0 , p_server_addr = & (p_forward_rule->server_addr[0]) ; server_index < p_forward_rule->server_count ; server_index++ , p_server_addr++ )
 				{
 					snprintf( buf , sizeof(buf)-1 , " %s:%s" , p_server_addr->netaddr.ip , p_server_addr->netaddr.port );
 					send( out_sock , buf , strlen(buf) , 0 );
 				}
 			}
-			
+
 			snprintf( buf , sizeof(buf)-1 , " ;\n" );
 			send( out_sock , buf , strlen(buf) , 0 );
 		}
@@ -1375,10 +1375,10 @@ static int ProcessManageCommand( struct ServerEnv *pse , int out_sock , struct F
 	{
 		char				*p_buffer = NULL ;
 		struct ForwardRule		forward_rule ;
-		
+
 		int				nret = 0 ;
-		
-		/* ĞÂÔö×ª·¢¹æÔò */
+
+		/* æ–°å¢è½¬å‘è§„åˆ™ */
 		p_buffer = strtok( p_forward_session->manage_input_buffer , " \t" ) ;
 		p_buffer = strtok( NULL , " \t" ) ;
 		p_buffer = strtok( NULL , "" ) ;
@@ -1410,10 +1410,10 @@ static int ProcessManageCommand( struct ServerEnv *pse , int out_sock , struct F
 	{
 		char				*p_buffer = NULL ;
 		struct ForwardRule		forward_rule ;
-		
+
 		int				nret = 0 ;
-		
-		/* ĞŞ¸Ä×ª·¢¹æÔò */
+
+		/* ä¿®æ”¹è½¬å‘è§„åˆ™ */
 		p_buffer = strtok( p_forward_session->manage_input_buffer , " \t" ) ;
 		p_buffer = strtok( NULL , " \t" ) ;
 		p_buffer = strtok( NULL , "" ) ;
@@ -1444,8 +1444,8 @@ static int ProcessManageCommand( struct ServerEnv *pse , int out_sock , struct F
 	else if( strcmp( cmd1 , "remove" ) == 0 && strcmp( cmd2 , "rule" ) == 0 )
 	{
 		int				nret = 0 ;
-		
-		/* É¾³ı×ª·¢¹æÔò */
+
+		/* åˆ é™¤è½¬å‘è§„åˆ™ */
 		nret = RemoveForwardRule( pse , cmd3 ) ;
 		if( nret )
 		{
@@ -1461,18 +1461,18 @@ static int ProcessManageCommand( struct ServerEnv *pse , int out_sock , struct F
 	else if( strcmp( cmd1 , "dump" ) == 0 && strcmp( cmd2 , "rules" ) == 0 )
 	{
 		FILE				*fp = NULL ;
-		
+
 		unsigned long			forward_rule_index ;
 		struct ForwardRule		*p_forward_rule = NULL ;
-		
+
 		unsigned long			client_index ;
 		struct ClientNetAddress		*p_client_addr = NULL ;
 		unsigned long			forward_index ;
 		struct ForwardNetAddress	*p_forward_addr = NULL ;
 		unsigned long			server_index ;
 		struct ServerNetAddress		*p_server_addr = NULL ;
-		
-		/* ±£´æ¹æÔòµ½ÅäÖÃÎÄ¼ş */
+
+		/* ä¿å­˜è§„åˆ™åˆ°é…ç½®æ–‡ä»¶ */
 		fp = fopen( pse->cmd_para.config_pathfilename , "w" ) ;
 		if( fp == NULL )
 		{
@@ -1480,38 +1480,38 @@ static int ProcessManageCommand( struct ServerEnv *pse , int out_sock , struct F
 			send( out_sock , buf , strlen(buf) , 0 );
 			return 0;
 		}
-		
+
 		for( forward_rule_index = 0 , p_forward_rule = & (pse->forward_rule[0]) ; forward_rule_index < pse->forward_rule_count ; forward_rule_index++ , p_forward_rule++ )
 		{
 			fprintf( fp , "%ld : %s %s" , forward_rule_index+1 , p_forward_rule->rule_id , p_forward_rule->rule_mode );
-			
+
 			for( client_index = 0 , p_client_addr = & (p_forward_rule->client_addr[0]) ; client_index < p_forward_rule->client_count ; client_index++ , p_client_addr++ )
 			{
 				fprintf( fp , " %s:%s" , p_client_addr->netaddr.ip , p_client_addr->netaddr.port );
 			}
-			
+
 			fprintf( fp , " -" );
-			
+
 			for( forward_index = 0 , p_forward_addr = & (p_forward_rule->forward_addr[0]) ; forward_index < p_forward_rule->forward_count ; forward_index++ , p_forward_addr++ )
 			{
 				fprintf( fp , " %s:%s" , p_forward_addr->netaddr.ip , p_forward_addr->netaddr.port );
 			}
-			
+
 			if( strcmp( p_forward_rule->rule_mode , FORWARD_RULE_MODE_G ) != 0 )
 			{
 				fprintf( fp , " >" );
-				
+
 				for( server_index = 0 , p_server_addr = & (p_forward_rule->server_addr[0]) ; server_index < p_forward_rule->server_count ; server_index++ , p_server_addr++ )
 				{
 					fprintf( fp , " %s:%s" , p_server_addr->netaddr.ip , p_server_addr->netaddr.port );
 				}
 			}
-			
+
 			fprintf( fp , " ;\n" );
 		}
-		
+
 		fclose(fp);
-		
+
 		snprintf( buf , sizeof(buf)-1 , "dump all forward rules ok\n" );
 		send( out_sock , buf , strlen(buf) , 0 );
 	}
@@ -1519,12 +1519,12 @@ static int ProcessManageCommand( struct ServerEnv *pse , int out_sock , struct F
 	{
 		unsigned long		index ;
 		struct ForwardSession	*p_forward_session = NULL ;
-		
-		/* ÁĞ±í×ª·¢»á»° */
+
+		/* åˆ—è¡¨è½¬å‘ä¼šè¯ */
 		for( index = 0 , p_forward_session = & (pse->forward_session[0]) ; index < pse->forward_session_maxcount ; index++ , p_forward_session++ )
 		{
 			memset( buf , 0x00 , sizeof(buf) );
-			
+
 			if( p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_MANAGE )
 			{
 				snprintf( buf , sizeof(buf)-1 , "%6ld : CLIENT [%s:%s]#%d# - MANAGE [%s:%s]#%d#\n"
@@ -1556,13 +1556,13 @@ static int ProcessManageCommand( struct ServerEnv *pse , int out_sock , struct F
 					, p_forward_session->server_addr.netaddr.ip , p_forward_session->server_addr.netaddr.port , p_forward_session->server_addr.sock
 					, ( p_forward_session->connect_status == CONNECT_STATUS_CONNECTING ? "connecting" : "connected" ) );
 			}
-			
+
 			send( out_sock , buf , strlen(buf) , 0 );
 		}
 	}
 	else if( strcmp( cmd1 , "quit" ) == 0 )
 	{
-		/* ¶Ï¿ª¹ÜÀí¶Ë¿Ú */
+		/* æ–­å¼€ç®¡ç†ç«¯å£ */
 		epoll_ctl( pse->event_env , EPOLL_CTL_DEL , out_sock , NULL );
 		ErrorOutput( pse , "close #%d# initiative\n" , out_sock );
 		close( out_sock );
@@ -1575,29 +1575,29 @@ static int ProcessManageCommand( struct ServerEnv *pse , int out_sock , struct F
 		snprintf( buf , sizeof(buf)-1 , "command invalid [%s]\n" , p_forward_session->manage_input_buffer );
 		send( out_sock , buf , strlen(buf) , 0 );
 	}
-	
+
 	return 0;
 }
 
-/* ½ÓÊÕ¹ÜÀíÃüÁî£¬»ò²¢´¦ÀíÖ® */
+/* æ¥æ”¶ç®¡ç†å‘½ä»¤ï¼Œæˆ–å¹¶å¤„ç†ä¹‹ */
 static int ReceiveOrProcessManageData( struct ServerEnv *pse , struct epoll_event *p_event , struct ForwardSession *p_forward_session )
 {
 	int		in_sock ;
 	int		out_sock ;
-	
+
 	char		*p_manage_buffer_offset = NULL ;
 	ssize_t		manage_input_remain_bufsize ;
 	ssize_t		recv_len ;
 	char		*p = NULL ;
-	
+
 	int		nret = 0 ;
-	
+
 	in_sock = p_forward_session->client_addr.sock ;
 	out_sock = in_sock ;
-	
+
 	while(1)
 	{
-		/* ½ÓÊÕ¹ÜÀí¶Ë¿ÚÊı¾İ */
+		/* æ¥æ”¶ç®¡ç†ç«¯å£æ•°æ® */
 		p_manage_buffer_offset = p_forward_session->manage_input_buffer + p_forward_session->manage_input_buflen ;
 		manage_input_remain_bufsize = MANAGE_INPUT_BUFSIZE-1 - p_forward_session->manage_input_buflen ;
 		if( manage_input_remain_bufsize == 0 )
@@ -1634,23 +1634,23 @@ static int ReceiveOrProcessManageData( struct ServerEnv *pse , struct epoll_even
 		}
 		else if( recv_len == 0 )
 		{
-			/* ½ÓÊÜµ½¶Ï¿ªÊÂ¼ş */
+			/* æ¥å—åˆ°æ–­å¼€äº‹ä»¶ */
 			epoll_ctl( pse->event_env , EPOLL_CTL_DEL , in_sock , NULL );
 			ErrorOutput( pse , "close #%d# recv 0\n" , in_sock );
 			close( in_sock );
 			SetForwardSessionUnitUnused( p_forward_session );
 			return 0;
 		}
-		
-		/* ÅĞ¶ÏÊÇ·ñĞÎ³ÉÍêÕûÃüÁîÊı¾İ */
+
+		/* åˆ¤æ–­æ˜¯å¦å½¢æˆå®Œæ•´å‘½ä»¤æ•°æ® */
 		p = strchr( p_manage_buffer_offset , '\n' ) ;
 		if( p )
 		{
-			/* ÒÑ¾­ĞÎ³ÉÍêÕûÃüÁîÊı¾İ£¬´¦ÀíÖ®£¬²¢±£ÁôÎ´³ÉĞÍÃüÁî */
+			/* å·²ç»å½¢æˆå®Œæ•´å‘½ä»¤æ•°æ®ï¼Œå¤„ç†ä¹‹ï¼Œå¹¶ä¿ç•™æœªæˆå‹å‘½ä»¤ */
 			(*p) = '\0' ;
 			if( p - p_manage_buffer_offset > 0 && *(p-1) == '\r' )
 				*(p-1) = '\0' ;
-			
+
 			if( p_forward_session->manage_input_buffer[0] != '\0' )
 			{
 				nret = ProcessManageCommand( pse , out_sock , p_forward_session ) ;
@@ -1667,33 +1667,33 @@ static int ReceiveOrProcessManageData( struct ServerEnv *pse , struct epoll_even
 					return -1;
 				}
 			}
-			
+
 			p_forward_session->manage_input_buflen = strlen(p+1) ;
 			memmove( p_forward_session->manage_input_buffer , p+1 , strlen(p+1)+1 );
 			memset( p_forward_session->manage_input_buffer , 0x00 , MANAGE_INPUT_BUFSIZE - p_forward_session->manage_input_buflen );
-			
+
 			send( out_sock , "> " , 2 , 0 );
 		}
 		else
 		{
-			/* Î´ĞÎ³ÉÍêÕûÃüÁî£¬¼ÌĞøÀÛ¼Ó */
+			/* æœªå½¢æˆå®Œæ•´å‘½ä»¤ï¼Œç»§ç»­ç´¯åŠ  */
 			p_forward_session->manage_input_buflen += recv_len ;
 		}
 	}
-	
+
 	return 0;
 }
 
-/* Òì²½Á¬½ÓÄ¿±êÍøÂçµØÖ·ºó»Øµ÷£¬Á¬½Ó³É¹¦ºóµÇ¼Çµ½epoll³Ø */
+/* å¼‚æ­¥è¿æ¥ç›®æ ‡ç½‘ç»œåœ°å€åå›è°ƒï¼Œè¿æ¥æˆåŠŸåç™»è®°åˆ°epollæ±  */
 static int SetSocketConnected( struct ServerEnv *pse , struct epoll_event *p_event , struct ForwardSession *p_forward_session_server )
 {
 	struct ForwardSession	*p_forward_session_client = NULL ;
 	struct epoll_event	client_event ;
 	struct epoll_event	server_event ;
-	
+
 	int			nret = 0 ;
-	
-	/* ²éÑ¯epoll³ØÎ´ÓÃµ¥Ôª */
+
+	/* æŸ¥è¯¢epollæ± æœªç”¨å•å…ƒ */
 	nret = GetForwardSessionUnusedUnit( pse , & p_forward_session_client ) ;
 	if( nret != FOUND )
 	{
@@ -1703,75 +1703,75 @@ static int SetSocketConnected( struct ServerEnv *pse , struct epoll_event *p_eve
 		SetForwardSessionUnitUnused( p_forward_session_server );
 		return 1;
 	}
-	
-	/* µÇ¼Ç¿Í»§¶ËĞÅÏ¢×ª·¢»á»°¡¢epoll³Ø£¬¸üĞÂ·şÎñ¶ËĞÅÏ¢ */
+
+	/* ç™»è®°å®¢æˆ·ç«¯ä¿¡æ¯è½¬å‘ä¼šè¯ã€epollæ± ï¼Œæ›´æ–°æœåŠ¡ç«¯ä¿¡æ¯ */
 	p_forward_session_client->forward_session_type = FORWARD_SESSION_TYPE_CLIENT ;
-	
+
 	memcpy( & (p_forward_session_client->client_addr) , & (p_forward_session_server->client_addr) , sizeof(struct ClientNetAddress) );
 	p_forward_session_client->client_index = p_forward_session_client - & (pse->forward_session[0]) ;
 	memcpy( & (p_forward_session_client->listen_addr) , & (p_forward_session_server->listen_addr) , sizeof(struct ClientNetAddress) );
 	memcpy( & (p_forward_session_client->server_addr) , & (p_forward_session_server->server_addr) , sizeof(struct ServerNetAddress) );
 	p_forward_session_client->server_index = p_forward_session_server->server_index ;
-	
+
 	p_forward_session_client->p_forward_rule = p_forward_session_server->p_forward_rule ;
 	p_forward_session_client->connect_status = CONNECT_STATUS_CONNECTED ;
-	
+
 	memset( & (client_event) , 0x00 , sizeof(client_event) );
 	client_event.data.ptr = p_forward_session_client ;
 	client_event.events = EPOLLIN | EPOLLERR | EPOLLET ;
 	epoll_ctl( pse->event_env , EPOLL_CTL_ADD , p_forward_session_client->client_addr.sock , & client_event );
-	
+
 	p_forward_session_server->client_index = p_forward_session_client - & (pse->forward_session[0]) ;
 	p_forward_session_server->connect_status = CONNECT_STATUS_CONNECTED ;
-	
+
 	memset( & (server_event) , 0x00 , sizeof(server_event) );
 	server_event.data.ptr = p_forward_session_server ;
 	server_event.events = EPOLLIN | EPOLLERR | EPOLLET ;
 	epoll_ctl( pse->event_env , EPOLL_CTL_MOD , p_forward_session_server->server_addr.sock , & server_event );
-	
+
 	DebugOutput( pse , "forward2 [%s:%s]#%d# - [%s:%s]#%d# > [%s:%s]#%d#\n"
 		, p_forward_session_client->client_addr.netaddr.ip , p_forward_session_client->client_addr.netaddr.port , p_forward_session_client->client_addr.sock
 		, p_forward_session_server->listen_addr.netaddr.ip , p_forward_session_server->listen_addr.netaddr.port , p_forward_session_server->listen_addr.sock
 		, p_forward_session_server->server_addr.netaddr.ip , p_forward_session_server->server_addr.netaddr.port , p_forward_session_server->server_addr.sock );
-	
+
 	return 0;
 }
 
-/* ½â¾ösock´íÎó´¦Àí */
+/* è§£å†³socké”™è¯¯å¤„ç† */
 static int ResolveSocketError( struct ServerEnv *pse , struct epoll_event *p_event , struct ForwardSession *p_forward_session )
 {
 	int		nret = 0 ;
-	
-	/* Èç¹ûÊÇÒì²½Á¬½Ó´íÎóÊÂ¼ş */
+
+	/* å¦‚æœæ˜¯å¼‚æ­¥è¿æ¥é”™è¯¯äº‹ä»¶ */
 	if( p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_SERVER && p_forward_session->connect_status == CONNECT_STATUS_CONNECTING )
 	{
 		ErrorOutput( pse , "connect2 to [%s:%s] failed\n" , p_forward_session->server_addr.netaddr.ip , p_forward_session->server_addr.netaddr.port );
-		
-		/* ´¦ÀíÄ¿±êÍøÂçµØÖ·²»¿ÉÓÃ´íÎó */
+
+		/* å¤„ç†ç›®æ ‡ç½‘ç»œåœ°å€ä¸å¯ç”¨é”™è¯¯ */
 		nret = OnServerUnable( pse , p_forward_session->p_forward_rule ) ;
 		if( nret )
 			goto _CLOSE_PAIR;
-		
+
 		if( p_forward_session->try_connect_count <= 0 )
 		{
 			goto _CLOSE_PAIR;
 		}
-		
-		/* Á¬½ÓÆäËüÄ¿±êÍøÂçµØÖ· */
+
+		/* è¿æ¥å…¶å®ƒç›®æ ‡ç½‘ç»œåœ°å€ */
 		nret = ConnectToRemote( pse , p_event , p_forward_session , p_forward_session->p_forward_rule , & (p_forward_session->client_addr) , --p_forward_session->try_connect_count ) ;
-		
-		/* ´Óepoll³ØÖĞÉ¾³ı¿Í»§¶Ësock */
+
+		/* ä»epollæ± ä¸­åˆ é™¤å®¢æˆ·ç«¯sock */
 		p_forward_session->p_forward_rule->connection_count[p_forward_session->p_forward_rule->select_index]--;
 		epoll_ctl( pse->event_env , EPOLL_CTL_DEL , p_forward_session->server_addr.sock , NULL );
 		close( p_forward_session->server_addr.sock );
 		SetForwardSessionUnitUnused( p_forward_session );
-		
+
 		if( nret )
 		{
 			goto _CLOSE_PAIR;
 		}
 	}
-	/* Èç¹ûÊÇ×ª·¢´íÎóÊÂ¼ş */
+	/* å¦‚æœæ˜¯è½¬å‘é”™è¯¯äº‹ä»¶ */
 	else
 	{
 _CLOSE_PAIR :
@@ -1780,8 +1780,8 @@ _CLOSE_PAIR :
 		int			out_sock ;
 		unsigned long		client_index ;
 		unsigned long		server_index ;
-		
-		/* ´Óepoll³ØÖĞÉ¾³ı×ª·¢Á½¶ËĞÅÏ¢¡¢É¾³ı×ª·¢»á»° */
+
+		/* ä»epollæ± ä¸­åˆ é™¤è½¬å‘ä¸¤ç«¯ä¿¡æ¯ã€åˆ é™¤è½¬å‘ä¼šè¯ */
 		if( p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_CLIENT )
 		{
 			in_sock = p_forward_session->client_addr.sock ;
@@ -1794,7 +1794,7 @@ _CLOSE_PAIR :
 		}
 		client_index = p_forward_session->client_index ;
 		server_index = p_forward_session->server_index ;
-		
+
 		pse->forward_session[server_index].p_forward_rule->connection_count[p_forward_session->server_index]--;
 		epoll_ctl( pse->event_env , EPOLL_CTL_DEL , in_sock , NULL );
 		epoll_ctl( pse->event_env , EPOLL_CTL_DEL , out_sock , NULL );
@@ -1805,36 +1805,36 @@ _CLOSE_PAIR :
 		SetForwardSessionUnitUnused( & (pse->forward_session[server_index]) );
 	}
 	}
-	
+
 	return 0;
 }
 
-/* ·şÎñÆ÷Ö÷¹¤×÷Ñ­»· */
+/* æœåŠ¡å™¨ä¸»å·¥ä½œå¾ªç¯ */
 static int ServerLoop( struct ServerEnv *pse )
 {
 	struct epoll_event	events[ WAIT_EVENTS_COUNT ] , *p_event = NULL ;
 	int			sock_count ;
 	int			sock_index ;
-	
+
 	struct ForwardSession	*p_forward_session = NULL ;
-	
+
 	int			nret = 0 ;
-	
+
 	while(1)
 	{
-		/* ÅúÁ¿µÈ´ıepollÊÂ¼ş */
+		/* æ‰¹é‡ç­‰å¾…epolläº‹ä»¶ */
 		sock_count = epoll_wait( pse->event_env , events , WAIT_EVENTS_COUNT , -1 ) ;
-		
+
 		gettimeofday( & (pse->server_cache.tv) , NULL );
-		
+
 		for( sock_index = 0 , p_event = & (events[0]) ; sock_index < sock_count ; sock_index++ , p_event++ )
 		{
 			p_forward_session = p_event->data.ptr ;
-			
-			/* Èç¹ûÊÇÕìÌı¶Ë¿ÚÊÂ¼ş */
+
+			/* å¦‚æœæ˜¯ä¾¦å¬ç«¯å£äº‹ä»¶ */
 			if( p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_LISTEN )
 			{
-				/* Èç¹ûÊÇ¹ÜÀí¶Ë¿ÚÊÂ¼ş */
+				/* å¦‚æœæ˜¯ç®¡ç†ç«¯å£äº‹ä»¶ */
 				if( strcmp( p_forward_session->listen_addr.rule_mode , FORWARD_RULE_MODE_G ) == 0 )
 				{
 					nret = AcceptManageSocket( pse , p_event , p_forward_session ) ;
@@ -1848,7 +1848,7 @@ static int ServerLoop( struct ServerEnv *pse )
 						return nret;
 					}
 				}
-				/* Èç¹ûÊÇ×ª·¢¶Ë¿ÚÊÂ¼ş */
+				/* å¦‚æœæ˜¯è½¬å‘ç«¯å£äº‹ä»¶ */
 				else
 				{
 					nret = AcceptForwardSocket( pse , p_event , p_forward_session ) ;
@@ -1863,10 +1863,10 @@ static int ServerLoop( struct ServerEnv *pse )
 					}
 				}
 			}
-			/* Èç¹ûÊÇÊäÈëÊÂ¼ş */
+			/* å¦‚æœæ˜¯è¾“å…¥äº‹ä»¶ */
 			else if( p_event->events & EPOLLIN )
 			{
-				/* Èç¹ûÊÇ¹ÜÀí¶Ë¿ÚÊäÈëÊÂ¼ş */
+				/* å¦‚æœæ˜¯ç®¡ç†ç«¯å£è¾“å…¥äº‹ä»¶ */
 				if( p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_MANAGE )
 				{
 					nret = ReceiveOrProcessManageData( pse , p_event , p_forward_session ) ;
@@ -1880,7 +1880,7 @@ static int ServerLoop( struct ServerEnv *pse )
 						return nret;
 					}
 				}
-				/* Èç¹ûÊÇ×ª·¢¶Ë¿ÚÊäÈëÊÂ¼ş */
+				/* å¦‚æœæ˜¯è½¬å‘ç«¯å£è¾“å…¥äº‹ä»¶ */
 				else if( p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_CLIENT
 					||
 					p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_SERVER
@@ -1898,7 +1898,7 @@ static int ServerLoop( struct ServerEnv *pse )
 					}
 				}
 			}
-			/* Èç¹ûÊÇÊä³öÊÂ¼ş */
+			/* å¦‚æœæ˜¯è¾“å‡ºäº‹ä»¶ */
 			else if( p_event->events & EPOLLOUT )
 			{
 				if( p_forward_session->forward_session_type == FORWARD_SESSION_TYPE_SERVER )
@@ -1915,7 +1915,7 @@ static int ServerLoop( struct ServerEnv *pse )
 					}
 				}
 			}
-			/* Èç¹ûÊÇ´íÎóÊÂ¼ş */
+			/* å¦‚æœæ˜¯é”™è¯¯äº‹ä»¶ */
 			else if( p_event->events & EPOLLERR )
 			{
 				nret = ResolveSocketError( pse , p_event , p_forward_session ) ;
@@ -1931,48 +1931,48 @@ static int ServerLoop( struct ServerEnv *pse )
 			}
 		}
 	}
-	
+
 	return 0;
 }
 
-/* G5Èë¿Úº¯Êı */
+/* G5å…¥å£å‡½æ•° */
 int G5( struct ServerEnv *pse )
 {
 	int			nret ;
-	
-	/* ´´½¨epoll³Ø */
+
+	/* åˆ›å»ºepollæ±  */
 	pse->event_env = epoll_create( pse->forward_session_maxcount ) ;
 	if( pse->event_env < 0 )
 	{
 		ErrorOutput( pse , "epoll_create failed[%d]errno[%d]\n" , pse->event_env , errno );
 		return -1;
 	}
-	
+
 	printf( "epoll_create ok #%d#\n" , pse->event_env );
-	
-	/* ×°ÔØÅäÖÃ */
+
+	/* è£…è½½é…ç½® */
 	nret = LoadConfig( pse ) ;
 	if( nret )
 	{
 		ErrorOutput( pse , "load config failed[%d]\n" , nret );
 		return nret;
 	}
-	
-	/* ·şÎñÆ÷Ö÷¹¤×÷Ñ­»· */
+
+	/* æœåŠ¡å™¨ä¸»å·¥ä½œå¾ªç¯ */
 	nret = ServerLoop( pse ) ;
 	if( nret )
 	{
 		ErrorOutput( pse , "server loop failed[%d]\n" , nret );
 		return nret;
 	}
-	
-	/* Ïú»Ùepoll³Ø */
+
+	/* é”€æ¯epollæ±  */
 	close( pse->event_env );
-	
+
 	return 0;
 }
 
-/* Èí¼ş°æ±¾¼°ÃüÁîĞĞ²ÎÊıËµÃ÷ */
+/* è½¯ä»¶ç‰ˆæœ¬åŠå‘½ä»¤è¡Œå‚æ•°è¯´æ˜ */
 static void usage()
 {
 	printf( "G5 - tcp LB dispatch\n" );
@@ -1991,26 +1991,26 @@ static void usage()
 int main( int argc , char *argv[] )
 {
 	struct ServerEnv	se , *pse = & se ;
-	
+
 	int			ch ;
-	
-	/* ÉèÖÃ±ê×¼Êä³öÎŞ»º³å */
+
+	/* è®¾ç½®æ ‡å‡†è¾“å‡ºæ— ç¼“å†² */
 	setbuf( stdout , NULL );
-	
-	/* ÉèÖÃËæ»úÊıÖÖ×Ó */
+
+	/* è®¾ç½®éšæœºæ•°ç§å­ */
 	srand( (unsigned)time(NULL) );
-	
+
 	if( argc > 1 )
 	{
-		/* ³õÊ¼»¯·şÎñÆ÷»·¾³ */
+		/* åˆå§‹åŒ–æœåŠ¡å™¨ç¯å¢ƒ */
 		memset( pse , 0x00 , sizeof(struct ServerEnv) );
-		
-		/* ³õÊ¼»¯ÃüÁîĞĞ²ÎÊı */
+
+		/* åˆå§‹åŒ–å‘½ä»¤è¡Œå‚æ•° */
 		pse->cmd_para.forward_rule_maxcount = DEFAULT_FORWARD_RULE_MAXCOUNT ;
 		pse->cmd_para.forward_session_maxcount = DEFAULT_CONNECTION_MAXCOUNT ;
 		pse->cmd_para.transfer_bufsize = DEFAULT_TRANSFER_BUFSIZE ;
-		
-		/* ·ÖÎöÃüÁîĞĞ²ÎÊı */
+
+		/* åˆ†æå‘½ä»¤è¡Œå‚æ•° */
 		while( ( ch = getopt( argc , argv , "f:r:s:b:d" ) ) != -1 )
 		{
 			switch( ch )
@@ -2041,8 +2041,8 @@ int main( int argc , char *argv[] )
 			usage();
 			return 7;
 		}
-		
-		/* ÉêÇë·şÎñÆ÷»·¾³ÄÚ²¿ÄÚ´æ */
+
+		/* ç”³è¯·æœåŠ¡å™¨ç¯å¢ƒå†…éƒ¨å†…å­˜ */
 		pse->forward_rule = (struct ForwardRule *)malloc( sizeof(struct ForwardRule) * pse->cmd_para.forward_rule_maxcount ) ;
 		if( pse->forward_rule == NULL )
 		{
@@ -2050,7 +2050,7 @@ int main( int argc , char *argv[] )
 			return 7;
 		}
 		memset( pse->forward_rule , 0x00 , sizeof(struct ForwardRule) * pse->cmd_para.forward_rule_maxcount );
-		
+
 		pse->forward_session_maxcount = pse->cmd_para.forward_session_maxcount * 3 ;
 		pse->forward_session = (struct ForwardSession *)malloc( sizeof(struct ForwardSession) * pse->forward_session_maxcount ) ;
 		if( pse->forward_session == NULL )
@@ -2059,12 +2059,12 @@ int main( int argc , char *argv[] )
 			return 7;
 		}
 		memset( pse->forward_session , 0x00 , sizeof(struct ForwardSession) * pse->forward_session_maxcount );
-		
+
 		printf( "forward_rule_maxcount    [%ld]\n" , pse->cmd_para.forward_rule_maxcount );
 		printf( "forward_session_maxcount [%ld]\n" , pse->cmd_para.forward_session_maxcount );
 		printf( "transfer_bufsize         [%ld]bytes\n" , pse->cmd_para.transfer_bufsize );
-		
-		/* µ÷ÓÃG5Èë¿Úº¯Êı */
+
+		/* è°ƒç”¨G5å…¥å£å‡½æ•° */
 		return -G5( pse );
 	}
 	else

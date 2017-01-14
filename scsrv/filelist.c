@@ -76,7 +76,7 @@ ShowLog(5,"filelist:path=%s",buff);
 	p=buffer;
 	*p=0;
 	while((ret=fscanf(fd,"%s",tmp))==1) {
-		if(*buffer==0 && tmp[strlen(tmp)-1] == ':') {//û�ҵ�
+		if(*buffer==0 && tmp[strlen(tmp)-1] == ':') {//没找到
 			break;
 		}
 		p1=sc_basename(tmp);
@@ -115,7 +115,7 @@ ShowLog(5,"filelist:path=%s",buff);
 	NetHead->PROTO_NUM=PutEvent(conn,Event_no);
 	NetHead->data=0;
      	NetHead->PKG_LEN=0;
-     	NetHead->ERRNO2=0;  
+     	NetHead->ERRNO2=0;
      	NetHead->PKG_REC_NUM=0;
      	NetHead->O_NODE=LocalAddr(conn->Socket,0);
      	NetHead->D_NODE=0;

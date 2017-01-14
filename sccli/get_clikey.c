@@ -6,7 +6,7 @@
 #include <crc.h>
 
 extern char * prikey128(char *keybuf,u_int ind[4],u_int *family);
-//客户端用，与服务器协商并取得密钥 
+//瀹㈡埛绔敤锛屼笌鏈嶅姟鍣ㄥ崗鍟嗗苟鍙栧緱瀵嗛挜
 int get_clikey(T_Connect *conn)
 {
 int i,kw,a2,b1;
@@ -36,7 +36,7 @@ unsigned short crc;
 	n2byte(4,ay,keybuf);
 	keybuf[16]=a2&255;
 	keybuf[17]=b1&255;
-	
+
 	byte_a64(cmd,keybuf,18);
 	crc=gencrc((unsigned char *)cmd,24);
 	*(short *)(cmd+24)=htons(crc);
@@ -71,8 +71,7 @@ strhex(8,(u_int *)(keybuf+16),errbuf);
 ShowLog(5,"%s:key=%s,len=%d",__FUNCTION__,errbuf,strlen(keybuf+16));
 */
 		enigma2_init(&conn->t,keybuf+16,32);
-	} 
+	}
 	conn->CryptFlg=crymode;
 	return crymode;
 }
-

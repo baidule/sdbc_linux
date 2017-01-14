@@ -11,7 +11,7 @@
 #define MIN(a,b) ((a)<(b))?(a):(b)
 #endif
 
-//timeout for second 
+//timeout for second
 int RecvNet(int s,char *buf,int n,int timeout,int TCB_no)
 {
 int bcount,br,ret,num=0;
@@ -31,7 +31,7 @@ struct timeval tmout;
 	bcount=0;
 	br=0;
 
-/* 为防止防火墙切断长期空闲的连接，对方可能定时发来心跳字符0x00,将其丢弃
+/* 涓洪槻姝㈤槻鐏鍒囨柇闀挎湡绌洪棽鐨勮繛鎺ワ紝瀵规柟鍙兘瀹氭椂鍙戞潵蹇冭烦瀛楃0x00,灏嗗叾涓㈠純
 	do {
 		br=read(s,buf,1);
 		if(br<0) return -1;
@@ -102,4 +102,3 @@ socklen_t SendSize=0;
 	if(bcount<=0)return -1;
 	return bcount;
 }
-

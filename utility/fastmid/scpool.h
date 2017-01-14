@@ -24,7 +24,7 @@ int get_s_connect(int TCBno,int poolno,T_Connect **connp,int (*call_back)(T_Conn
 int bind_sc(int TCBno,T_Connect *conn);
 int unbind_sc(int TCBno);
 /**
- * ¹é»¹Á¬½Óµ½Á÷Ë®Ïß¹©ÆäËûÈÎÎñ¹²Ïí  
+ * å½’è¿˜è¿æ¥åˆ°æµæ°´çº¿ä¾›å…¶ä»–ä»»åŠ¡å…±äº«
  */
 int share_lnk(int poolno,T_Connect *conn);
 

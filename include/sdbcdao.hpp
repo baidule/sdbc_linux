@@ -1,5 +1,5 @@
 /*********************************************************
- * DAUµÄC++½Ó¿Ú
+ * DAUçš„C++æ¥å£
  *********************************************************/
 
 #ifndef DAUDEF
@@ -11,14 +11,14 @@ class SdbcDAO {
 	protected:
 		DAU dau;
 	public:
-//¹¹Ôìº¯ÊıºÍÎö¹¹º¯Êı
-//¿ÕÄ£°å
+//æ„é€ å‡½æ•°å’Œææ„å‡½æ•°
+//ç©ºæ¨¡æ¿
 	SdbcDAO(void)
         {
             DAU_init(&dau,NULL,NULL,NULL,NULL);
         }
 
-//´ÓÊı¾İ¿â»ñÈ¡Ä£°å
+//ä»æ•°æ®åº“è·å–æ¨¡æ¿
 	SdbcDAO(T_SQL_Connect *SQL_Connect,char *tabname)
         {
             int ret;
@@ -28,13 +28,13 @@ class SdbcDAO {
                 throw Showid;
             }
         }
-//Ê¹ÓÃ¾²Ì¬Ä£°å£¬²¢´ÓÄ£°å»ñÈ¡±íÃû
+//ä½¿ç”¨é™æ€æ¨¡æ¿ï¼Œå¹¶ä»æ¨¡æ¿è·å–è¡¨å
 	SdbcDAO(T_SQL_Connect *SQL_Connect,void *rec,T_PkgType *tpl)
         {
             init(SQL_Connect,NULL,rec,tpl);
         }
 
-//ÓÃ±íÃûÈ¡´úÄ£°åÀïµÄ±íÃû
+//ç”¨è¡¨åå–ä»£æ¨¡æ¿é‡Œçš„è¡¨å
 	SdbcDAO(T_SQL_Connect *SQL_Connect,char *tabname,void *rec,T_PkgType *tpl)
 	{
             int ret;
@@ -43,7 +43,7 @@ class SdbcDAO {
                 throw Showid;
 	    }
 	}
-//¶ÔÒÑ´æÔÚµÄ¶ÔÏóÖØĞÂ³õÊ¼»¯
+//å¯¹å·²å­˜åœ¨çš„å¯¹è±¡é‡æ–°åˆå§‹åŒ–
 	int  init(T_SQL_Connect *SQL_Connect,char *tabname,void *rec,T_PkgType *tpl)
 	{
 	 	DAU_init(&dau,SQL_Connect,tabname,rec,tpl);
@@ -54,13 +54,13 @@ class SdbcDAO {
             if(dau.srm.tp) data_init(dau.srm.rec,dau.srm.tp);
 	}
 
-//Îö¹¹º¯Êı
+//ææ„å‡½æ•°
 	~SdbcDAO(void)
         {
             DAU_free(&dau);
         }
 
-//beanº¯Êı
+//beanå‡½æ•°
 	DAU *getDAU()
 	{
 	 return &dau;
@@ -96,7 +96,7 @@ class SdbcDAO {
 
 	int getRecSize(void)
 	{
-	 if(!dau.srm.tp) return -1; 
+	 if(!dau.srm.tp) return -1;
 	 return dau.srm.tp[abs(dau.srm.Aflg)].offset;
 	}
 
@@ -125,7 +125,7 @@ class SdbcDAO {
 	 dau.srm.befor=befor;
 	}
 
-//²Ù×÷º¯Êı
+//æ“ä½œå‡½æ•°
 	int select(char *stmt)
 	{
 	  return DAU_select(&dau,stmt,0);
@@ -166,7 +166,7 @@ class SdbcDAO {
 	  return DAU_exec(&dau,stmt);
 	}
 
-//ÉèÖÃÑ¡ÔñµÄÁĞÊä³ö
+//è®¾ç½®é€‰æ‹©çš„åˆ—è¾“å‡º
 	int selectCol(const char *choose)
 	{
 	char stmt[10240];
@@ -181,7 +181,7 @@ class SdbcDAO {
 	  return selectCol(choose);
 	}
 
-//¶ÔÑ¡ÔñµÄÁĞ¹¹½¨updateÓï¾ä£¬Èç¹ûchooseÎª¿Õ£¬È«²¿ÁĞ ,·µ»ØÎ²²¿
+//å¯¹é€‰æ‹©çš„åˆ—æ„å»ºupdateè¯­å¥ï¼Œå¦‚æœchooseä¸ºç©ºï¼Œå…¨éƒ¨åˆ— ,è¿”å›å°¾éƒ¨
 	char *mkUpdateByCol(const char *choose,char *stmt)
 	{
 	  return DAU_mk_upd_col(&dau,choose,stmt);
@@ -197,13 +197,13 @@ class SdbcDAO {
 	  return DAU_except_col(&dau,buf,choose);
 	}
 
-//´òÓ¡ÉÏÊö²Ù×÷µÄ°ó¶¨±äÁ¿Öµ
+//æ‰“å°ä¸Šè¿°æ“ä½œçš„ç»‘å®šå˜é‡å€¼
 	int printBind(char *buf)
 	{
 	  return DAU_print_bind(&dau,buf);
 	}
 
-//ĞòÁĞ»¯/·´ĞòÁĞ»¯
+//åºåˆ—åŒ–/ååºåˆ—åŒ–
 	int pack(char *buf)
 	{
 	  return DAU_pack(&dau,buf);

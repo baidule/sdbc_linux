@@ -1,15 +1,15 @@
-# mid_status Ö§³ÖÓĞ×´Ì¬Á¬½ÓµÄ½»Ò×¹ÜÀíÆ÷  
+# mid_status æ”¯æŒæœ‰çŠ¶æ€è¿æ¥çš„äº¤æ˜“ç®¡ç†å™¨
 CFLAGS = -Wall -g -I$(SDBCDIR)/include -I../srvcomm
-LFLAGS = -rdynamic -L$(SDBCDIR)/lib 
+LFLAGS = -rdynamic -L$(SDBCDIR)/lib
 CC=gcc
 
 OBJS = login.o transfer.o dmapp.o
-#mod_sc.o scpool.o 
+#mod_sc.o scpool.o
 #	uc_tcp.o set_sp64.o
 midsc: midsc.o $(OBJS)
 	$(CC) -o midsc midsc.o $(OBJS) $(LFLAGS) -lsc -lscbase -ljson -lpthread -lrt -ldl
 
-#$(SDBCDIR)/lib/AIO_tcp.o 
+#$(SDBCDIR)/lib/AIO_tcp.o
 #-L/usr/local/lib -ltcmalloc_minimal
 
 install::midsc

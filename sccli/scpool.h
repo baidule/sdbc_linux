@@ -26,10 +26,9 @@ void release_SC_connect(T_Connect **Connect,int TCBno,int poolno);
 int get_scpool_no(int d_node);
 int get_scpoolnum(void);
 char *get_LABEL(int poolno);
-//¸ºÔØ¾ùºâ£¬ÕÒÒ»¸ö¸ºÔØ×îÇáµÄ³Ø
+//è´Ÿè½½å‡è¡¡ï¼Œæ‰¾ä¸€ä¸ªè´Ÿè½½æœ€è½»çš„æ± 
 resource * get_SC_weight(int TCBno);
 
 #ifdef __cplusplus
 }
 #endif
-

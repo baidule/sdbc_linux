@@ -14,7 +14,7 @@ int SRM_fromJSON(SRM *srmp,JSON_OBJECT json)
 	if(!srmp->tp || !srmp->rec) return MEMERR;
 	return json_to_struct(srmp->rec,json,srmp->tp);
 }
-/* 将src中的同名成员拷贝到desc,格式自动转换 */
+/* 灏唖rc涓殑鍚屽悕鎴愬憳鎷疯礉鍒癲esc,鏍煎紡鑷姩杞崲 */
 int SRM_copy(SRM *desc,SRM *src,const char *choose)
 {
 JSON_OBJECT json;
@@ -73,4 +73,3 @@ int SRM_mk(SRM *srmp,const char *tabname)
 	}
         return mk_srm(srmp);
 }
-

@@ -12,7 +12,7 @@ register char *s,*t;
     return t;
 }
 
-/* 如果系统未定义stpcpy,在此定义 */
+/* 濡傛灉绯荤粺鏈畾涔塻tpcpy,鍦ㄦ瀹氫箟 */
 
 #ifndef  __USE_XOPEN2K8
 char * stpcpy(char *t,const char *s)
@@ -20,4 +20,3 @@ char * stpcpy(char *t,const char *s)
 	return strtcpy(t,&s,0);
 }
 #endif
-

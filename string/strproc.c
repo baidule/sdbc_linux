@@ -1,7 +1,7 @@
 /****************************** description *****************************/
 /*Copyright (C), 2006-2009, EASYWAY. Co., Ltd.							*/
-/*function:×Ö·û´®´¦Àíº¯Êı												*/
-/*author:yulihua¡¢huangpeng												*/
+/*function:å­—ç¬¦ä¸²å¤„ç†å‡½æ•°												*/
+/*author:yulihuaã€huangpeng												*/
 /*modify date:2009-4-21													*/
 /************************************************************************/
 #include <ctype.h>
@@ -11,12 +11,12 @@
 #define MIN(a,b) ((a>b)?b:a)
 #endif
 
-/*function:iscc ÅĞ¶ÏÊÇ·ñÊÇºº×Ö*/
+/*function:iscc åˆ¤æ–­æ˜¯å¦æ˜¯æ±‰å­—*/
 int iscc(unsigned char ch)
 {
 	return (ch >= 0x81 && ch < 0xff);
 }
-/*function:cc1 È¡ºº×ÖµÄÒ»¸ö×Ö½Ú*/
+/*function:cc1 å–æ±‰å­—çš„ä¸€ä¸ªå­—èŠ‚*/
 static int cc1(unsigned char *bp,unsigned char *bufp)
 {
 	register unsigned char *p;
@@ -24,36 +24,36 @@ static int cc1(unsigned char *bp,unsigned char *bufp)
 	for(p = bufp; iscc(*p); p--)
 	{
 		i++;
-		if(p <= bp) 
+		if(p <= bp)
 			break;
 	}
 	return (i & 1);
 }
-/*function:firstcc ºº×ÖµÄµÚÒ»¸ö×Ö½Ú*/
+/*function:firstcc æ±‰å­—çš„ç¬¬ä¸€ä¸ªå­—èŠ‚*/
 int firstcc(unsigned char *bp,unsigned char *bufp)
 {
-	if(!bufp || !(*bufp) || (bufp < bp) || !iscc(*bufp)) 
+	if(!bufp || !(*bufp) || (bufp < bp) || !iscc(*bufp))
 		return 0;
 	return (cc1(bp, bufp));
 }
-/*function:secondcc ºº×ÖµÄµÚ¶ş¸ö×Ö½Ú*/
+/*function:secondcc æ±‰å­—çš„ç¬¬äºŒä¸ªå­—èŠ‚*/
 int secondcc(unsigned char *bp,unsigned char *bufp)
 {
-	if(!firstcc(bp, bufp-1)) 
+	if(!firstcc(bp, bufp-1))
 		return 0;
-	if(*bufp == 0x7f) 
+	if(*bufp == 0x7f)
 		return 0;
-	if((*bufp >= 0x80) && (*bufp <= 0xfe)) 
-		return 1; 
+	if((*bufp >= 0x80) && (*bufp <= 0xfe))
+		return 1;
 	if(GBK_flag && *bufp>=0x40 && *bufp<0X7f) return 1;
 	return 0;
 }
 
 /************************************************************************/
-/*function:stptok ·Ö½â×Ö·û´®ÎªÒ»×é±ê¼Ç´®	                        */
-/*description:¸ù¾İ·Ö¸ô·û'tok'£¬´Ó'src'·Ö½âµ½'trg'ÖĞ£¬Èç¹û'tok'²»ÉèÖÃ£¬Ôò*/
-/*¸ù¾İ'src'ÓëlenµÄ×îĞ¡Öµ£¬½«'src'¿½±´µ½'trg'ÖĞ¡£¿ÉÒÔ½â¾öºº×ÖÖĞ³öÏÖµÄÓë  */
-/*'tok'ÏàÍ¬µÄ·Ö¸ô·û±»·Ö½â¡£						*/
+/*function:stptok åˆ†è§£å­—ç¬¦ä¸²ä¸ºä¸€ç»„æ ‡è®°ä¸²	                        */
+/*description:æ ¹æ®åˆ†éš”ç¬¦'tok'ï¼Œä»'src'åˆ†è§£åˆ°'trg'ä¸­ï¼Œå¦‚æœ'tok'ä¸è®¾ç½®ï¼Œåˆ™*/
+/*æ ¹æ®'src'ä¸lençš„æœ€å°å€¼ï¼Œå°†'src'æ‹·è´åˆ°'trg'ä¸­ã€‚å¯ä»¥è§£å†³æ±‰å­—ä¸­å‡ºç°çš„ä¸  */
+/*'tok'ç›¸åŒçš„åˆ†éš”ç¬¦è¢«åˆ†è§£ã€‚						*/
 /************************************************************************/
 char *stptok(const char *src,char *trg,int len,const char *tok)
 {
@@ -80,7 +80,7 @@ char *stptok(const char *src,char *trg,int len,const char *tok)
 	if(!trg) return ((size_t)((const char *)p-src))<len?(char *)p:(char *)(src+len);
 
 	while(*src && --len) {
-		if((unsigned char *)src == p) 
+		if((unsigned char *)src == p)
 			break;
 		*trg++ = *src++;
 	}
@@ -90,50 +90,50 @@ char *stptok(const char *src,char *trg,int len,const char *tok)
 }
 
 /************************************************************************
- *function:strsubst Ìæ»»×Ö·û´®º¯Êı	        
- *description:ÓÃ'str'Ìæ»»'from'µÄÇ°cnt¸ö×Ö·û	
- * ·µ»ØÖ¸ÏòÌæ»»ºó±ßµÄ×Ö½Ú¡£ 
+ *function:strsubst æ›¿æ¢å­—ç¬¦ä¸²å‡½æ•°
+ *description:ç”¨'str'æ›¿æ¢'from'çš„å‰cntä¸ªå­—ç¬¦
+ * è¿”å›æŒ‡å‘æ›¿æ¢åè¾¹çš„å­—èŠ‚ã€‚
  ************************************************************************/
 char *strsubst(char *from,int cnt,char *str)
 {
 	int i;
 	register char *cp, *cp1, *cp2;
 
- 	if(!from) 
+ 	if(!from)
 		return 0;
 	i = strlen(from);
-	if(cnt < 0) 
+	if(cnt < 0)
 		cnt = 0;
-	else if(cnt > i) 
+	else if(cnt > i)
 		cnt = i;
 	else ;
 	i = str ? strlen(str) : 0;
 	if(i < cnt)				/* delete some char*/
-	{  
+	{
 		cp1 = from + i;
 		cp = from + cnt;
-		while(*cp) 
+		while(*cp)
 			*cp1++ = *cp++;
 		*cp1 = 0;
 	}
 	else if (i > cnt)			/* extend some*/
-	{ 
+	{
 		cp2 = from + cnt;
 		cp = from + strlen(from);
 		cp1 = cp + i - cnt;
-		while(cp >= cp2) 
+		while(cp >= cp2)
 			*cp1-- = *cp--;
 	}
 	else ;
-	if(str) 
+	if(str)
 		strncpy(from, str, i);
 
 	return (from + i);
 }
 /************************************************************************
- *function:strins ²åÈë×Ö·ûº¯Êı                                          
- *description:ÔÚ'str'Ç°²åÈë×Ö·û'ch'	
- * ·µ»ØÖ¸ÏòÌæ»»ºó±ßµÄ×Ö½Ú¡£
+ *function:strins æ’å…¥å­—ç¬¦å‡½æ•°
+ *description:åœ¨'str'å‰æ’å…¥å­—ç¬¦'ch'
+ * è¿”å›æŒ‡å‘æ›¿æ¢åè¾¹çš„å­—èŠ‚ã€‚
  ************************************************************************/
 char *strins(char *str,char ch)
 {
@@ -147,13 +147,13 @@ char *strins(char *str,char ch)
 
 
 /************************************************************************/
-/*function:strupper ½«×Ö·û´®ÖĞµÄĞ¡Ğ´×ÖÄ¸×ª»»³É´óĞ´                      */
+/*function:strupper å°†å­—ç¬¦ä¸²ä¸­çš„å°å†™å­—æ¯è½¬æ¢æˆå¤§å†™                      */
 /************************************************************************/
 char *strupper(char *str)
 {
 register	char *p;
 
-	if(!str) 
+	if(!str)
 		return str;
 	for(p = str; *p; p++) {
 		if((*p & 128) && GBK_flag) {
@@ -168,13 +168,13 @@ register	char *p;
 }
 
 /************************************************************************/
-/*function:strlower ½«×Ö·û´®ÖĞµÄ´óĞ´×ÖÄ¸×ª»»³ÉĞ¡Ğ´                      */
+/*function:strlower å°†å­—ç¬¦ä¸²ä¸­çš„å¤§å†™å­—æ¯è½¬æ¢æˆå°å†™                      */
 /************************************************************************/
 char *strlower(char *str)
 {
 	char *p;
 
-	if(!str) 
+	if(!str)
 		return str;
 	for(p = str; *p; p++) {
 		if((*p & 128) && GBK_flag) {

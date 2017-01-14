@@ -1,8 +1,8 @@
 /*******************************************
- * ĞèÒªlinux 2.6.22 ÒÔÉÏ°æ±¾
- * ºÍlibaio 3.107ÒÔÉÏ°æ±¾
- * Èç¹û²»¾ß±¸Õâ¸öÌõ¼ş£¬ÔÚmakefileÀïÓÃSIO_fd.o
- * È¡´ú±¾Ä£¿é
+ * éœ€è¦linux 2.6.22 ä»¥ä¸Šç‰ˆæœ¬
+ * å’Œlibaio 3.107ä»¥ä¸Šç‰ˆæœ¬
+ * å¦‚æœä¸å…·å¤‡è¿™ä¸ªæ¡ä»¶ï¼Œåœ¨makefileé‡Œç”¨SIO_fd.o
+ * å–ä»£æœ¬æ¨¡å—
  *******************************************/
 
 #include <unistd.h>
@@ -23,9 +23,9 @@ struct io_event event;
 int	efd = eventfd(0, 0);
 T_YIELD yield=get_yield();
 
-	if (efd == -1) {   
+	if (efd == -1) {
 		return flg?write(fd,buff,iosize):read(fd,buff,iosize);
-	}   
+	}
 
 	memset(&myctx,0,sizeof(myctx));
 	io_set_eventfd(io,efd);

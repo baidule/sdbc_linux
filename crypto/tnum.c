@@ -23,7 +23,7 @@ main()
 u_int m[4],x[4],y[4],a[4],ax[4],ay[4],axy[4],ayx[4];
 int i;
 char buf[1024];
-//Çó128bit×î´óËØÊý 
+//æ±‚128bitæœ€å¤§ç´ æ•° 
 	for( m[0]=m[1]=m[2]=m[3]=0XFFFFFFFF;
 		m[0]>5;m[0]-=2) {
 		if(isprime4(m)) break;
@@ -67,6 +67,6 @@ printf("ax=%s\n",buf);
 	for(i=0;i<4;i++)
 		printf("%08X ",ayx[3-i]);
 	printf("\n");
-	
+
 	return 0;
 }

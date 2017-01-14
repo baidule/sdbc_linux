@@ -10,8 +10,8 @@ char *strCaseStr(const char *str1, const char *str2)
 	int len2 = strlen(str2);
 	char *pStr1 = (char *)malloc(len1 + 1);
 	char *pStr2 = (char *)malloc(len2 + 1);
-	memset(pStr1, 0, len1 + 1); // ÎðÍü¼Ç
-	memset(pStr2, 0, len2 + 1); // ÎðÍü¼Ç
+	memset(pStr1, 0, len1 + 1); // å‹¿å¿˜è®°
+	memset(pStr2, 0, len2 + 1); // å‹¿å¿˜è®°
 	strcpy(pStr1, str1);
 	strcpy(pStr2, str2);
 	strlwr(pStr1);
@@ -30,7 +30,7 @@ char *strCaseStr(const char *str1, const char *str2)
 }
 int main()
 {
-	char testStr1[][100] = 
+	char testStr1[][100] =
 	{
 		"abc", "abc", "Abc", "Abc", "Abc"
 	};
@@ -49,9 +49,8 @@ int main()
 		}
 		else
 		{
-			cout << "error" << endl; 
+			cout << "error" << endl;
 		}
 	}
 	return 0;
 }
-

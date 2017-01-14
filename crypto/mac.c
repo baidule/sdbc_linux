@@ -14,10 +14,10 @@
 #define MAXINTERFACES 8
 
 /*
-ÔÚlinuxÏÂ£¬ÅĞ¶ÏÍø¿¨×´Ì¬
+åœ¨linuxä¸‹ï¼Œåˆ¤æ–­ç½‘å¡çŠ¶æ€
 ioctl(sockfd, SIOCGIFFLAGS, &ifr);
 return ((ifr.ifr_flags & IFF_UP) && (ifr.ifr_flags & IFF_RUNNING));
-¿ÉÒÔ¿´¿´Õâ¸öÄ¿Â¼£¬¾ÍÖªµÀÓĞ¶àÉÙÍø¿¨
+å¯ä»¥çœ‹çœ‹è¿™ä¸ªç›®å½•ï¼Œå°±çŸ¥é“æœ‰å¤šå°‘ç½‘å¡
 /sys/class/net/
 
 */
@@ -41,16 +41,16 @@ struct ifconf ifc;
 		close(fd);
 		return -2;
 	}
-	// »ñÈ¡¶Ë¿ÚĞÅÏ¢
+	// è·å–ç«¯å£ä¿¡æ¯
 	intrface = ifc.ifc_len/sizeof(struct ifreq);
-	// ¸ù¾İ¶Ë¿ÚĞÅÏ¢»ñÈ¡Éè±¸IPºÍMACµØÖ·
+	// æ ¹æ®ç«¯å£ä¿¡æ¯è·å–è®¾å¤‡IPå’ŒMACåœ°å€
 	while(intrface-- > 0 )
 	{
  		if(!strcmp(buf[intrface].ifr_name,"lo")) {
 			continue;
 		}
 /*
-		// »ñÈ¡Éè±¸Ãû³Æ
+		// è·å–è®¾å¤‡åç§°
 		if(!(ioctl(fd,SIOCGIFFLAGS,(char *)&buf[intrface])))
 		{
 			if(buf[intrface].ifr_flags & IFF_PROMISC)
@@ -62,7 +62,7 @@ struct ifconf ifc;
 			continue;
 		}
 */
-		// »ñÈ¡MACµØÖ·
+		// è·å–MACåœ°å€
 		if(ioctl(fd,SIOCGIFHWADDR,(char *)&buf[intrface]))
 		{
 			continue;

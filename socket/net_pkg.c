@@ -1,9 +1,9 @@
 /************************************************
- * SDBC µÄºËÐÄ´«Êä³ÌÐò¡£Í¨ÐÅ°ü·Ö³É°üÍ·ºÍ°üÌå,
- * °üÍ·ÊÇ9¸öÕûÊý£¬±»±ä»»Îª48×Ö½ÚµÄ¶¨³¤Í·¡£
- * °üÌåÊÇÈÎÒâ³¤¶ÈµÄ×Ö½ÚÁ÷£¬Ö»ÊÜ×ÊÔ´ÏÞÖÆ¡£
- * ´«ÊäËùÐèµÄÄÚ´æÊÇÄÚ²¿·ÖÅäºÍ¹ÜÀíµÄ¡£
- * °üÍ·ºÍ´«Êä¿ØÖÆ¿éµÄÄÚÈÝÊÇÏòÓÃ»§¿ª·ÅµÄ¡£
+ * SDBC çš„æ ¸å¿ƒä¼ è¾“ç¨‹åºã€‚é€šä¿¡åŒ…åˆ†æˆåŒ…å¤´å’ŒåŒ…ä½“,
+ * åŒ…å¤´æ˜¯9ä¸ªæ•´æ•°ï¼Œè¢«å˜æ¢ä¸º48å­—èŠ‚çš„å®šé•¿å¤´ã€‚
+ * åŒ…ä½“æ˜¯ä»»æ„é•¿åº¦çš„å­—èŠ‚æµï¼Œåªå—èµ„æºé™åˆ¶ã€‚
+ * ä¼ è¾“æ‰€éœ€çš„å†…å­˜æ˜¯å†…éƒ¨åˆ†é…å’Œç®¡ç†çš„ã€‚
+ * åŒ…å¤´å’Œä¼ è¾“æŽ§åˆ¶å—çš„å†…å®¹æ˜¯å‘ç”¨æˆ·å¼€æ”¾çš„ã€‚
  * SDBC 6.5 2013-11-15 by YuLihua
  ************************************************/
 
@@ -130,7 +130,7 @@ int i,len;
 char *p=NULL;
 
 	if(!connect || !nethead) return -1;
-//ÊÍ·Å½ÓÊÕbuf
+//é‡Šæ”¾æŽ¥æ”¶buf
 	if(connect->RecvLen > 65536) {
 		if(connect->RecvBuffer) free(connect->RecvBuffer);
 		connect->RecvBuffer=0;
@@ -161,7 +161,7 @@ char *p=NULL;
 */
 
 		} else {
-			if(!(connect->CryptFlg & UNDO_ZIP)) 
+			if(!(connect->CryptFlg & UNDO_ZIP))
 				nethead->T_LEN=nethead->PKG_LEN;
 			memcpy((void *)p,nethead->data,len);
 		}
@@ -280,7 +280,7 @@ void initconnect(T_Connect *connect)
 extern void FreeVar(void *);
 void freeconnect(T_Connect *conn)
 {
-	
+
     if(conn->Socket > -1) close(conn->Socket);
     conn->Socket=-1;
     memset(&conn->t,0,sizeof(conn->t));

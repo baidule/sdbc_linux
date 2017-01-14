@@ -84,7 +84,7 @@ char addr[41],*cp;
         	free(hp->h_addr_list);
 		free(hp);
 	}
-/* 如果要已经处于连接状态的soket在调用closesocket后强制关闭，不经历TIME_WAIT的过程：
+/* 濡傛灉瑕佸凡缁忓浜庤繛鎺ョ姸鎬佺殑soket鍦ㄨ皟鐢╟losesocket鍚庡己鍒跺叧闂紝涓嶇粡鍘員IME_WAIT鐨勮繃绋嬶細
 BOOL bDontLinger = FALSE;
 setsockopt(s,SOL_SOCKET,SO_DONTLINGER,(const char*)&bDontLinger,sizeof(BOOL));
 for WINDOWS */

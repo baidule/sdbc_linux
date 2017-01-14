@@ -11,11 +11,11 @@ extern int substitute_env(char *line);
 
 #include <sys/stat.h>
 /*************************************************/
-/* µÃµ½ÎÄ¼þ³¤¶È                                  */
-/*     Óï·¨: int GetFileSize(FILE *fd)		 */
-/*           fd:ÒÔ´ò¿ªµÄÎÄ¼þ                     */
-/*           ·µ»Ø: -1 Ê§°Ü                       */
-/*                 >=0 ÎÄ¼þ³¤¶È¢                 */
+/* å¾—åˆ°æ–‡ä»¶é•¿åº¦                                  */
+/*     è¯­æ³•: int GetFileSize(FILE *fd)		 */
+/*           fd:ä»¥æ‰“å¼€çš„æ–‡ä»¶                     */
+/*           è¿”å›ž: -1 å¤±è´¥                       */
+/*                 >=0 æ–‡ä»¶é•¿åº¦ï¿½                 */
 /*************************************************/
 int GetFileSize(fd)
 int fd;
@@ -45,7 +45,7 @@ int Event_no;
 		goto errret;
 	}
 //    ShowLog(5,"Rexec:len=%d,%s",NetHead->PKG_LEN,NetHead->data);
-/* ¼ì²éÒ»ÏÂ£¬ÃüÁîÊÇ·ñÔÊÐíÖ´ÐÐ */
+/* æ£€æŸ¥ä¸€ä¸‹ï¼Œå‘½ä»¤æ˜¯å¦å…è®¸æ‰§è¡Œ */
 	i=chkexec(NetHead->data);
 	if(i) {
 		sprintf(errbuf,"rexec %.520s permisson denied %d",
@@ -54,7 +54,7 @@ int Event_no;
 		NetHead->ERRNO1=i;
 		NetHead->data=errbuf;
 		NetHead->PKG_LEN=strlen(NetHead->data);
-		
+
 		goto errret;
 	}
     cmd=strdup(NetHead->data);
@@ -88,7 +88,7 @@ errret:
 		NetHead->PROTO_NUM=PutEvent(connect,Event_no);
      		NetHead->PKG_REC_NUM=0;
      		NetHead->ERRNO1=FORMATERR;
-     		NetHead->ERRNO2=0; 
+     		NetHead->ERRNO2=0;
      		NetHead->D_NODE=0;
      		NetHead->O_NODE=e_node;
      		NetHead->PKG_LEN=0;
@@ -150,7 +150,7 @@ errret:
 		    for(i=0;i<(sizeof(buffer)-100);i=strlen(buffer)) {
 			fgets(buffer+i,sizeof(buffer)-i,fd);
 			if(ferror(fd)||feof(fd))break;
-		    } 
+		    }
 			NetHead->PROTO_NUM=0;
 			NetHead->data=buffer;
      			NetHead->PKG_LEN=strlen(NetHead->data);
@@ -211,7 +211,7 @@ errret:
 	NetHead->data=0;
 	i=SendPack(connect,NetHead);
 	return 0;
-    } 
+    }
     {
 	int r_len=0;
     	size=GetFileSize(fd);
@@ -242,7 +242,7 @@ errret:
 		goto errret;
 	}
      	NetHead->PKG_REC_NUM=0;
-     	NetHead->ERRNO1=0; 
+     	NetHead->ERRNO1=0;
 	NetHead->O_NODE=e_node;
      	NetHead->D_NODE=0;
 	if(seekflag)lseek(fd,seekflag,SEEK_SET);
@@ -270,7 +270,7 @@ errret:
 	i=SendPack(connect,NetHead);
 	free(buffer);
     }
-	ShowLog(2,"GetFile %s success",fname);   
+	ShowLog(2,"GetFile %s success",fname);
     return 0;
 }
 
@@ -305,7 +305,7 @@ int Event_no;
 	fd=open(buffer,O_WRONLY|O_APPEND|O_TRUNC,S_IREAD|S_IWRITE);
 	if(!fd)
 	    fd=open(buffer,O_WRONLY|O_CREAT|O_TRUNC,S_IREAD|S_IWRITE);
-    } else  
+    } else
 	fd=open(buffer,O_WRONLY|O_CREAT|O_TRUNC,S_IREAD|S_IWRITE|S_IRGRP|S_IROTH);
     if(fd<0){
      	NetHead->ERRNO1=errno;
@@ -315,25 +315,25 @@ errret:
 	NetHead->data=0;
 	NetHead->PKG_LEN=0;
      	NetHead->PKG_REC_NUM=0;
-     	NetHead->ERRNO2=PACK_NOANSER; 
+     	NetHead->ERRNO2=PACK_NOANSER;
      	NetHead->D_NODE=0;
      	NetHead->O_NODE=e_node;
 	i=SendPack(connect,NetHead);
 	return 0;
-    } 
+    }
     if(breakflag){
 	lseek(fd,0,SEEK_END);
     	NetHead->PKG_REC_NUM = GetFileSize(fd);
     } else NetHead->PKG_REC_NUM=0;
 	NetHead->PROTO_NUM=PutEvent(connect,Event_no);
 	NetHead->ERRNO1=0;
-	NetHead->ERRNO2=0; 
+	NetHead->ERRNO2=0;
      	NetHead->O_NODE=e_node;
 	NetHead->D_NODE=0;
 	NetHead->data=0;
 	NetHead->PKG_LEN= 0;
 	i=SendPack(connect,NetHead);
-    
+
 	count=1;
 	flg=0;
 	do {
@@ -396,7 +396,7 @@ int i,e_node;
 		return 1;
 	}
 	return 0;
-    
+
 }
 
 int ChDir(connect,NetHead)
@@ -456,4 +456,3 @@ int i,e_node;
     i=SendPack(connect,NetHead);
     return i;
 }
-

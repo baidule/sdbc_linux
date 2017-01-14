@@ -1,0 +1,13 @@
+dn: cn=Tom Black,ou=people,dc=easyway,dc=net
+cn: Tom Black
+sn: Black
+mail: tom@126.com
+telephoneNumber: 371-6338-3522
+objectClass: inetOrgPerson
+
+dn: cn=Jerry Smith,ou=people,dc=easyway,dc=net
+cn: Jerry Smith
+sn: Smith
+mail: jerry@126.com
+telephoneNumber: 371-6338-3523
+objectClass: inetOrgPerson

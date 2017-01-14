@@ -1,5 +1,5 @@
 /**************************************************
- * SDBCÁ¬½Ó³Ø¹ÜÀí
+ * SDBCè¿æ¥æ± ç®¡ç†
  **************************************************/
 #include <ctype.h>
 #include <sys/utsname.h>
@@ -68,7 +68,7 @@ typedef struct {
 
 static int SCPOOLNUM=0;
 static pool *scpool=NULL;
-//ÊÍ·ÅÁ¬½Ó³Ø  
+//é‡Šæ”¾è¿æ¥æ± 
 void scpool_free()
 {
 int i,n;
@@ -91,7 +91,7 @@ int i,n;
 	scpool=NULL;
 }
 
-//³õÊ¼»¯Á¬½Ó³Ø  
+//åˆå§‹åŒ–è¿æ¥æ± 
 int scpool_init()
 {
 int n,i,ret;
@@ -104,7 +104,7 @@ SCPOOL_stu node;
 	if(scpool) return 0;
 	p=getenv("SCPOOLCFG");
 	if(!p||!*p) {
-		ShowLog(1,"%s:È±ÉÙ»·¾³±äÁ¿SCPOOLCFG!",__FUNCTION__);
+		ShowLog(1,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡SCPOOLCFG!",__FUNCTION__);
 		return -1;
 	}
 	fd=fopen((const char *)p,"r");
@@ -151,7 +151,7 @@ SCPOOL_stu node;
 		json_object_put(cfg);
 		return -12;
 	}
-	
+
 	if(0!=(i=pthread_cond_init(&scpool[n].cond,NULL))) {
 		ShowLog(1,"%s:cond init  err %s",__FUNCTION__,
 			strerror(i));
@@ -226,21 +226,21 @@ resource *rs;
         *np=-1;
         return i;
 }
-//½«pl[i]¼ÓÈëfree_q
+//å°†pl[i]åŠ å…¥free_q
 static void add_lnk(pool *pl,int i)
 {
 int *np,*ip=&pl->lnk[i].next;
-        if(*ip>=0) return;//ÒÑ¾­ÔÚ¶ÓÁĞÖĞ
+        if(*ip>=0) return;//å·²ç»åœ¨é˜Ÿåˆ—ä¸­
 	np=&pl->free_q;
         if(*np < 0) {
                 *np=i;
                 *ip=i;
-	} else { //²åÈë¶ÓÍ·  
+	} else { //æ’å…¥é˜Ÿå¤´
 	resource *rs=&pl->lnk[*np];
                 *ip=rs->next;
                 rs->next=i;
 		if(pl->lnk[i].Conn.Socket<0) {
-			*np=i;//»µÁ¬½ÓÅÅ¶ÓÎ² 
+			*np=i;//åè¿æ¥æ’é˜Ÿå°¾
 		}
         }
 }
@@ -272,27 +272,27 @@ log_stu logs;
 	f=Conn->only_do;
 	if(f!=(sdbcfunc)1) set_callback(srvp->TCB_no,f,Conn->timeout);
 	Conn->only_do=NULL;
-        if(event!=EPOLLIN) { 
-                ShowLog(1,"%s:ºô½Ğ·şÎñÆ÷·µ»Ø³¬Ê±,rs[%d],event=%08X",__FUNCTION__,ret,event);
+        if(event!=EPOLLIN) {
+                ShowLog(1,"%s:å‘¼å«æœåŠ¡å™¨è¿”å›è¶…æ—¶,rs[%d],event=%08X",__FUNCTION__,ret,event);
 		unbind_sc(srvp->TCB_no);
 		rs->cli.Errno=-1;
                 release_SC_connect(&Conn,srvp->TCB_no,srvp->poolno);
-		TCB_add(NULL,srvp->TCB_no); //¼ÓÈëµ½Ö÷ÈÎÎñ¶ÓÁĞ
+		TCB_add(NULL,srvp->TCB_no); //åŠ å…¥åˆ°ä¸»ä»»åŠ¡é˜Ÿåˆ—
 		return THREAD_ESCAPE;
         }
 
 	ret=RecvPack(Conn,&Head);
-	if(ret) { //ÍøÂçÊ§°Ü
+	if(ret) { //ç½‘ç»œå¤±è´¥
 		rs->cli.Errno=errno;
 		stptok(strerror(errno),rs->cli.ErrMsg,sizeof(rs->cli.ErrMsg),0);
 		unbind_sc(srvp->TCB_no);
 		ShowLog(1,"%s:network error %d,%s",__FUNCTION__,rs->cli.Errno,rs->cli.ErrMsg);
 		rs->cli.Errno=-1;
 		release_SC_connect(&Conn,srvp->TCB_no,srvp->poolno);
-		TCB_add(NULL,srvp->TCB_no); //¼ÓÈëµ½Ö÷ÈÎÎñ¶ÓÁĞ
+		TCB_add(NULL,srvp->TCB_no); //åŠ å…¥åˆ°ä¸»ä»»åŠ¡é˜Ÿåˆ—
 		return THREAD_ESCAPE;
 	}
-	if(Head.ERRNO1 || Head.ERRNO2) {  //loginÊ§°Ü
+	if(Head.ERRNO1 || Head.ERRNO2) {  //loginå¤±è´¥
 		ShowLog(1,"%s:HOST=%s,login error ERRNO1=%d,ERRNO2=%d,%s",__FUNCTION__,
 			Conn->Host,Head.ERRNO1,Head.ERRNO2,Head.data);
 errret:
@@ -300,7 +300,7 @@ errret:
 		stptok(Head.data,rs->cli.ErrMsg,sizeof(rs->cli.ErrMsg),0);
 		rs->cli.Errno=-1;
 		release_SC_connect(&Conn,srvp->TCB_no,srvp->poolno);
-		TCB_add(NULL,srvp->TCB_no); //¼ÓÈëµ½Ö÷ÈÎÎñ¶ÓÁĞ
+		TCB_add(NULL,srvp->TCB_no); //åŠ å…¥åˆ°ä¸»ä»»åŠ¡é˜Ÿåˆ—
 		return THREAD_ESCAPE;
 	}
 	memset(&logs,0,sizeof(logs));
@@ -310,13 +310,13 @@ errret:
 	if(!*pl->DBLABEL) strcpy(pl->DBLABEL,logs.DBLABEL);
 //session id for end server
 	rs->cli.ctx_id=atoi(logs.DBLABEL);
-	
-//È¡·şÎñÃû
+
+//å–æœåŠ¡å
 	rs->cli.svc_tbl=&pl->svc_tbl;
 	pthread_mutex_lock(&pl->mut);
 	if(pl->svc_tbl.srvn <= 0) {
 	    ret=init_svc_no(&rs->Conn);
-	    if(ret) { //È¡·şÎñÃûÊ§°Ü
+	    if(ret) { //å–æœåŠ¡åå¤±è´¥
 		pthread_mutex_unlock(&pl->mut);
 		ShowLog(1,"%s:HOST=%s,init_svc_no error ERRNO1=%d,ERRNO2=%d,%s",__FUNCTION__,
 			Conn->Host,Head.ERRNO1,Head.ERRNO2,Head.data);
@@ -336,7 +336,7 @@ errret:
 static int to_log_ret(T_Connect *conn,T_NetHead *head)
 {
 T_SRV_Var *srvp=(T_SRV_Var *)conn->Var;
-//´Órdy¶ÓÁĞ×ªµ½epoll¶ÓÁĞ
+//ä»rdyé˜Ÿåˆ—è½¬åˆ°epollé˜Ÿåˆ—
 	unset_callback(srvp->TCB_no);
 int ret;
 resource *rs;
@@ -349,14 +349,14 @@ pool *pl;
 	}
 	pl=&scpool[srvp->poolno];
 
-	ret=conn->pos;//´Ósc_connect´«µİ¹ıÀ´
+	ret=conn->pos;//ä»sc_connectä¼ é€’è¿‡æ¥
 	rs=&pl->lnk[ret];
-//ÈÎÎñ½«»Øµ½epoll¶ÓÁĞ 
+//ä»»åŠ¡å°†å›åˆ°epollé˜Ÿåˆ—
 	set_event(srvp->TCB_no,rs->Conn.Socket,log_ret,60);
 	return THREAD_ESCAPE;
 }
 
-//Á¬½Ó
+//è¿æ¥
 static int sc_connect(pool *p1,resource *rs)
 {
 int ret=-1;
@@ -393,22 +393,22 @@ char finger[200];
 	Head.PROTO_NUM=0;
 	Head.D_NODE=p1->log.NEXT_d_node;
 	Head.ERRNO1=rs->Conn.MTU;
-	Head.PKG_REC_NUM=-1; //²»ÒªÇóctx_id
+	Head.PKG_REC_NUM=-1; //ä¸è¦æ±‚ctx_id
 	Head.data=buf;
 	Head.PKG_LEN=strlen(Head.data);
 	ret=SendPack(&rs->Conn,&Head);
 ShowLog(5,"%s:Send %s ret%d",__FUNCTION__,Head.data,ret);
-//ÈÎÎñ½«»Øµ½rdy¶ÓÁĞ 
+//ä»»åŠ¡å°†å›åˆ°rdyé˜Ÿåˆ—
 	cli_conn=get_TCB_connect(rs->TCBno);
-	cli_conn->pos=rs->Conn.pos;//ÏòÏÂ´«µİpos
+	cli_conn->pos=rs->Conn.pos;//å‘ä¸‹ä¼ é€’pos
 	rs->Conn.only_do=set_callback(rs->TCBno,to_log_ret,rs->Conn.timeout);
 	if(!rs->Conn.only_do) {
 		rs->Conn.only_do=(sdbcfunc)1;
-	}//Ã»ÓĞ½øĞĞTCB_add(),»ØÈ¥ºó×ö¡£
+	}//æ²¡æœ‰è¿›è¡ŒTCB_add(),å›å»ååšã€‚
 	return 0;
 }
 
-//È¡Á¬½Ó  
+//å–è¿æ¥
 T_Connect * get_SC_connect(int TCBno,int n,int flg)
 {
 int i,ret;
@@ -419,7 +419,7 @@ pthread_t tid=pthread_self();
 	if(!scpool || n<0 || n>=SCPOOLNUM) return NULL;
 	pl=&scpool[n];
 	if(!pl->lnk) {
-		ShowLog(1,"%s:ÎŞĞ§µÄÁ¬½Ó³Ø[%d]",__FUNCTION__,n);
+		ShowLog(1,"%s:æ— æ•ˆçš„è¿æ¥æ± [%d]",__FUNCTION__,n);
 		return NULL;
 	}
 	if(0!=pthread_mutex_lock(&pl->mut))  return (T_Connect *)-1;
@@ -430,7 +430,7 @@ pthread_t tid=pthread_self();
 	    }
 //	    if(log_level) ShowLog(log_level,"%s tid=%lu pool[%d] suspend",
 //		__FUNCTION__,pthread_self(),n);
-	    pthread_cond_wait(&pl->cond,&pl->mut); //Ã»ÓĞ×ÊÔ´£¬µÈ´ı 
+	    pthread_cond_wait(&pl->cond,&pl->mut); //æ²¡æœ‰èµ„æºï¼Œç­‰å¾…
 //	    if(log_level) ShowLog(log_level,"%s tid=%lu pool[%d] weakup",
 //		__FUNCTION__,pthread_self(),n);
 	}
@@ -441,7 +441,7 @@ pthread_t tid=pthread_self();
 	if(rs->Conn.Socket<0 || rs->cli.Errno<0) {
 		ret=sc_connect(pl,rs);
 		if(ret) {
-			ShowLog(1,"%s:scpool[%d].%d Á¬½Ó%s/%s´í:err=%d,%s",
+			ShowLog(1,"%s:scpool[%d].%d è¿æ¥%s/%sé”™:err=%d,%s",
 				__FUNCTION__,n,i,pl->log.HOST,pl->log.PORT,
 				rs->cli.Errno, rs->cli.ErrMsg);
 			rs->TCBno=-1;
@@ -450,8 +450,8 @@ pthread_t tid=pthread_self();
 			add_lnk(pl,i);
 			pthread_mutex_unlock(&pl->mut);
 			return (T_Connect *)-1;
-		} 
-	} 
+		}
+	}
 	rs->timestamp=now_usec();
 	if(log_level) ShowLog(log_level,"%s tid=%lu,TCB:%d,pool[%d].%d,USEC=%llu",__FUNCTION__,
 			tid,TCBno,n,i,rs->timestamp);
@@ -459,7 +459,7 @@ pthread_t tid=pthread_self();
 	*rs->cli.ErrMsg=0;
 	return &rs->Conn;
 }
-//¹é»¹Á¬½Ó  
+//å½’è¿˜è¿æ¥
 void release_SC_connect(T_Connect **Connect,int TCBno,int n)
 {
 int i;
@@ -469,7 +469,7 @@ resource *rs;
 T_CLI_Var *clip;
 //ShowLog(5,"%s:tid=%lu,TCB:%d,poolno=%d",__FUNCTION__,pthread_self(),TCBno,n);
 	if(!Connect || !scpool || n<0 || n>=SCPOOLNUM) {
-		ShowLog(1,"%s:TCB:%d,poolno=%d,´íÎóµÄ²ÎÊı",__FUNCTION__,TCBno,n);
+		ShowLog(1,"%s:TCB:%d,poolno=%d,é”™è¯¯çš„å‚æ•°",__FUNCTION__,TCBno,n);
 		return;
 	}
 	if(!*Connect) {
@@ -485,30 +485,30 @@ T_CLI_Var *clip;
 if(clip != &rs->cli) {
 	ShowLog(1,"%s:TCB:%d,clip not equal!",__FUNCTION__,TCBno);
 }
-		if(clip->Errno==-1) {  //Á¬½ÓÊ§Ğ§
+		if(clip->Errno==-1) {  //è¿æ¥å¤±æ•ˆ
 			ShowLog(1,"%s:scpool[%d].%d to fail!",__FUNCTION__,n,i);
 			disconnect(&rs->Conn);
 		}
 		rs->TCBno=-1;
 		clip->Errno=0;
 		*clip->ErrMsg=0;
-		
+
 		pthread_mutex_lock(&pl->mut);
 		add_lnk(pl,i);
 		pthread_mutex_unlock(&pl->mut);
-		pthread_cond_signal(&pl->cond); //Èç¹ûÓĞµÈ´ıÁ¬½ÓµÄÏß³Ì¾Í»½ĞÑËü 
+		pthread_cond_signal(&pl->cond); //å¦‚æœæœ‰ç­‰å¾…è¿æ¥çš„çº¿ç¨‹å°±å”¤é†’å®ƒ
   		rs->timestamp=now_usec();
 		*Connect=NULL;
 		if(log_level) ShowLog(log_level,"%s tid=%lu,TCB:%d,pool[%d].%d,USEC=%llu",
 					__FUNCTION__,tid,TCBno,n,i,rs->timestamp);
 		return;
 	}
-	ShowLog(1,"%s:ÔÚpool[%d]ÖĞÎ´·¢ÏÖ¸ÃTCBno:%d",__FUNCTION__,n,TCBno);
+	ShowLog(1,"%s:åœ¨pool[%d]ä¸­æœªå‘ç°è¯¥TCBno:%d",__FUNCTION__,n,TCBno);
 	clip->Errno=0;
 	*clip->ErrMsg=0;
 	*Connect=NULL;
 }
-//Á¬½Ó³Ø¼à¿Ø 
+//è¿æ¥æ± ç›‘æ§
 void scpool_check()
 {
 int n,i,num;
@@ -530,10 +530,10 @@ T_Connect *conn=NULL;
                 pthread_mutex_lock(&pl->mut);
                 for(i=0;i<num;i++,rs++) if(rs->TCBno<0) {
                         if(rs->Conn.Socket>-1 && (now-rs->timestamp)>299000000) {
-//¿ÕÏĞÊ±¼äÌ«³¤ÁË     
+//ç©ºé—²æ—¶é—´å¤ªé•¿äº†
 //                              if(0!=pthread_mutex_lock(&pl->mut)) continue;
 ShowLog(log_level,"%s:scpool[%d].%d,Socket=%d,to free",__FUNCTION__,n,i,rs->Conn.Socket);
-//                              rs->Conn.Var=NULL; //ÒıÆğÄÚ´æĞ¹Â©£¿
+//                              rs->Conn.Var=NULL; //å¼•èµ·å†…å­˜æ³„æ¼ï¼Ÿ
                                 disconnect(&rs->Conn);
                                 rs->cli.Errno=-1;
                                 if(log_level)
@@ -542,9 +542,9 @@ ShowLog(log_level,"%s:scpool[%d].%d,Socket=%d,to free",__FUNCTION__,n,i,rs->Conn
                         }
                 } else {
                         if(rs->Conn.Socket>-1 && (now-rs->timestamp)>299000000) {
-//Õ¼ÓÃÊ±¼äÌ«³¤ÁË     
+//å ç”¨æ—¶é—´å¤ªé•¿äº†
                               if(-1==get_TCB_status(rs->TCBno)) {
-                                //TCBÒÑ¾­½áÊø£¬ÊÍ·ÅÖ®
+                                //TCBå·²ç»ç»“æŸï¼Œé‡Šæ”¾ä¹‹
                                         unbind_sc(rs->TCBno);
                                         ShowLog(1,"%s:scpool[%d].%d TCB:%d to release",
                                                 __FUNCTION__,n,i,rs->TCBno);
@@ -565,8 +565,8 @@ ShowLog(log_level,"%s:scpool[%d].%d,Socket=%d,to free",__FUNCTION__,n,i,rs->Conn
 }
 
 /**
- * ¸ù¾İd_nodeÈ¡Á¬½Ó³ØºÅ  
- * Ê§°Ü·µ»Ø-1
+ * æ ¹æ®d_nodeå–è¿æ¥æ± å·
+ * å¤±è´¥è¿”å›-1
  */
 int get_scpool_no(int d_node)
 {
@@ -589,4 +589,3 @@ char *get_SC_DBLABEL(int poolno)
 	if(poolno<0 || poolno>=SCPOOLNUM) return NULL;
 	return scpool[poolno].DBLABEL;
 }
-

@@ -7,8 +7,8 @@
 #include <sccli.h>
 /*****************************************************************
  * for sdbc 4.0
- * SDBC µÄ¿Í»§¶ËÁ¬½ÓºÍÊÍ·Åº¯Êý¡£
- * Á¬½ÓºóÊÕÈ¡·þÎñÆ÷ËÍÀ´µÄÃÜÔ¿¡£
+ * SDBC çš„å®¢æˆ·ç«¯è¿žæŽ¥å’Œé‡Šæ”¾å‡½æ•°ã€‚
+ * è¿žæŽ¥åŽæ”¶å–æœåŠ¡å™¨é€æ¥çš„å¯†é’¥ã€‚
  *****************************************************************/
 
 
@@ -35,7 +35,7 @@ char *cp,addr[16];
 
     initconnect(conn);
     if(new_family) conn->family=new_family;
-    else conn->family=family; 
+    else conn->family=family;
     conn->Var=userdata;
     cp=getenv("CONN_REPEAT");
     if(cp && *cp) repeat=atoi(cp);
@@ -54,9 +54,9 @@ char *cp,addr[16];
 	usleep(5000000);
     } while(1);
     if(socket_no<0) return socket_no;
-    
+
     LocalAddr(socket_no,addr);
-    i=get_clikey(conn); //È¡µÃ¿Í»§ÃÜÔ¿ 
+    i=get_clikey(conn); //å–å¾—å®¢æˆ·å¯†é’¥
     if(i>=0){
         conn->Socket=socket_no;
     	ShowLog(2,"%s:netconnect %s/%s,OK ",__FUNCTION__,conn->Host,conn->Service);
@@ -89,4 +89,3 @@ T_NetHead NetHead;
 	}
 	freeconnect(conn);
 }
-

@@ -1,9 +1,9 @@
 /************************************************
- * SDBC �ĺ��Ĵ������ͨ�Ű��ֳɰ�ͷ�Ͱ���,
- * ��ͷ��9�����������任Ϊ48�ֽڵĶ���ͷ��
- * ���������ⳤ�ȵ��ֽ�����ֻ����Դ���ơ�
- * ����������ڴ����ڲ�����͹����ġ�
- * ��ͷ�ʹ�����ƿ�����������û����ŵġ�
+ * SDBC 的核心传输程序。通信包分成包头和包体,
+ * 包头是9个整数，被变换为48字节的定长头。
+ * 包体是任意长度的字节流，只受资源限制。
+ * 传输所需的内存是内部分配和管理的。
+ * 包头和传输控制块的内容是向用户开放的。
  ************************************************/
 
 //#include <malloc.h>
@@ -127,7 +127,7 @@ int SendPack(T_Connect *connect,T_NetHead *nethead)
 int i,len;
 char *p=NULL;
 
-//�ͷŽ���buf
+//释放接收buf
 	if(connect->RecvLen > 32768) {
 		if(connect->RecvBuffer) free(connect->RecvBuffer);
 		connect->RecvBuffer=0;
@@ -242,7 +242,7 @@ char *zbuf;
 			nethead->PKG_LEN,nethead->T_LEN,i);
 			return LENGERR;
 		}
-	} 
+	}
 	connect->RecvBuffer[nethead->PKG_LEN]=0;
 	nethead->data=connect->RecvBuffer;
 	return 0;
@@ -267,7 +267,7 @@ void initconnect(T_Connect *connect)
 extern void FreeVar(void *);
 void freeconnect(T_Connect *conn)
 {
-	
+
     if(conn->Var) {
     	if(conn->freevar) {conn->freevar(conn->Var);}
 	else FreeVar(conn->Var);
