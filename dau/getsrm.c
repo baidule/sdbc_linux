@@ -1,10 +1,10 @@
 /********************************************************************
- * ×Ô¶¯Éú³ÉÄ£°åµÄ³ÌÐò
- * ¸ù¾ÝÊý¾Ý¿â±í½á¹¹Éú³ÉÄ£°å¡£ÐèÒªÒ»¸ö¸¨ÖúµÄ±í£ºPATTERN_COL,
- * ¶ÔÊý¾Ý½á¹¹½øÐÐ²¹³ä¶¨Òå,Õâ¸ö±í¿ÉÒÔ²»´æÔÚ»ò¿Õ£¬±íÊ¾Ã»ÓÐ²¹³äºÍÐÞÕý
- * Èç¹û¶ÔÄ³±íµÄÄ³ÁÐÓÐ²¹³äºÍÐÞÕý£¬¾ÍÔÚÕâ¸ö±íÖÐ½¨Á¢Ò»Ìõ¼ÇÂ¼¡£
- * ±¾³ÌÐòÊÊÓÃÓÚORACLE
- *** Ñ°ÕÒÎ¨Ò»Ë÷ÒýµÄÓï¾ä£º
+ * è‡ªåŠ¨ç”Ÿæˆæ¨¡æ¿çš„ç¨‹åº
+ * æ ¹æ®æ•°æ®åº“è¡¨ç»“æž„ç”Ÿæˆæ¨¡æ¿ã€‚éœ€è¦ä¸€ä¸ªè¾…åŠ©çš„è¡¨ï¼šPATTERN_COL,
+ * å¯¹æ•°æ®ç»“æž„è¿›è¡Œè¡¥å……å®šä¹‰,è¿™ä¸ªè¡¨å¯ä»¥ä¸å­˜åœ¨æˆ–ç©ºï¼Œè¡¨ç¤ºæ²¡æœ‰è¡¥å……å’Œä¿®æ­£
+ * å¦‚æžœå¯¹æŸè¡¨çš„æŸåˆ—æœ‰è¡¥å……å’Œä¿®æ­£ï¼Œå°±åœ¨è¿™ä¸ªè¡¨ä¸­å»ºç«‹ä¸€æ¡è®°å½•ã€‚
+ * æœ¬ç¨‹åºé€‚ç”¨äºŽORACLE
+ *** å¯»æ‰¾å”¯ä¸€ç´¢å¼•çš„è¯­å¥ï¼š
  select  TABLE_NAME,COLUMN_NAME,COLUMN_POSITION FROM all_ind_columns where table_name='SEAT' and
  index_name=(select index_name from all_indexes where table_name= 'SEAT' AND UNIQUENESS='UNIQUE' AND rownum < 2)
  order by COLUMN_POSITION;
@@ -20,7 +20,7 @@ extern void PatternFree(SRM *srmp);
 
 #define THROW goto
 char col_to_lower=0;
-//Èç¹û¸Ã±íÃ»ÓÐÖ÷¼ü£¬ÕÒÒ»¸öÎ¨Ò»Ë÷Òýµ±×÷Ö÷¼ü
+//å¦‚æžœè¯¥è¡¨æ²¡æœ‰ä¸»é”®ï¼Œæ‰¾ä¸€ä¸ªå”¯ä¸€ç´¢å¼•å½“ä½œä¸»é”®
 T_PkgType ALL_IND_COLUMNS_tpl[]={
 	{CH_CHAR,49,"TABLE_NAME",0,-1},
 	{CH_CHAR,49,"COLUMN_NAME"},
@@ -37,7 +37,7 @@ typedef struct {
 } ALL_IND_COLUMNS_stu;
 
 
-//×Ö·û´®ÖÐÓÐÐ¡Ð´ 
+//å­—ç¬¦ä¸²ä¸­æœ‰å°å†™
 static int lcase(char *str)
 {
 	while(*str) {
@@ -98,7 +98,7 @@ int cc;
         return 0;
 }
 
-//ÔÝ´æÁÐÃû
+//æš‚å­˜åˆ—å
 typedef struct {
 	char COLUMN_NAME[49];
 	T_PkgType *tp;
@@ -137,7 +137,7 @@ static int calc_col(PATTERN_stu *pattrec,TAB_COLUMNS_stu *tab_col,char *datetype
 	   	strcpy(pattrec->Fld_Format,YEAR_TO_USEC);
 		pattrec->Fld_Column_Len=YEAR_TO_USEC_LEN;
 	} else if(!strcmp(tab_col->Fld_Column_Type,"NUMBER")) {
-		if(tab_col->Data_Scale>0) { //ÓÐÐ¡Êý
+		if(tab_col->Data_Scale>0) { //æœ‰å°æ•°
 			if(tab_col->data_precision>14) {
 	   			pattrec->Fld_Column_Type=CH_CNUM;
 				pattrec->Fld_Column_Len=tab_col->data_precision+
@@ -152,7 +152,7 @@ static int calc_col(PATTERN_stu *pattrec,TAB_COLUMNS_stu *tab_col,char *datetype
 			}
 		} else {
 			if(tab_col->data_precision<=0 ||
-			   tab_col->data_precision>18) { //´óÕûÊý
+			   tab_col->data_precision>18) { //å¤§æ•´æ•°
 	   			pattrec->Fld_Column_Type=CH_CNUM;
 				pattrec->Fld_Column_Len=(tab_col->data_precision>18)?
 					tab_col->data_precision+2:40;
@@ -290,13 +290,13 @@ INT64 now;
 		stptok(tab_col.Fld_Column_Name,col_name.COLUMN_NAME,sizeof(col_name.COLUMN_NAME),0);
 		col_name.tp=NULL;
 		*pseudo=0;
-		//Èç¹ûÁÐÃûº¬ÓÐÐ¡Ð´ 
+		//å¦‚æžœåˆ—åå«æœ‰å°å†™
 		if(lcase(tab_col.Fld_Column_Name)){
 			strcpy(pseudo,tab_col.Fld_Column_Name);
 		}
 //calc column
 		ret=calc_col(&pattrec,&tab_col,datetype);
-// ²éÕÒPATTERN_COL±í,ÐÞÕýÄ£°å
+// æŸ¥æ‰¾PATTERN_COLè¡¨,ä¿®æ­£æ¨¡æ¿
 		if(upd_pa) {
 		T_Tree *upd;
    			strcpy(upd_patt.COL_NAME,pattrec.Fld_Column_Name);
@@ -304,7 +304,7 @@ INT64 now;
 			if(upd) {
 			PATTERN_COL_stu *upd_p;
 				upd_p=(PATTERN_COL_stu *)upd->Content;
-				if(!strcmp(upd_p->COL_TYPE,"DELETE")) {//±íÊ¾É¾³ý¸ÃÁÐ
+				if(!strcmp(upd_p->COL_TYPE,"DELETE")) {//è¡¨ç¤ºåˆ é™¤è¯¥åˆ—
 					i--;
 					tp--;
 					continue;
@@ -314,7 +314,7 @@ INT64 now;
 				ret=mk_sdbc_type(upd_p->COL_TYPE);
 				if(ret >= 0) {
 					pattrec.Fld_Column_Type=ret;
-                        			if(upd_p->COL_LEN>0) {//ÐÞÕý¸ÃÁÐµÄ³¤¶È
+                        			if(upd_p->COL_LEN>0) {//ä¿®æ­£è¯¥åˆ—çš„é•¿åº¦
                              			pattrec.Fld_Column_Len=upd_p->COL_LEN;
                         		}
                         		if(*upd_p->COL_FORMAT) strcpy(pattrec.Fld_Format,upd_p->COL_FORMAT);
@@ -346,7 +346,7 @@ catch:
 		if(*pattrec.Fld_Format) {
 			tp->format=strdup(pattrec.Fld_Format);
 		} else tp->format=NULL;
-//ÏÈ¼ÇÂ¼ÏÂÀ´£¬×¼±¸ÔÚÃ»ÓÐÖ÷¼üÊ±²éË÷Òý±í£¬È·¶¨Î¨Ò»Ë÷ÒýµÄÁÐ
+//å…ˆè®°å½•ä¸‹æ¥ï¼Œå‡†å¤‡åœ¨æ²¡æœ‰ä¸»é”®æ—¶æŸ¥ç´¢å¼•è¡¨ï¼Œç¡®å®šå”¯ä¸€ç´¢å¼•çš„åˆ—
 		col_name.tp=tp;
 		colmn_tree=BB_Tree_Add(colmn_tree,&col_name,sizeof(col_name),colmn_Cmp,0);
 		if(pattrec.Fld_PK > 0) {
@@ -356,7 +356,7 @@ catch:
 			root=BB_Tree_Add(root,&pk_node,sizeof(pk_node),buf_Cmp,0);
 		}
 	}
-/* ¿´¿´ÊÇ·ñÐèÒªÔö¼ÓÒ»¸öROWIDÁÐ */
+/* çœ‹çœ‹æ˜¯å¦éœ€è¦å¢žåŠ ä¸€ä¸ªROWIDåˆ— */
 	if(rowid_flg) {
         T_Tree *upd;
 		strcpy(upd_patt.COL_NAME,"ROWID");
@@ -364,10 +364,10 @@ catch:
                 if(upd) {
                 PATTERN_COL_stu *upd_p;
                         upd_p=(PATTERN_COL_stu *)upd->Content;
-                        if(strcmp(upd_p->COL_TYPE,"DELETE")) {//±íÊ¾²»É¾³ý¸ÃÁÐ
+                        if(strcmp(upd_p->COL_TYPE,"DELETE")) {//è¡¨ç¤ºä¸åˆ é™¤è¯¥åˆ—
                                 if(*upd_p->COL_TYPE)
                                         pattrec.Fld_Column_Type=mk_sdbc_type(upd_p->COL_TYPE);
-                                if(upd_p->COL_LEN>0) {//ÐÞÕý¸ÃÁÐµÄ³¤¶È
+                                if(upd_p->COL_LEN>0) {//ä¿®æ­£è¯¥åˆ—çš„é•¿åº¦
                                         pattrec.Fld_Column_Len=upd_p->COL_LEN;
                                 }
                                 tp->name=strdup("ROWID");
@@ -394,11 +394,11 @@ catch:
 		PatternFree(srmp);
 		return -4;
 	}
-	if(!root) do {//Ã»ÓÐÖ÷¼ü£¬ÕÒÒ»¸öÎ¨Ò»Ë÷Òý×öÖ÷¼ü
+	if(!root) do {//æ²¡æœ‰ä¸»é”®ï¼Œæ‰¾ä¸€ä¸ªå”¯ä¸€ç´¢å¼•åšä¸»é”®
 		ALL_IND_COLUMNS_stu colmn;
 		DAU_init(&patt_DAU,SQL_Connect,0,&colmn,ALL_IND_COLUMNS_tpl);
 		strcpy(colmn.TABLE_NAME,pattrec.Fld_Tlb_Name);
-/*»áÕÒµ½²»¿ÉÊ¶±ðµÄË÷Òý
+/*ä¼šæ‰¾åˆ°ä¸å¯è¯†åˆ«çš„ç´¢å¼•
 		strcpy(stmt,"WHERE TABLE_NAME=:TABLE_NAME AND INDEX_NAME="
 			"(SELECT INDEX_NAME FROM ALL_INDEXES "
 			"WHERE TABLE_NAME=:TABLE_NAME AND UNIQUENESS='UNIQUE' AND rownum < 2)");
@@ -411,7 +411,7 @@ catch:
 		DAU_init(&upd_DAU,SQL_Connect,0,&colmn,ALL_IND_COLUMNS_tpl);
 		strcpy(stmt,"WHERE TABLE_NAME=:TABLE_NAME AND INDEX_NAME=:INDEX_NAME");
 		upd_DAU.srm.hint="/*+client_result_cache */";
-		for(ret=0;ret<i;ret++) {//Ã¿¸öË÷ÒýÃû
+		for(ret=0;ret<i;ret++) {//æ¯ä¸ªç´¢å¼•å
 		int ind_num;
 			patt_DAU.srm.rp += net_dispack(colmn.INDEX_NAME,patt_DAU.srm.rp,CharType);
 			ind_num=DAU_prepare(&upd_DAU,stmt);
@@ -422,18 +422,18 @@ catch:
 					SQL_Connect->ErrMsg);
 				continue;
 			}
-			while(!DAU_next(&upd_DAU)) {//Ã¿¸öË÷ÒýÁÐ
+			while(!DAU_next(&upd_DAU)) {//æ¯ä¸ªç´¢å¼•åˆ—
 			T_Tree *upd;
 			T_PkgType *tpe;
 				strcpy(col_name.COLUMN_NAME,colmn.COLUMN_NAME);
        	         		upd=BB_Tree_Find(colmn_tree,&col_name,sizeof(col_name),colmn_Cmp);
-				if(!upd) { //²»¿ÉÊ¶±ðµÄË÷ÒýÁÐ
+				if(!upd) { //ä¸å¯è¯†åˆ«çš„ç´¢å¼•åˆ—
 				   strcpy(upd_patt.COL_NAME,colmn.COLUMN_NAME);
 				   upd=BB_Tree_Find(upd_pa,&upd_patt,sizeof(upd_patt),par_Cmp);
 				   if(!upd) {
 bad_colname:
-					ShowLog(1,"UK:Ë÷ÒýÃû %s ¼üÁÐÐò£º%d ¿É½« %s|%s|PK|||¶ÔÓ¦µÄÕæÊµÁÐÃû| "
-						  "¼ÓÈë PATTERN_COL ±í",
+					ShowLog(1,"UK:ç´¢å¼•å %s é”®åˆ—åºï¼š%d å¯å°† %s|%s|PK|||å¯¹åº”çš„çœŸå®žåˆ—å| "
+						  "åŠ å…¥ PATTERN_COL è¡¨",
 						colmn.INDEX_NAME,colmn.COLUMN_POSITION,
 						colmn.TABLE_NAME,colmn.COLUMN_NAME);
 					BB_Tree_Free(&root,0);
@@ -448,8 +448,8 @@ bad_colname:
 				strcpy(pk_node.colname,plain_name(tpe->name));
 				root=BB_Tree_Add(root,&pk_node,sizeof(pk_node),buf_Cmp,0);
 			}
-			if(root) break; 
-			//Õâ¸öË÷ÒýÃû²»ÐÐÁË£¬ÕÒÏÂÒ»¸ö
+			if(root) break;
+			//è¿™ä¸ªç´¢å¼•åä¸è¡Œäº†ï¼Œæ‰¾ä¸‹ä¸€ä¸ª
 		}
 		DAU_free(&patt_DAU);
 		DAU_free(&upd_DAU);
@@ -466,4 +466,3 @@ bad_colname:
 	tp->name=srmp->tabname;
 	return 0;
 }
-

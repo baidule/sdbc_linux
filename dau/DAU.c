@@ -2,7 +2,7 @@
 #include <ctype.h>
 #include "getsrm.h"
 
-#define THROW goto 
+#define THROW goto
 
 extern T_PkgType *patt_dup(T_PkgType *tp);
 extern int reset_bind(void *content);
@@ -44,7 +44,7 @@ int DAU_init(DAU *DP,T_SQL_Connect *SQL_Connect,const char *tabname,void *rec,T_
 int n;
 
 	if(!DP) return -1;
-	if(SQL_Connect) { //Ô­Ê¼³õÊ¼»¯
+	if(SQL_Connect) { //åŸå§‹åˆå§‹åŒ–
 		DP->SQL_Connect=SQL_Connect;
 		DP->srm.rec=rec;
 		DP->srm.tp=NULL;
@@ -64,7 +64,7 @@ int n;
 		DP->srm.tabname=tabname;
 		DP->srm.rp=0;
 		DP->srm.result=0;
-		if(tp) { 
+		if(tp) {
 		int n=set_offset(tp);
 			DP->srm.tp=patt_dup(tp);
 			if(!DP->srm.tp) return -1;
@@ -76,41 +76,41 @@ int n;
 			return 0;
 		}
 		return mksrm(&DP->srm,DP->SQL_Connect);
-	} 
-//´Î¼¶³õÊ¼»¯
+	}
+//æ¬¡çº§åˆå§‹åŒ–
 	if(tabname) {
 		DP->srm.tabname=tabname;
 		if(tp) {
 init_tp:
 
-			DAU_free(DP); //±íÃû¡¢Ä£°å¸ÄÁË£¬Ô­À´µÄÉÏÏÂÎÄÃ»ÓĞÒâÒåÁË£¬±ØĞëÇå³ı
+			DAU_free(DP); //è¡¨åã€æ¨¡æ¿æ”¹äº†ï¼ŒåŸæ¥çš„ä¸Šä¸‹æ–‡æ²¡æœ‰æ„ä¹‰äº†ï¼Œå¿…é¡»æ¸…é™¤
 			n=set_offset(tp);
 			if(!tabname && tp[n].name)
 				DP->srm.tabname=(char *)tp[n].name;
 			DP->srm.tp=patt_dup(tp);
 			DP->srm.Aflg = -n;
 			DP->srm.pks = (char *)tp[n].format;
-			DP->srm.rec=rec; //Ä£°å¸ÄÁË,recÇ¿ÖÆ¸ü»»
+			DP->srm.rec=rec; //æ¨¡æ¿æ”¹äº†,recå¼ºåˆ¶æ›´æ¢
 			if(DP->srm.colidx) {
 				free(DP->srm.colidx);
 			}
 			DP->srm.colidx=mk_col_idx(DP->srm.tp);
 			return 0;
 		}
-//±ØĞëÊÇÍ¬¹¹µÄ±í
+//å¿…é¡»æ˜¯åŒæ„çš„è¡¨
 		DAU_free2(DP);
 		return 0;
 	}
 	if(tp) {
 		THROW init_tp;
 	} else if(rec) {
-		if(DP->srm.Aflg>0) return -1; //Èç¹ûÔ­À´ÊÇ·ÖÅäµÄ£¬²»ÔÊĞí¸ü»»¼ÇÂ¼
+		if(DP->srm.Aflg>0) return -1; //å¦‚æœåŸæ¥æ˜¯åˆ†é…çš„ï¼Œä¸å…è®¸æ›´æ¢è®°å½•
 		DP->srm.rec=rec;
-		BB_Tree_Scan(DP->bt_pre,reset_bind);	//ÖØĞÂbind
-		BB_Tree_Scan(DP->bt_ins,reset_bind);	//ÖØĞÂbind
-		BB_Tree_Scan(DP->bt_upd,reset_bind);	//ÖØĞÂbind
-		BB_Tree_Scan(DP->bt_del,reset_bind);	//ÖØĞÂbind
-	} else {	//²ÎÊıÈ«¿Õ£¬È«Çå³ı
+		BB_Tree_Scan(DP->bt_pre,reset_bind);	//é‡æ–°bind
+		BB_Tree_Scan(DP->bt_ins,reset_bind);	//é‡æ–°bind
+		BB_Tree_Scan(DP->bt_upd,reset_bind);	//é‡æ–°bind
+		BB_Tree_Scan(DP->bt_del,reset_bind);	//é‡æ–°bind
+	} else {	//å‚æ•°å…¨ç©ºï¼Œå…¨æ¸…é™¤
 		DP->srm.hint=NULL;
 		DP->srm.tp=NULL;
 		DP->srm.rec=NULL;
@@ -186,8 +186,8 @@ register T_PkgType *tp;
 	ret=sqlo_query_result(DP->cursor, &coln, &val, &vn, 0,0);
 	if(ret) {
 		 ___SQL_GetError(DP->SQL_Connect);
-		if(DP->SQL_Connect->Errno == SQLNOTFOUND) 
-			strcpy(DP->SQL_Connect->ErrMsg,"Ã»ÕÒµ½¼ÇÂ¼");
+		if(DP->SQL_Connect->Errno == SQLNOTFOUND)
+			strcpy(DP->SQL_Connect->ErrMsg,"æ²¡æ‰¾åˆ°è®°å½•");
 		 return -1;
 	}
 	i=0;
@@ -215,7 +215,7 @@ int DAU_next(register DAU *DP)
 		}
 		return 0;
 	}
-// DPÊÇprepareµÄ
+// DPæ˜¯prepareçš„
 	return DAU_Fetch(DP);
 }
 
@@ -224,7 +224,7 @@ int DAU_insert(DAU *DP,char *msg)
 
 	if(!DP||!DP->srm.rec||!DP->srm.tp) return -1;
 
-	if(!msg) { //ÈÎÎñ½áÊø£¬¹Ø±ÕÓÎ±ê
+	if(!msg) { //ä»»åŠ¡ç»“æŸï¼Œå…³é—­æ¸¸æ ‡
 	int ret=0;
 		if(DP->ins_sth>=0) ret=___SQL_Close__(DP->SQL_Connect,DP->ins_sth);
 		DP->ins_sth=SQLO_STH_INIT;
@@ -233,7 +233,7 @@ int DAU_insert(DAU *DP,char *msg)
 		return ret;
 	}
 	*msg=0;
-	
+
 	return bind_ins(DP,msg);
 }
 
@@ -242,7 +242,7 @@ int DAU_update(DAU *DP,char *where)
 int ret=0;
 
 	if(!DP) return -1;
-	if(!where) { //ÈÎÎñ½áÊø£¬¹Ø±ÕÓÎ±ê
+	if(!where) { //ä»»åŠ¡ç»“æŸï¼Œå…³é—­æ¸¸æ ‡
 		BB_Tree_Free(&DP->bt_upd,0);
 		if(DP->upd_sth>=0) ret=___SQL_Close__(DP->SQL_Connect,DP->upd_sth);
 		DP->upd_sth=SQLO_STH_INIT;
@@ -264,7 +264,7 @@ int DAU_delete(DAU *DP,char *where)
 {
 
 	if(!DP) return -1;
-        if(!where) { //ÈÎÎñ½áÊø£¬¹Ø±ÕÓÎ±ê
+        if(!where) { //ä»»åŠ¡ç»“æŸï¼Œå…³é—­æ¸¸æ ‡
 	int ret=0;
                 BB_Tree_Free(&DP->bt_del,0);
                 if(DP->del_sth>=0) ret=___SQL_Close__(DP->SQL_Connect,DP->del_sth);
@@ -274,10 +274,10 @@ int DAU_delete(DAU *DP,char *where)
 	return bind_delete(DP,where);
 }
 /*****************************************************
- * Ö´ĞĞÎŞ·µ»Ø½á¹û¼¯µÄSQLÓï¾ä£¬Ê¹ÓÃDAU_deleteµÄÓÎ±ê£¬
- * ²»ÒªÓëDAU_deleteÍ¬Ê±Ê¹ÓÃ
- * DAUÖĞµÄ½á¹¹ºÍÄ£°åĞèÂú×ãbindµÄĞèÒª¡£
- * Éæ¼°±íÃûµÄ$DB.·ûºÅ½«ÓÃDBOWNÈ¡´ú¡£
+ * æ‰§è¡Œæ— è¿”å›ç»“æœé›†çš„SQLè¯­å¥ï¼Œä½¿ç”¨DAU_deleteçš„æ¸¸æ ‡ï¼Œ
+ * ä¸è¦ä¸DAU_deleteåŒæ—¶ä½¿ç”¨
+ * DAUä¸­çš„ç»“æ„å’Œæ¨¡æ¿éœ€æ»¡è¶³bindçš„éœ€è¦ã€‚
+ * æ¶‰åŠè¡¨åçš„$DB.ç¬¦å·å°†ç”¨DBOWNå–ä»£ã€‚
  *****************************************************/
 int DAU_exec(DAU *DP,char *stmt)
 {
@@ -291,14 +291,14 @@ int ret;
 char *p,*whp;
 
 	if(!DP || !DP[0].srm.tp) return -1;
-	
+
 	if(DP[0].srm.result) {
 		free(DP[0].srm.result);
 		DP[0].srm.result=0;
 		DP[0].srm.rp=0;
 	}
 	whp=0;
-	if(!*where || (toupper(*where)!='S')) { //Èç¹ûÊÇselect,²»×÷´¦Àí
+	if(!*where || (toupper(*where)!='S')) { //å¦‚æœæ˜¯select,ä¸ä½œå¤„ç†
 	    if(*where) {
 			whp=strdup(where);
 			if(!whp) {
@@ -407,4 +407,3 @@ int i;
 		DAU_free(&DP[i]);
 	}
 }
-

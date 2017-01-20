@@ -1,9 +1,9 @@
 /********************************************************************
- * ×Ô¶¯Éú³ÉÄ£°åµÄ³ÌÐò
- * ¸ù¾ÝÊý¾Ý¿â±í½á¹¹Éú³ÉÄ£°å¡£ÐèÒªÒ»¸ö¸¨ÖúµÄ±í£ºPATTERN_COL,
- * ¶ÔÊý¾Ý½á¹¹½øÐÐ²¹³ä¶¨Òå,Õâ¸ö±í¿ÉÒÔ²»´æÔÚ»ò¿Õ£¬±íÊ¾Ã»ÓÐ²¹³äºÍÐÞÕý
- * Èç¹û¶ÔÄ³±íµÄÄ³ÁÐÓÐ²¹³äºÍÐÞÕý£¬¾ÍÔÚÕâ¸ö±íÖÐ½¨Á¢Ò»Ìõ¼ÇÂ¼¡£
- * ±¾³ÌÐòÊÊÓÃÓÚORACLE
+ * è‡ªåŠ¨ç”Ÿæˆæ¨¡æ¿çš„ç¨‹åº
+ * æ ¹æ®æ•°æ®åº“è¡¨ç»“æž„ç”Ÿæˆæ¨¡æ¿ã€‚éœ€è¦ä¸€ä¸ªè¾…åŠ©çš„è¡¨ï¼šPATTERN_COL,
+ * å¯¹æ•°æ®ç»“æž„è¿›è¡Œè¡¥å……å®šä¹‰,è¿™ä¸ªè¡¨å¯ä»¥ä¸å­˜åœ¨æˆ–ç©ºï¼Œè¡¨ç¤ºæ²¡æœ‰è¡¥å……å’Œä¿®æ­£
+ * å¦‚æžœå¯¹æŸè¡¨çš„æŸåˆ—æœ‰è¡¥å……å’Œä¿®æ­£ï¼Œå°±åœ¨è¿™ä¸ªè¡¨ä¸­å»ºç«‹ä¸€æ¡è®°å½•ã€‚
+ * æœ¬ç¨‹åºé€‚ç”¨äºŽORACLE
 #include <DAU.h>
 #include "gettab.h"
 NLS_DATE_FORMAT
@@ -27,7 +27,7 @@ static T_PkgType TAB_COLUMNS_tpl[]={
 	{CH_SHORT,sizeof(short),"DATA_PRECISION"},
 	{CH_SHORT,sizeof(short),"c.DATA_SCALE Data_Scale"},
 	{CH_SHORT,sizeof(short),"k.POSITION Fld_PK"},
-	{-1,0,"ALL_TAB_COLUMNS c, "				//±íÃû±í´ïÊ½ 
+	{-1,0,"ALL_TAB_COLUMNS c, "				//è¡¨åè¡¨è¾¾å¼
 	      "(SELECT C2.TABLE_NAME,C2.COLUMN_NAME,C2.POSITION "
 	      "FROM USER_CONSTRAINTS C1,USER_CONS_COLUMNS C2 "
 	      "WHERE C1.OWNER = :Fld_Column_Name AND "
@@ -41,7 +41,7 @@ static int descDAO(DAU *DP,char *stmt)
 {
 int ret;
 
-// Èç¹ûÊÇÆäËüÊý¾Ý¿â£¬Òª¸Ä¡£
+// å¦‚æžœæ˜¯å…¶å®ƒæ•°æ®åº“ï¼Œè¦æ”¹ã€‚
 	strcpy(stmt,"WHERE c.TABLE_NAME = k.TABLE_NAME(+) "
                  "AND c.COLUMN_NAME = k.COLUMN_NAME(+) "
                  "AND c.OWNER = :Fld_Column_Name AND c.TABLE_NAME=:Fld_Tlb_Name "
@@ -66,4 +66,3 @@ static int getIdxDao(DAU *DP,char *stmt)
               "WHERE TABLE_NAME=:TABLE_NAME AND UNIQUENESS='UNIQUE'");
 	return DAU_select(DP,stmt,0);
 }
-

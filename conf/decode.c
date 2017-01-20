@@ -5,7 +5,7 @@
 #include <crc32.h>
 
 extern char *(*encryptproc)(char *mstr);
-// Ïß³Ì²»°²È«
+// çº¿ç¨‹ä¸å®‰å…¨
 static char keyid[20]="";
 static char *encryptpass(char *mstr)
 {
@@ -27,11 +27,11 @@ char *p;
 DWS dw;
 int ret;
 /********************************************************************
- * ÓÃ»§¿ÚÁî½âÃÜ×¼±¸
+ * ç”¨æˆ·å£ä»¤è§£å¯†å‡†å¤‡
  ********************************************************************/
 	p=getenv("KEYFILE");
 	if(!p||!*p) {
-		ShowLog(1,"È±ÉÙ»·¾³±äÁ¿ KEYFILE");
+		ShowLog(1,"ç¼ºå°‘ç¯å¢ƒå˜é‡ KEYFILE");
 		ret=-1;
 	} else {
 		ret=initdw(p,&dw);
@@ -54,7 +54,7 @@ char *cp;
 		cp=getdw(crc,&dw);
 		if(!cp) {
 			freedw(&dw);
-			ShowLog(1,"%s:ÎŞĞ§µÄ KEYID %s",__FUNCTION__,p);
+			ShowLog(1,"%s:æ— æ•ˆçš„ KEYID %s",__FUNCTION__,p);
 		} else {
 			strcpy(keyid,cp);
 			encryptproc=encryptpass;
@@ -63,4 +63,3 @@ char *cp;
 	}
 	return p;
 }
-

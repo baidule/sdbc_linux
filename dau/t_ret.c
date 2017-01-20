@@ -19,7 +19,7 @@ create table ttype (
         primary key ("t1")
 );
 
-ÒÔÏÂÊÇÄ£°å£¬ÓÉmkpatt³ÌĞòÉú³É 
+ä»¥ä¸‹æ˜¯æ¨¡æ¿ï¼Œç”±mkpattç¨‹åºç”Ÿæˆ
 *****************************************/
 T_PkgType TTYPE_tpl[]={
         {CH_TINY,1,"\"id\" id",0,-1},
@@ -43,7 +43,7 @@ typedef struct {
         char r5[128];
         char date1[YEAR_TO_SEC_LEN];
 } TTYPE_stu;
-int ins_ttype_dao(DAU *DP,char *stmt);//DAOº¯Êı 
+int ins_ttype_dao(DAU *DP,char *stmt);//DAOå‡½æ•°
 
 
 int main(int argc,char *argv[])
@@ -62,7 +62,7 @@ T_SQL_Connect SQL_Connect;
 	}
 	___SQL_Transaction__(&SQL_Connect,TRANBEGIN);
 	DAU_init(&dau,&SQL_Connect,0,&tt,TTYPE_tpl);
-//¶Ô¼ÇÂ¼¸³Öµ 
+//å¯¹è®°å½•èµ‹å€¼
 	for(ret=0;ret<sizeof(tt.r5);ret++)
 		tt.r5[ret]=127-ret;
         tt.id=13;
@@ -82,7 +82,7 @@ T_SQL_Connect SQL_Connect;
 	tt.id=0;
 	*tt.date1=0;
 	*stmt=0;
-	ret=prepare_by_PK(&dau,stmt);//¹«ÓÃDAOº¯Êı £¬°´Ö÷¼üÈ¡Êı¾İ
+	ret=prepare_by_PK(&dau,stmt);//å…¬ç”¨DAOå‡½æ•° ï¼ŒæŒ‰ä¸»é”®å–æ•°æ®
 	printf("prepare %s,ret=%d\n",stmt,ret);
 	printf("id=%d,t1=%s,date1=%s,d4=%.2f\n", tt.id,
 		rusecstrfmt(stmt,tt.t1,YEAR_TO_USEC),tt.date1,tt.d4);
@@ -107,10 +107,10 @@ int ins_ttype_dao(DAU *DP,char *stmt)
 {
 int ret;
 
-    do {//ÒÔtimestampÎªÖ÷¼ü£¬´óÁ¿ÓÃ»§Í¬Ê±²åÈë¿ÉÄÜ»áÖØÂë£¬¡£ 
-	if(DP->ins_sth < 0) 
-		DAU_mk_returning(DP,"t1,date1",stmt); //Éú³ÉRETURNING×Ó¾ä t1,date1×÷Îª·µ»ØÁĞ 
-	ret=DAU_ins_returning(DP,stmt); //²åÈëÊı¾İ¿â 
-   } while (DP->SQL_Connect->Errno == DUPKEY);//Èç¹ûÖØÂëÔÙ´Î²åÈë£¬×Ü»áÓĞ²»ÖØµÄÊ±ºò¡£ 
+    do {//ä»¥timestampä¸ºä¸»é”®ï¼Œå¤§é‡ç”¨æˆ·åŒæ—¶æ’å…¥å¯èƒ½ä¼šé‡ç ï¼Œã€‚
+	if(DP->ins_sth < 0)
+		DAU_mk_returning(DP,"t1,date1",stmt); //ç”ŸæˆRETURNINGå­å¥ t1,date1ä½œä¸ºè¿”å›åˆ—
+	ret=DAU_ins_returning(DP,stmt); //æ’å…¥æ•°æ®åº“
+   } while (DP->SQL_Connect->Errno == DUPKEY);//å¦‚æœé‡ç å†æ¬¡æ’å…¥ï¼Œæ€»ä¼šæœ‰ä¸é‡çš„æ—¶å€™ã€‚
    return ret;
 }

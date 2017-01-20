@@ -3,11 +3,11 @@
  ***********************************************************/
 #include <SRM.h>
 
-/* Éú³ÉRETURNING×Ó¾ä  */
+/* ç”ŸæˆRETURNINGå­å¥  */
 char * SRM_mk_returning(SRM *srmp,const char *keys,char *stmt)
 {
 char pks[104],*p,*p1,*p2,*p3,into[256];
-int i,n; 
+int i,n;
 
 	if(!srmp||!stmt) return 0;
 	if(!keys || !*keys) {
@@ -53,4 +53,3 @@ int i,n;
 	p1=stpcpy(p1,into);
 	return p1;
 }
-

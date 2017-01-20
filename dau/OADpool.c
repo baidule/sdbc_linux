@@ -1,6 +1,6 @@
 /**************************************************
- * OADÁ¬½Ó³Ø¹ÜÀí
- * ÒòÎªÓëÓ¦ÓÃ¹ØÏµ½ôÃÜ£¬Ã»ÓĞ¼ÓÈëµ½¿ò¼ÜÏµÍ³£¬ÔÚ´Ë¹©ĞèÒªÕß²Î¿¼
+ * OADè¿æ¥æ± ç®¡ç†
+ * å› ä¸ºä¸åº”ç”¨å…³ç³»ç´§å¯†ï¼Œæ²¡æœ‰åŠ å…¥åˆ°æ¡†æ¶ç³»ç»Ÿï¼Œåœ¨æ­¤ä¾›éœ€è¦è€…å‚è€ƒ
  **************************************************/
 #include <OAD.h>
 /*********************
@@ -18,7 +18,7 @@ OAD * get_OAD(int n,int flg)
 }
 #endif
 
-ÍâÖÃµÄÄ£°å¿â£¬Ó¦ÓÃÏµÍ³µÄÀı×Ó£º
+å¤–ç½®çš„æ¨¡æ¿åº“ï¼Œåº”ç”¨ç³»ç»Ÿçš„ä¾‹å­ï¼š
 static T_PkgType *tpl_lib[] = {
         CM_UD_ROUTE_tpl,
         PI_EXIT_tpl,
@@ -40,13 +40,13 @@ int i;
         return NULL;
 }
 
-ÅäÖÃÎÄ¼ş£º
-#OAD³ØÉèÖÃ
+é…ç½®æ–‡ä»¶ï¼š
+#OADæ± è®¾ç½®
 OADPOOL_LOGLEVEL=5
 OADPOOLNUM=1
-#±íÃû
+#è¡¨å
 OADFN0=CM_UD_ROUTE_TEMP_3
-#Ä£°åÃû
+#æ¨¡æ¿å
 OADTN0=CM_UD_ROUTE
 OADBATCH0=200
 OADDBPOOLNO0_NUM=0
@@ -79,7 +79,7 @@ typedef struct {
 
 static int OADPOOLNUM=0;
 static pool *oadpool=NULL;
-//ÊÍ·ÅOAD³Ø  
+//é‡Šæ”¾OADæ± 
 #ifdef __cplusplus
 extern "C"
 #endif
@@ -111,7 +111,7 @@ T_SQL_Connect *SQL_Connect;
 	oadpool=NULL;
 }
 
-//³õÊ¼»¯OAD Á¬½Ó³Ø  
+//åˆå§‹åŒ–OAD è¿æ¥æ± 
 #ifdef __cplusplus
 extern "C"
 #endif
@@ -125,7 +125,7 @@ resource *rs;
 	if(oadpool) return 0;
 	p=getenv("OADPOOLNUM");
 	if(!p||!isdigit((unsigned)*p)) {
-		ShowLog(1,"%s:È±ÉÙ»·¾³±äÁ¿ OADPOOLNUM È±Ê¡ÉèÎª1",__FILE__);
+		ShowLog(1,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡ OADPOOLNUM ç¼ºçœè®¾ä¸º1",__FILE__);
 		OADPOOLNUM=1;
 	} else OADPOOLNUM=atoi(p);
 
@@ -146,7 +146,7 @@ resource *rs;
 			strerror(i));
 		return -2;
 	}
-	
+
 	if(0!=(i=pthread_cond_init(&oadpool[n].cond,NULL))) {
 		ShowLog(1,"%s:cond init  err %s",__FILE__,
 			strerror(i));
@@ -156,25 +156,25 @@ resource *rs;
 	sprintf(buf,"OADBATCH%d",n);
 	p=getenv(buf);
 	if(!p||!isdigit((unsigned)*p)) {
-		ShowLog(1,"%s:È±ÉÙ»·¾³±äÁ¿ %s È±Ê¡ÉèÎª1000",__FILE__,buf);
+		ShowLog(1,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡ %s ç¼ºçœè®¾ä¸º1000",__FILE__,buf);
 		oadpool[n].batch=1000;
 	} else oadpool[n].batch=atoi(p);
 	sprintf(buf,"OADFN%d",n);
 	p=getenv(buf);
 	if(!p||!*p) {
-		ShowLog(1,"%s:È±ÉÙ»·¾³±äÁ¿  %s,OAD³Ø[%d]²»ÄÜÊ¹ÓÃ",__FILE__,buf,n);
+		ShowLog(1,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡  %s,OADæ± [%d]ä¸èƒ½ä½¿ç”¨",__FILE__,buf,n);
 		oadpool[n].lnk=0;
 		oadpool[n].resource_num=0;
 		*oadpool[n].OADFN=0;
 		continue;
-	} 
+	}
 	stptok(p,oadpool[n].OADFN,sizeof(oadpool[n].OADFN),0);
 
 	sprintf(buf,"OADTN%d",n);
 	p=getenv(buf);
 	if(!p||!*p) {
 		p=oadpool[n].OADFN;
-	} 
+	}
 	oadpool[n].tp=get_tpl(p);
 	if(!oadpool[n].tp) {
 		ShowLog(1,"%s:OAD pool[%d}:no such template %s",
@@ -187,14 +187,14 @@ resource *rs;
 	sprintf(buf,"OADDBPOOLNO%d_NUM",n);
 	p=getenv(buf);
 	if(!p || !isdigit((int)*p)) {
-		ShowLog(1,"%s:È±ÉÙ»·¾³±äÁ¿  %s,Êı¾İ¿â³ØºÅÉèÎª0",__FILE__,buf);
+		ShowLog(1,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡  %s,æ•°æ®åº“æ± å·è®¾ä¸º0",__FILE__,buf);
 		oadpool[n].dbpool_no=0;
 	} else oadpool[n].dbpool_no=atoi(p);
 
 	sprintf(buf,"OADPOOL%d_NUM",n);
 	p=getenv(buf);
 	if(!p || !isdigit((int)*p)) {
-		ShowLog(1,"%s:È±ÉÙ»·¾³±äÁ¿  %s,Á¬½ÓÊıÉèÎª1",__FILE__,buf);
+		ShowLog(1,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡  %s,è¿æ¥æ•°è®¾ä¸º1",__FILE__,buf);
 		oadpool[n].resource_num=1;
 	} else oadpool[n].resource_num=atoi(p);
 	oadpool[n].lnk=(resource *)malloc(oadpool[n].resource_num * sizeof(resource));
@@ -221,7 +221,7 @@ ShowLog(5,"%s:begin init oadpool[%d]=%d",__FILE__,n,num);
 	return 0;
 }
 
-// ¹é»¹Á¬½ÓÊ±£¬²âÊÔÔÚÁ¬½Ó³ØµÄÎ»ÖÃ
+// å½’è¿˜è¿æ¥æ—¶ï¼Œæµ‹è¯•åœ¨è¿æ¥æ± çš„ä½ç½®
 static resource * lnk_no(pool *pl,OAD *oadp)
 {
 int i,e;
@@ -243,9 +243,9 @@ ShowLog(1,"%s:the OAD fix to pos=%d",__FILE__,i);
 			return rs;
 		}
 	}
-	return NULL;	//²»ÊÇÁ¬½Ó³ØÀïµÄ
+	return NULL;	//ä¸æ˜¯è¿æ¥æ± é‡Œçš„
 }
-//È¡Á¬½ÓÊ±»ñÈ¡¿ÕÏĞµÄÁ¬½Ó
+//å–è¿æ¥æ—¶è·å–ç©ºé—²çš„è¿æ¥
 static resource * get_lnk_no(pool *pl)
 {
 int i,*ip,*np;
@@ -264,31 +264,31 @@ resource *rs;
         *np=-1;
         return rs;
 }
-//¹é»¹Á¬½ÓÊ±¼ÓÈë¿ÕÏĞ¶ÓÁĞ
+//å½’è¿˜è¿æ¥æ—¶åŠ å…¥ç©ºé—²é˜Ÿåˆ—
 static void add_lnk(pool *pl,int i)
 {
 int *np,*ip=&pl->lnk[i].next;
         if(*ip>=0) {
-		ShowLog(1,"%s:lnk[%d] ÒÑ¾­ÔÚ¶ÓÁĞÀï free_q=%d",__FILE__,i,*ip);
-		return; //ÒÑ¾­ÔÚ¶ÓÁĞÀï
+		ShowLog(1,"%s:lnk[%d] å·²ç»åœ¨é˜Ÿåˆ—é‡Œ free_q=%d",__FILE__,i,*ip);
+		return; //å·²ç»åœ¨é˜Ÿåˆ—é‡Œ
 	}
 	np=&pl->free_q;
         if(*np < 0) {
                 *np=i;
                 *ip=i;
-	} else { //²åÈë¶ÓÍ·  
+	} else { //æ’å…¥é˜Ÿå¤´
 	resource *rs=&pl->lnk[*np];
                 *ip=rs->next;
                 rs->next=i;
-		if(!pl->lnk[i].t_dau.SQL_Connect) *np=i;//»µÁ¬½ÓÅÅ¶ÓÎ² 
+		if(!pl->lnk[i].t_dau.SQL_Connect) *np=i;//åè¿æ¥æ’é˜Ÿå°¾
         }
 }
-//Á¬½ÓOAD  
+//è¿æ¥OAD
 static int new_connect(pool *pl,resource *rs)
 {
 int ret=-1,len=0;
 T_SQL_Connect *SQL_Connect;
-	//Õâ¸ö²»±£Ö¤²»ËÀËø
+	//è¿™ä¸ªä¸ä¿è¯ä¸æ­»é”
 	ret= _get_DB_connect(&SQL_Connect,pl->dbpool_no,0);
 	if(ret) {
 		ShowLog(1,"new_connect:get_DB_connect error!");
@@ -318,8 +318,8 @@ T_SQL_Connect *SQL_Connect;
 }
 
 /**
- * ¸ù¾İOADFNÈ¡OAD³ØºÅ  
- * Ê§°Ü·µ»Ø-1
+ * æ ¹æ®OADFNå–OADæ± å·
+ * å¤±è´¥è¿”å›-1
  */
 #ifdef __cplusplus
 extern "C"
@@ -328,12 +328,12 @@ int get_oadpool_no(const char *OADFN)
 {
 int n;
 	if(!oadpool) return -1;
-	for(n=0;n<OADPOOLNUM;n++) 
+	for(n=0;n<OADPOOLNUM;n++)
 		if(!strcmp(oadpool[n].OADFN,OADFN)) return n;
 	return -1;
 }
 
-//È¡OADÁ¬½Ó  
+//å–OADè¿æ¥
 #ifdef __cplusplus
 extern "C"
 #endif
@@ -349,7 +349,7 @@ OAD *oadp=NULL;
 	if(!oadpool || n<0 || n>=OADPOOLNUM) return NULL;
 	pl=&oadpool[n];
 	if(!pl->lnk) {
-		ShowLog(1,"%s:ÎŞĞ§µÄOAD³Ø[%d]",__FILE__,n);
+		ShowLog(1,"%s:æ— æ•ˆçš„OADæ± [%d]",__FILE__,n);
 		return NULL;
 	}
 	if(0!=pthread_mutex_lock(&pl->mut)) {
@@ -364,19 +364,19 @@ OAD *oadp=NULL;
 		}
 		if(log_level) ShowLog(log_level,"get_OAD:tid=%lu pool[%d] suspend",
 			tid,n);
-		pthread_cond_wait(&pl->cond,&pl->mut); //Ã»ÓĞ×ÊÔ´£¬µÈ´ı 
+		pthread_cond_wait(&pl->cond,&pl->mut); //æ²¡æœ‰èµ„æºï¼Œç­‰å¾…
 		if(log_level) ShowLog(log_level,"get_OAD:tid=%lu pool[%d] weakup",tid,n);
     	}
 	pthread_mutex_unlock(&pl->mut);
 	oadp=&rs->t_oad;
 	i=oadp->pos;
-	if(!rs->t_dau.SQL_Connect) { //»¹Ã»ÓĞÊı¾İ¿âÁ¬½Ó
+	if(!rs->t_dau.SQL_Connect) { //è¿˜æ²¡æœ‰æ•°æ®åº“è¿æ¥
 		if(new_connect(pl,rs)) {
-			oadp->pos=i;//Á¬½ÓÊ±posÆÆ»µÁË
+			oadp->pos=i;//è¿æ¥æ—¶posç ´åäº†
 			pthread_mutex_lock(&pl->mut);
 			add_lnk(pl,i);
 			pthread_mutex_unlock(&pl->mut);
-			ShowLog(1,"%s:oadpool[%d] ´ò¿ªOAD³Ø%d´í",
+			ShowLog(1,"%s:oadpool[%d] æ‰“å¼€OADæ± %dé”™",
 				__FILE__,n,pl->dbpool_no);
 			return NULL;
 		}
@@ -388,7 +388,7 @@ OAD *oadp=NULL;
 				tid,n,i,rs->timestamp);
 	return oadp;
 }
-//¹é»¹OADÁ¬½Ó  
+//å½’è¿˜OADè¿æ¥
 #ifdef __cplusplus
 extern "C"
 #endif
@@ -402,14 +402,14 @@ T_SQL_Connect *SQL_Connect;
 	if(!oadpp || !*oadpp || !oadpool || n<0 || n>=OADPOOLNUM) return;
 	pl=&oadpool[n];
 	if(!pl->lnk) {
-		ShowLog(1,"%s:ÎŞĞ§µÄOAD³Ø[%d]",__FILE__,n);
+		ShowLog(1,"%s:æ— æ•ˆçš„OADæ± [%d]",__FILE__,n);
 		return;
 	}
 	if(NULL != (rs=lnk_no(pl, *oadpp))) {
 	int i=rs->t_oad.pos;
-		rs->tid=0; 
+		rs->tid=0;
 		SQL_Connect=rs->t_dau.SQL_Connect;
-		if(SQL_Connect->Errno==3114||SQL_Connect->Errno==-30001) {  //Êı¾İ¿âÃ»´ò¿ª
+		if(SQL_Connect->Errno==3114||SQL_Connect->Errno==-30001) {  //æ•°æ®åº“æ²¡æ‰“å¼€
 			OAD_free(&rs->t_oad);
 			DAU_free(&rs->t_dau);
 			release_DB_connect(&rs->t_dau.SQL_Connect,pl->dbpool_no);
@@ -417,7 +417,7 @@ T_SQL_Connect *SQL_Connect;
 		if(0!=pthread_mutex_lock(&pl->mut)) return;
 		add_lnk(pl,i);
 		pthread_mutex_unlock(&pl->mut);
-		pthread_cond_signal(&pl->cond); //Èç¹ûÓĞµÈ´ıÁ¬½ÓµÄÏß³Ì¾Í»½ĞÑËü 
+		pthread_cond_signal(&pl->cond); //å¦‚æœæœ‰ç­‰å¾…è¿æ¥çš„çº¿ç¨‹å°±å”¤é†’å®ƒ
   		rs->timestamp=now_usec();
 		*oadpp=NULL;
 		if(log_level) ShowLog(log_level,"release_OAD:tid=%lu,pool[%d].%d,USEC=%llu",
@@ -425,7 +425,7 @@ T_SQL_Connect *SQL_Connect;
 		return;
 	}
 }
-//OAD³Ø¼à¿Ø 
+//OADæ± ç›‘æ§
 #ifdef __cplusplus
 extern "C"
 #endif
@@ -452,7 +452,7 @@ OAD *oadp;
 //ShowLog(5,"%s:oadpool[%d].%d,tid=%lu",__FILE__,n,i,rs->tid);
 		    if(rs->next>=0) {
 			if(rs->t_dau.SQL_Connect && (now-rs->timestamp)>150000000) {
-//¿ÕÏĞÊ±¼äÌ«³¤ÁË     
+//ç©ºé—²æ—¶é—´å¤ªé•¿äº†
 				rs->t_dau.SQL_Connect->Errno==3114;
                                 OAD_free(&rs->t_oad);
 				DAU_free(&rs->t_dau);
@@ -463,7 +463,7 @@ OAD *oadp;
 			}
 		    } else {
 			if(rs->t_dau.SQL_Connect && (now-rs->timestamp)>299000000) {
-//Õ¼ÓÃÊ±¼äÌ«³¤ÁË     
+//å ç”¨æ—¶é—´å¤ªé•¿äº†
 				ShowLog(3,"%s:oadpool[%d].lnk[%d] used by tid=%lu,since %s",
 					__FILE__,n,i,rs->tid,
 					rusecstrfmt(buf,rs->timestamp,YEAR_TO_USEC));
@@ -480,4 +480,3 @@ int get_OADpoolnum()
 {
 	return OADPOOLNUM;
 }
-

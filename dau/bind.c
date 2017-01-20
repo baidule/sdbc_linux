@@ -6,14 +6,14 @@
 #include <regex.h>
 #include <unistd.h>
 
-//ËÑË÷Õ¼Î»·ûµÄ
-static char *regstr="^[$:]([A-Za-z_][0-9A-Za-z_]*)";  //Õ¼Î»·û
+//æœç´¢å ä½ç¬¦çš„
+static char *regstr="^[$:]([A-Za-z_][0-9A-Za-z_]*)";  //å ä½ç¬¦
 static regex_t zwreg;
 static volatile int zwflg=0;
 static pthread_mutex_t bind_mutex=PTHREAD_MUTEX_INITIALIZER;
 
-//ÕâÀï¶¨ÒåbindÊ÷µÄÊı¾İ½á¹¹ºÍ»Øµ÷º¯Êı
-struct bindnod {  //»Øµ÷º¯Êı²»ÄÜÈ¡µÃÍâ²¿×ÊÔ´£¬ËùÓĞ×ÊÔ´±ØĞë¶¨ÒåÔÚ½ÚµãÀï
+//è¿™é‡Œå®šä¹‰bindæ ‘çš„æ•°æ®ç»“æ„å’Œå›è°ƒå‡½æ•°
+struct bindnod {  //å›è°ƒå‡½æ•°ä¸èƒ½å–å¾—å¤–éƒ¨èµ„æºï¼Œæ‰€æœ‰èµ„æºå¿…é¡»å®šä¹‰åœ¨èŠ‚ç‚¹é‡Œ
 	int bindnum;
 	T_PkgType *tp;
 	char **rec;
@@ -23,7 +23,7 @@ struct bindnod {  //»Øµ÷º¯Êı²»ÄÜÈ¡µÃÍâ²¿×ÊÔ´£¬ËùÓĞ×ÊÔ´±ØĞë¶¨ÒåÔÚ½ÚµãÀï
 	short ind;
 	char **tail;
 };
-//±È½Ïº¯Êı
+//æ¯”è¾ƒå‡½æ•°
 static int bind_Cmp(void *rec1,void *rec2,int len)
 {
 register struct bindnod *dap1,*dap2;
@@ -43,7 +43,7 @@ static char *pack_mk_fmt(const char *format,char *buf)
 	return buf;
 }
 
-int reset_bind(void *content) //¸´Î»±êÖ¾£¬×¼±¸ÖØĞÂbind
+int reset_bind(void *content) //å¤ä½æ ‡å¿—ï¼Œå‡†å¤‡é‡æ–°bind
 {
 struct bindnod *bp;
 
@@ -53,7 +53,7 @@ struct bindnod *bp;
 	return 0;
 }
 
-int print_bind(void *content)  //´òÓ¡bind²ÎÊı
+int print_bind(void *content)  //æ‰“å°bindå‚æ•°
 {
 struct bindnod *bp;
 
@@ -69,7 +69,7 @@ struct bindnod *bp;
 	return 0;
 }
 
-static int bind_proc(void *content)   //bind´¦Àí
+static int bind_proc(void *content)   //bindå¤„ç†
 {
 register struct bindnod *bp;
 T_PkgType *tp;
@@ -82,10 +82,10 @@ short nf;
 	tp=bp->tp;
 	bindp=*(bp->rec)+tp->offset;
 //ShowLog(5,"bind_proc sth=%d,%s:%d",*bp->sth,tp->name,bp->bindnum);
-	
+
 //bind NULL
 	nf=isnull(bindp,tp->type)?-1:0;
-	if(1&bp->flg) bp->flg=!(nf ^ bp->ind); //Èç¹ûNULL×´Ì¬ÓĞ±ä»¯£¬Çå¿ÕÃâbind±êÖ¾
+	if(1&bp->flg) bp->flg=!(nf ^ bp->ind); //å¦‚æœNULLçŠ¶æ€æœ‰å˜åŒ–ï¼Œæ¸…ç©ºå…bindæ ‡å¿—
 	bp->ind=nf;
 	ret=0;
         if(!(1&bp->flg)) {
@@ -100,25 +100,25 @@ short nf;
 		case CH_SHORT:
 		case CH_INT:
 		    ret=sqlo_bind_by_pos(*bp->sth, bp->bindnum, SQLOT_INT, bindp, tp->len, &bp->ind, 0);
-			bp->flg=1; //ÏÂ´ÎÃâbind
+			bp->flg=1; //ä¸‹æ¬¡å…bind
                 break;
 		case CH_FLOAT:
 		case CH_DOUBLE:
 		    ret=sqlo_bind_by_pos(*bp->sth, bp->bindnum, SQLOT_FLT, bindp, tp->len, &bp->ind, 0);
-			bp->flg=1; //ÏÂ´ÎÃâbind
+			bp->flg=1; //ä¸‹æ¬¡å…bind
 		        break;
 		case CH_BYTE:
 		    ret=sqlo_bind_by_pos(*bp->sth, bp->bindnum, SQLOT_BIN, bindp, tp->len, &bp->ind, 0);
-			bp->flg=1; //ÏÂ´ÎÃâbind
+			bp->flg=1; //ä¸‹æ¬¡å…bind
 		        break;
-		case CH_CHAR:  
+		case CH_CHAR:
 		case CH_CNUM:
 		case CH_DATE:
 //ShowLog(5,"%s:bind %d:%s=%s,len=%d",__FUNCTION__,bp->bindnum,tp->name,bindp,tp->len);
 		    ret=sqlo_bind_by_pos(*bp->sth, bp->bindnum, SQLOT_STR, bindp, tp->len, &bp->ind, 0);
-			bp->flg=1; //ÏÂ´ÎÃâbind
+			bp->flg=1; //ä¸‹æ¬¡å…bind
 		        break;
-		default:	//ÀàĞÍÓëORACLE²»·û£¬Ğè±ä»»
+		default:	//ç±»å‹ä¸ORACLEä¸ç¬¦ï¼Œéœ€å˜æ¢
 			bindp=p;
 			if(tp->bindtype & RETURNING) { //bind RETURNING
 				n=40;
@@ -149,7 +149,7 @@ short nf;
 	return 0;
 }
 
-static int bind_returning(void *content)   //bind RETURNING ºó´¦Àí
+static int bind_returning(void *content)   //bind RETURNING åå¤„ç†
 {
 register struct bindnod *bp;
 T_PkgType *tp;
@@ -160,18 +160,18 @@ char *bindp;
 	tp=bp->tp;
 	bindp=(*bp->rec)+tp->offset;
 	put_str_one(*bp->rec,bp->last_bindp,tp,0);
-	
+
 	return 0;
 }
 
-//¶¨ÒåbindÊ÷µÄÊı¾İ½á¹¹ºÍ»Øµ÷º¯ÊıÍê±Ï,ÏÂ±ßÊÇbind²Ù×÷º¯Êı
-//²éÕÒÕ¼Î»·û
+//å®šä¹‰bindæ ‘çš„æ•°æ®ç»“æ„å’Œå›è°ƒå‡½æ•°å®Œæ¯•,ä¸‹è¾¹æ˜¯bindæ“ä½œå‡½æ•°
+//æŸ¥æ‰¾å ä½ç¬¦
 int do_regexp(char *stmt,regmatch_t *match)
 {
 int ret;
 char errbuf[200];
 	if(zwflg==-1) {
-		sprintf(stmt+strlen(stmt)," :Õ¼Î»·û±àÒëÊ§°Ü");
+		sprintf(stmt+strlen(stmt)," :å ä½ç¬¦ç¼–è¯‘å¤±è´¥");
 		return -1;
 	} else if(zwflg==0) {
 		pthread_mutex_lock(&bind_mutex);
@@ -190,15 +190,15 @@ char errbuf[200];
 		}
 		pthread_mutex_unlock(&bind_mutex);
 		if(zwflg==-1) {
-			sprintf(stmt+strlen(stmt)," :Õ¼Î»·û±àÒëÊ§°Ü");
+			sprintf(stmt+strlen(stmt)," :å ä½ç¬¦ç¼–è¯‘å¤±è´¥");
 			return -1;
 		}
 	}
-	while (zwflg==1) usleep(1000); //µÈ±ğÈË±àÒëzwregÍê³É
+	while (zwflg==1) usleep(1000); //ç­‰åˆ«äººç¼–è¯‘zwregå®Œæˆ
 	ret=regexec(&zwreg,stmt,3,match,0);
 	return ret;
 }
-//Õ¼Î»·ûÌæ»»Îªbind POS,²¢¹¹½¨bindÊ÷
+//å ä½ç¬¦æ›¿æ¢ä¸ºbind POS,å¹¶æ„å»ºbindæ ‘
 static char *mk_col_bind(char *values, T_PkgType *tp,int *num,struct bindnod *bnode,T_Tree **bind_tree)
 {
 T_PkgType *typ;
@@ -242,7 +242,7 @@ dflt:
         return vp;
 }
 
-/* typÊÇµ¥¸öÄ£°å£¬ÎªËüÉú³ÉÕ¼Î»·û */
+/* typæ˜¯å•ä¸ªæ¨¡æ¿ï¼Œä¸ºå®ƒç”Ÿæˆå ä½ç¬¦ */
 char * mark_subst(char *vp,T_PkgType *typ,int *bindnum)
 {
 char buf[100];
@@ -284,7 +284,7 @@ T_PkgType *tp;
 //ShowLog(5,"pre_bind:stmt=%s",ep);
 	into=strcasestr(stmt," INTO :");
 	while(*(ep=stptok(ep,0,0,"$:\'"))) {
-		if(*ep=='\'') {	//ÌŞ³ıÒıºÅÀïµÄÕ¼Î»·û
+		if(*ep=='\'') {	//å‰”é™¤å¼•å·é‡Œçš„å ä½ç¬¦
 			ep++;
 			ep=stptok(ep,0,0,"\'");
 			if(*ep=='\'') {
@@ -297,26 +297,26 @@ T_PkgType *tp;
 			ep++;
 			continue;
 		}
-		if(!do_regexp(ep,match)) { //²éÕÒÕ¼Î»·û
+		if(!do_regexp(ep,match)) { //æŸ¥æ‰¾å ä½ç¬¦
 			rep=ep+match[0].rm_so;
 			bindp=ep+match[1].rm_so;
 			ep+=match[0].rm_eo;
 			c=*ep;
-			*ep=0;	//ÁÙÊ±¸øÎ²0
+			*ep=0;	//ä¸´æ—¶ç»™å°¾0
 			n=index_col(DP->srm.colidx,colnum,bindp,DP->srm.tp);
 			tp=&DP->srm.tp[n];
 			*ep=c;
-			if(*rep=='$') {   //Î±ÁĞÃûÌæ»»³ÉÕæÁĞÃû 
+			if(*rep=='$') {   //ä¼ªåˆ—åæ›¿æ¢æˆçœŸåˆ—å
 			char *trup;
-				if(n<0) continue;		//Èç¹ûÃ»ÓĞ¸ÃÁĞÃû£¬²»Ìæ»» 
+				if(n<0) continue;		//å¦‚æœæ²¡æœ‰è¯¥åˆ—åï¼Œä¸æ›¿æ¢
 				trup=(char *)tp->name;
 				strtcpy(buf,&trup,' ');
 //ShowLog(5,"pre_bind:aft pkg_getType %s type=%d,name=%s,buf=%s",bindp,tp->type,tp->name,buf);
-				ep=strsubst(rep,(int)(ep-rep),buf);//Ìæ»»³É ÕæÁĞÃû
+				ep=strsubst(rep,(int)(ep-rep),buf);//æ›¿æ¢æˆ çœŸåˆ—å
 				continue;
-			} 
+			}
 			if(n<0) {
-				sprintf(DP->SQL_Connect->ErrMsg,"pre_bind:%.*s ÎŞĞ§ÁĞÃû",(int)(ep-bindp),bindp);
+				sprintf(DP->SQL_Connect->ErrMsg,"pre_bind:%.*s æ— æ•ˆåˆ—å",(int)(ep-bindp),bindp);
 				DP->SQL_Connect->Errno=FORMATERR;
 				BB_Tree_Free(broot,0);
 				return NULL;
@@ -327,17 +327,17 @@ T_PkgType *tp;
 				 mark_subst(buf,tp,bindnum);
 			else sprintf(buf,":%d",(*bindnum)+1);
 			bindp--;
-			ep=strsubst(bindp,(int)(ep-bindp),buf);//Ìæ»»³ÉÊı×Ö
+			ep=strsubst(bindp,(int)(ep-bindp),buf);//æ›¿æ¢æˆæ•°å­—
 			bnode->bindnum=++(*bindnum);
 			bnode->tp=tp;
-			*broot=BB_Tree_Add(*broot,bnode,sizeof(struct bindnod),bind_Cmp,0); //±£´æbind²ÎÊı
+			*broot=BB_Tree_Add(*broot,bnode,sizeof(struct bindnod),bind_Cmp,0); //ä¿å­˜bindå‚æ•°
 		} else ep++;
 	}
 	return *broot;
 }
 //set DBOWN  at SRM.c
 extern void set_dbo(char *buf,char *DBOWN);
-//ÒÔÏÂÊÇ²å¡¢²é¡¢¸Ä¡¢É¾²Ù×÷º¯Êı
+//ä»¥ä¸‹æ˜¯æ’ã€æŸ¥ã€æ”¹ã€åˆ æ“ä½œå‡½æ•°
 int bind_ins(register DAU *DP,char *buf)
 {
 int ret=0;
@@ -348,17 +348,17 @@ register char *p;
 	int bindnum=0;
 	struct bindnod bnode;
 	char *returning=0;
-//½¨Á¢bind½Úµã
+//å»ºç«‹bindèŠ‚ç‚¹
 		bnode.rec=(char **)&DP->srm.rec;
 		bnode.sth=&DP->ins_sth;
 		bnode.tail=&DP->tail;
 		bnode.last_bindp=0;
 		bnode.flg=0;
 		bnode.ind=0;
-		if(*p) { //ÓĞ RETURNING ×Ó¾ä 
+		if(*p) { //æœ‰ RETURNING å­å¥
 			returning=strdup(p);
 		}
-//ÖÆÔìÓï¾ä
+//åˆ¶é€ è¯­å¥
 		if(DP->srm.befor) {
 			p=stpcpy(p,DP->srm.befor);
 			*p++ = ' ';
@@ -378,7 +378,7 @@ register char *p;
 			*p=0;
 		}
 		p=stpcpy(mkset(stpcpy(stpcpy(p,DP->srm.tabname)," ("),DP->srm.tp),") VALUES (");
-//Éú³ÉÕ¼Î»·û
+//ç”Ÿæˆå ä½ç¬¦
 		p=stpcpy(mk_col_bind(p,DP->srm.tp,&bindnum,&bnode,&DP->bt_ins),")");
 		if(returning) {
 		char *	p1=p;
@@ -393,7 +393,7 @@ register char *p;
 			returning=0;
 		}
 		p=buf+strlen(buf);
-		DP->ins_sth=sqlo_prepare(DP->SQL_Connect->dbh, (CONST char *)buf); 
+		DP->ins_sth=sqlo_prepare(DP->SQL_Connect->dbh, (CONST char *)buf);
 		if(DP->ins_sth<0) {
 			___SQL_GetError(DP->SQL_Connect);
 			sprintf(p," bind_ins:sqlo_prepare=%d,err=%d,%s",DP->ins_sth,
@@ -409,16 +409,16 @@ register char *p;
 	BB_Tree_Scan(DP->bt_ins,bind_proc);
 //exec
 	DP->SQL_Connect->Errno = 0;
-	if(0!=(ret = sqlo_execute(DP->ins_sth, 1))) { 
+	if(0!=(ret = sqlo_execute(DP->ins_sth, 1))) {
 		___SQL_GetError(DP->SQL_Connect);
 		p=buf+strlen(buf);
 		p+=sprintf(p," bind_ins:sqlo_execute=%d,errmsg=%s,tabneme=%s,bind=",ret,
 			DP->SQL_Connect->ErrMsg,DP->srm.tabname);
 		DP->tail=p;
-		BB_Tree_Scan(DP->bt_ins,print_bind);//´òÓ¡bindÇø
+		BB_Tree_Scan(DP->bt_ins,print_bind);//æ‰“å°bindåŒº
 		return -abs(ret);
 	}
-//ÊÕ¼¯RETURNING±äÁ¿Öµ  
+//æ”¶é›†RETURNINGå˜é‡å€¼
 	BB_Tree_Scan(DP->bt_ins,bind_returning);
 
 //	sprintf(buf,"bind_ins:ret=%d",ret);
@@ -454,7 +454,7 @@ struct bindnod bnode;
 	} else ShowLog(5,"bind_select:cursor=%d,sqlo_prepare=%s",cursor,stmt);
 
 	tail=stmt+strlen(stmt)+1;
-	*tail=0;  //Îªbind_proc×¼±¸¿Õ¼ä
+	*tail=0;  //ä¸ºbind_procå‡†å¤‡ç©ºé—´
 	if(broot) {
 		BB_Tree_Scan(broot,bind_proc);  //bind
 	}
@@ -524,7 +524,7 @@ int ret=0;
 			ShowLog(1,"%s:stmt=%s,err=%d",__FUNCTION__,stmt,ret);
 			return ret;
 		}
-		if(!DP->bt_pre) { //Èç¹ûÃ»ÓĞbind
+		if(!DP->bt_pre) { //å¦‚æœæ²¡æœ‰bind
 			DP->cursor=___SQL_Prepare__(DP->SQL_Connect,stmt);
 			if(DP->cursor < 0) {
 				ShowLog(1,"bind_prepare no_bind:CURSOR=%d,%s",DP->cursor,stmt);
@@ -542,7 +542,7 @@ int ret=0;
 			return DP->cursor;
 		} else ShowLog(5,"%s:cursor=%d,%s",__FUNCTION__,DP->cursor,stmt);
 		DP->tail=stmt+strlen(stmt)+1;
-	} else  DP->tail=stmt,*stmt=0;  //Îªbind_proc×¼±¸¿Õ¼ä
+	} else  DP->tail=stmt,*stmt=0;  //ä¸ºbind_procå‡†å¤‡ç©ºé—´
 
 	if(DP->bt_pre) BB_Tree_Scan(DP->bt_pre,bind_proc);  //bind
 	ret=sqlo_reopen(DP->cursor,0,0);
@@ -592,13 +592,13 @@ register char *p;
 				strcat(p,save_where);
 				free(save_where);
 			}
-		} 
+		}
 		DP->srm.hint=0;
 		set_dbo(where,DP->SQL_Connect->DBOWN);
 		p+=strlen(p);
         DP->bt_upd=pre_bind(DP,&DP->upd_sth,&bindnum,where,&bnode,&DP->bt_upd);
 		if(0!=(ret=DP->SQL_Connect->Errno)) return ret;
-        DP->upd_sth=sqlo_prepare(DP->SQL_Connect->dbh, (CONST char *)where); 
+        DP->upd_sth=sqlo_prepare(DP->SQL_Connect->dbh, (CONST char *)where);
         if(DP->upd_sth<0) {
                 ___SQL_GetError(DP->SQL_Connect);
                 sprintf(p," bind_update:sqlo_prepare=%d,err=%d,%s",DP->upd_sth,
@@ -612,7 +612,7 @@ register char *p;
     }
 	DP->tail=p;
 	if(DP->bt_upd && !DP->srm.rec) {
-		sprintf(DP->SQL_Connect->ErrMsg,"bind_update:#´íÎó£ºÓĞbind±äÁ¿£¬Ã»ÓĞÊı¾İÇø£¬ÎŞ·¨bind£¡#");
+		sprintf(DP->SQL_Connect->ErrMsg,"bind_update:#é”™è¯¯ï¼šæœ‰bindå˜é‡ï¼Œæ²¡æœ‰æ•°æ®åŒºï¼Œæ— æ³•bindï¼#");
 		DP->SQL_Connect->Errno=FORMATERR;
 		ShowLog(1,"%s",DP->SQL_Connect->ErrMsg);
 		BB_Tree_Free(&DP->bt_upd,0);
@@ -659,7 +659,7 @@ int ret;
 		 BB_Tree_Scan(DP->bt_upd,bind_returning);
 		return ret;
 	}
-	
+
 	___SQL_GetError(DP->SQL_Connect);
 	ShowLog(1,"%s err=%d.%s",__FUNCTION__,
 		DP->SQL_Connect->Errno,
@@ -681,7 +681,7 @@ register char *p;
 		if(toupper(*p) != 'D') {
 			ret=SRM_mk_delete(&DP->srm,DP->SQL_Connect->DBOWN,where);
 			if(ret) return ret;
-		} 
+		}
 		set_dbo(where,DP->SQL_Connect->DBOWN);
 		p+=strlen(p)+30;
 		*p=0;
@@ -693,7 +693,7 @@ register char *p;
 		DP->bt_del=pre_bind(DP,&DP->del_sth,&bindnum,where,&bnode,&DP->bt_del);
 		if(0!=(ret=DP->SQL_Connect->Errno)) return ret;
 		if(!DP->bt_del) return ___SQL_Exec(DP->SQL_Connect,where);
-		DP->del_sth=sqlo_prepare(DP->SQL_Connect->dbh, (CONST char *)where); 
+		DP->del_sth=sqlo_prepare(DP->SQL_Connect->dbh, (CONST char *)where);
 		if(DP->del_sth<0) {
 			___SQL_GetError(DP->SQL_Connect);
 			sprintf(p," bind_delete:sqlo_prepare=%d,err=%d,%s",DP->del_sth,
@@ -708,7 +708,7 @@ register char *p;
 	DP->tail=p;
 	if(DP->bt_del ) {
 		if(!DP->srm.rec) {
-			sprintf(DP->SQL_Connect->ErrMsg,"bind_delete:#´íÎó£ºÓĞbind±äÁ¿£¬Ã»ÓĞÊı¾İÇø£¬ÎŞ·¨bind£¡#");
+			sprintf(DP->SQL_Connect->ErrMsg,"bind_delete:#é”™è¯¯ï¼šæœ‰bindå˜é‡ï¼Œæ²¡æœ‰æ•°æ®åŒºï¼Œæ— æ³•bindï¼#");
 			DP->SQL_Connect->Errno=FORMATERR;
 			ShowLog(1,"%s",DP->SQL_Connect->ErrMsg);
 			BB_Tree_Free(&DP->bt_del,0);
@@ -750,7 +750,7 @@ int bind_exec(register DAU *DP,char *stmt)
 int ret=0;
 register char *p;
 
-        if(!stmt) { //ÈÎÎñ½áÊø£¬¹Ø±ÕÓÎ±ê
+        if(!stmt) { //ä»»åŠ¡ç»“æŸï¼Œå…³é—­æ¸¸æ ‡
                 BB_Tree_Free(&DP->bt_del,0);
                 if(DP->del_sth>=0) ret=___SQL_Close__(DP->SQL_Connect,DP->del_sth);
                 DP->del_sth=SQLO_STH_INIT;
@@ -773,7 +773,7 @@ register char *p;
 		DP->bt_del=pre_bind(DP,&DP->del_sth,&bindnum,stmt,&bnode,&DP->bt_del);
 		if(0!=(ret=DP->SQL_Connect->Errno)) return ret;
 		if(!DP->bt_del) return ___SQL_Exec(DP->SQL_Connect,stmt);
-		DP->del_sth=sqlo_prepare(DP->SQL_Connect->dbh, (CONST char *)stmt); 
+		DP->del_sth=sqlo_prepare(DP->SQL_Connect->dbh, (CONST char *)stmt);
 		if(DP->del_sth<0) {
 			___SQL_GetError(DP->SQL_Connect);
 			sprintf(p," bind_exec:sqlo_prepare=%d,err=%d,%s",DP->del_sth,
@@ -788,7 +788,7 @@ register char *p;
 	DP->tail=p;
 	if(DP->bt_del ) {
 		if(!DP->srm.rec) {
-			sprintf(DP->SQL_Connect->ErrMsg,"bind_exec:#´íÎó£ºÓĞbind±äÁ¿£¬Ã»ÓĞÊı¾İÇø£¬ÎŞ·¨bind£¡#");
+			sprintf(DP->SQL_Connect->ErrMsg,"bind_exec:#é”™è¯¯ï¼šæœ‰bindå˜é‡ï¼Œæ²¡æœ‰æ•°æ®åŒºï¼Œæ— æ³•bindï¼#");
 			DP->SQL_Connect->Errno=FORMATERR;
 			ShowLog(1,"%s",DP->SQL_Connect->ErrMsg);
 			BB_Tree_Free(&DP->bt_del,0);

@@ -9,7 +9,7 @@ extern char * mark_subst(char *vp,T_PkgType *typ,int *bindnum);
 extern void set_dbo(char *buf,char *DBOWN);
 
 static int BULK_alloc(BULK *bulk);
-static int bind_proc(void *content);   //bind´¦Àí
+static int bind_proc(void *content);   //bindå¤„ç†
 static int define(BULK *bulk);
 
 
@@ -61,15 +61,15 @@ void BULK_init(BULK *bulk,DAU *DP,void *recs,int max_rows_of_fetch)
 	bulk->cols=0;
 	bulk->bind_tree=NULL;
 	bulk->prows=0;
-    } else {//´Î¼¶³õÊ¼»¯ ÉèÖÃĞÂµÄ½á¹û¼¯
-	bind_rows_free(bulk);//Çå³ı²éÑ¯Ìõ¼ş
+    } else {//æ¬¡çº§åˆå§‹åŒ– è®¾ç½®æ–°çš„ç»“æœé›†
+	bind_rows_free(bulk);//æ¸…é™¤æŸ¥è¯¢æ¡ä»¶
 	if(bulk->max_rows_of_fetch < max_rows_of_fetch) {
-		dcb_free(bulk);//Çå³ı¾ÉµÄ½á¹û¼¯
+		dcb_free(bulk);//æ¸…é™¤æ—§çš„ç»“æœé›†
 		bulk->dcols=abs(bulk->srm->Aflg);
 		bulk->max_rows_of_fetch= max_rows_of_fetch;
-		BULK_alloc(bulk);//ÖØĞÂ·ÖÅä
+		BULK_alloc(bulk);//é‡æ–°åˆ†é…
 	} else bulk->max_rows_of_fetch= max_rows_of_fetch;
-	define(bulk);//¶¨ÒåĞÂµÄ½á¹û¼¯
+	define(bulk);//å®šä¹‰æ–°çš„ç»“æœé›†
     }
 //ShowLog(5,"%s:recs=%016lX",__FUNCTION__,bulk->recs);
 }
@@ -96,15 +96,15 @@ int error=0;
 	bulk->SQL_Connect=NULL;
 }
 
-//ÕâÀï¶¨ÒåbindÊ÷µÄÊı¾İ½á¹¹ºÍ»Øµ÷º¯Êı
-struct bindnod {  //»Øµ÷º¯Êı²»ÄÜÈ¡µÃÍâ²¿×ÊÔ´£¬ËùÓĞ×ÊÔ´±ØĞë¶¨ÒåÔÚ½ÚµãÀï
+//è¿™é‡Œå®šä¹‰bindæ ‘çš„æ•°æ®ç»“æ„å’Œå›è°ƒå‡½æ•°
+struct bindnod {  //å›è°ƒå‡½æ•°ä¸èƒ½å–å¾—å¤–éƒ¨èµ„æºï¼Œæ‰€æœ‰èµ„æºå¿…é¡»å®šä¹‰åœ¨èŠ‚ç‚¹é‡Œ
 	int bindnum;
 	T_PkgType *tp;
 	char *last_bindp;
 	short flg;
 	BULK *bulk;
 };
-//±È½Ïº¯Êı
+//æ¯”è¾ƒå‡½æ•°
 static int bind_Cmp(void *rec1,void *rec2,int len)
 {
 register struct bindnod *dap1,*dap2;
@@ -118,7 +118,7 @@ int cc;
         return 0;
 }
 
-static int bind_proc(void *content)   //bind´¦Àí
+static int bind_proc(void *content)   //bindå¤„ç†
 {
 register struct bindnod *bp=(struct bindnod *)content;
 T_PkgType *tp=bp->tp;
@@ -162,11 +162,11 @@ col_bag *cb;
         case CH_DATE:
             ret=sqlo_bind_by_pos(bulk->sth, bp->bindnum, SQLOT_STR, bindp, tp->len, cb->ind, reclen);
                 break;
-        default:    //ÀàĞÍÓëORACLE²»·û£¬Ğè±ä»»
+        default:    //ç±»å‹ä¸ORACLEä¸ç¬¦ï¼Œéœ€å˜æ¢
 //ShowLog(5,"%s name=%s",__FUNCTION__,tp->name);
 			if(!cb->a_col) cb->a_col=(char *)calloc(bulk->bind_rows,BULK_A_COL_LEN);
 			bindp=cb->a_col;
-			for(i=0;i<bulk->bind_rows;i++) {//°ÑËùÓĞÖµÄÃµ½±ä»»Êı×é
+			for(i=0;i<bulk->bind_rows;i++) {//æŠŠæ‰€æœ‰å€¼æ‹¿åˆ°å˜æ¢æ•°ç»„
 				get_one_str(bindp,p,tp,0);
 				p+=reclen;
 				bindp+=BULK_A_COL_LEN;
@@ -177,11 +177,11 @@ col_bag *cb;
 //ShowLog(5,"bind_proc END sth=%d,%s:%d",bulk->sth,tp->name,bp->bindnum);
     	if(ret) {
         	ShowLog(1,"%s %s:ret=%d,bindnum=%d",__FUNCTION__,tp->name,ret,bp->bindnum);
-    	} else {//Èç¹ûÃ»ÓĞ´íÎó£¬ÉèÖÃind.
+    	} else {//å¦‚æœæ²¡æœ‰é”™è¯¯ï¼Œè®¾ç½®ind.
 		for(i=0;i<bulk->bind_rows;i++) {
 			if(isnull(bindp,tp->type)) cb->ind[i]=-1;
 			else cb->ind[i]=0;
-		}	
+		}
 	}
 //ShowLog(5,"bind_proc sth=%d,%s:%d,%s,ret=%d",sth,tp->name,bp->bindnum,errb,ret);
     return 0;
@@ -199,7 +199,7 @@ T_PkgType *tp;
 	ep=stmt;
 	colnum=abs(bulk->srm->Aflg);
 	while(*(ep=stptok(ep,0,0,"$:\'"))) {
-		if(*ep=='\'') {	//ÌŞ³ıÒıºÅÀïµÄÕ¼Î»·û
+		if(*ep=='\'') {	//å‰”é™¤å¼•å·é‡Œçš„å ä½ç¬¦
 			ep++;
 			ep=stptok(ep,0,0,"\'");
 			if(*ep=='\'') {
@@ -212,43 +212,43 @@ T_PkgType *tp;
 			ep++;
 			continue;
 		}
-		if(!do_regexp(ep,match)) { //²éÕÒÕ¼Î»·û
+		if(!do_regexp(ep,match)) { //æŸ¥æ‰¾å ä½ç¬¦
 			rep=ep+match[0].rm_so;
 			bindp=ep+match[1].rm_so;
 			ep+=match[0].rm_eo;
 			c=*ep;
-			*ep=0;	//ÁÙÊ±¸øÎ²0
+			*ep=0;	//ä¸´æ—¶ç»™å°¾0
 			n=index_col(bulk->srm->colidx,colnum,bindp,bulk->srm->tp);
 			tp=&bulk->srm->tp[n];
 			*ep=c;
-			if(*rep=='$') {   //Î±ÁĞÃûÌæ»»³ÉÕæÁĞÃû 
+			if(*rep=='$') {   //ä¼ªåˆ—åæ›¿æ¢æˆçœŸåˆ—å
 			char *trup;
-				if(n<0) continue;		//Èç¹ûÃ»ÓĞ¸ÃÁĞÃû£¬²»Ìæ»» 
+				if(n<0) continue;		//å¦‚æœæ²¡æœ‰è¯¥åˆ—åï¼Œä¸æ›¿æ¢
 				trup=(char *)tp->name;
 				strtcpy(buf,&trup,' ');
 //ShowLog(5,"pre_bind:aft pkg_getType %s type=%d,name=%s,buf=%s",bindp,tp->type,tp->name,buf);
-				ep=strsubst(rep,(int)(ep-rep),buf);//Ìæ»»³É ÕæÁĞÃû
+				ep=strsubst(rep,(int)(ep-rep),buf);//æ›¿æ¢æˆ çœŸåˆ—å
 				continue;
-			} 
+			}
 			if(n<0) {
-				sprintf(bulk->SQL_Connect->ErrMsg," :pre_bind:%.*s ÎŞĞ§ÁĞÃû",(int)(ep-bindp),bindp);
+				sprintf(bulk->SQL_Connect->ErrMsg," :pre_bind:%.*s æ— æ•ˆåˆ—å",(int)(ep-bindp),bindp);
 				bulk->SQL_Connect->Errno=FORMATERR;
 				BB_Tree_Free(&bulk->bind_tree,0);
 				return FORMATERR;
 			}
 			mark_subst(buf,tp,&bulk->cols);
 			bindp--;
-			ep=strsubst(bindp,(int)(ep-bindp),buf);//Ìæ»»³ÉÊı×Ö
+			ep=strsubst(bindp,(int)(ep-bindp),buf);//æ›¿æ¢æˆæ•°å­—
 			bnode->bindnum = ++bulk->cols;
 			bnode->tp=tp;
-			bulk->bind_tree=BB_Tree_Add(bulk->bind_tree,bnode,sizeof(struct bindnod),bind_Cmp,0); //±£´æbind²ÎÊı
+			bulk->bind_tree=BB_Tree_Add(bulk->bind_tree,bnode,sizeof(struct bindnod),bind_Cmp,0); //ä¿å­˜bindå‚æ•°
 		} else ep++;
 	}
-	
-	return 0; 
+
+	return 0;
 }
-//·ÖÅäbulk¿Õ¼ä   
-static int BULK_alloc(BULK *bulk) 
+//åˆ†é…bulkç©ºé—´
+static int BULK_alloc(BULK *bulk)
 {
 int n;
 	if(bulk->cols>0 && !bulk->cb && 0!=(bulk->cb=malloc(bulk->cols * sizeof(col_bag)))) {
@@ -317,7 +317,7 @@ col_bag *cb;
 		case CH_LDOUBLE:
 			ret=sqlo_define_by_pos(bulk->sth, i+1, SQLOT_FLT,
 				p,tp->len, cb->ind, 0,
-				bulk->reclen); 
+				bulk->reclen);
 			break;
 		case CH_TINY:
 		case CH_SHORT:
@@ -328,7 +328,7 @@ col_bag *cb;
 #endif
 			ret=sqlo_define_by_pos(bulk->sth, i+1, SQLOT_INT,
 				p,tp->len, cb->ind, 0,
-				bulk->reclen); 
+				bulk->reclen);
 			break;
 		case CH_JUL:
 		case CH_CJUL:
@@ -346,7 +346,7 @@ col_bag *cb;
 			ret=sqlo_define_by_pos(bulk->sth, i+1, SQLOT_STR,
 				cb->a_col, BULK_A_COL_LEN, cb->ind, cb->r_len,
 //				cb->r_code,
-				1);	//1=ÁĞÊ½°ó¶¨Êı×é 
+				1);	//1=åˆ—å¼ç»‘å®šæ•°ç»„
 //ShowLog(5,"%s: %d BULK_A_COL_LEN=%d,ret=%d",__FUNCTION__,i+1,BULK_A_COL_LEN,ret);
 			break;
 		case CH_DATE:
@@ -360,7 +360,7 @@ col_bag *cb;
 				ret=sqlo_define_by_pos(bulk->sth, i+1, SQLOT_STR,
 					p, tp->len, cb->ind, cb->r_len,
 //                           		cb->r_code,
-					bulk->reclen); 
+					bulk->reclen);
 			break;
 		default:
 //CH_CLOB????
@@ -390,9 +390,9 @@ int ret=0;
 		bnode.flg=0;
 		bnode.last_bindp=0;
 		bnode.bulk=bulk;
-//ÖÆÔìÓï¾ä
+//åˆ¶é€ è¯­å¥
 	 	ret=SRM_mk_select(bulk->srm,bulk->SQL_Connect->DBOWN,stmt);
-//Éú³É°ó¶¨Ê÷
+//ç”Ÿæˆç»‘å®šæ ‘
 		if(bind_rows>0) {
 			ret=pre_bind_array(bulk,stmt,&bnode);
 			if(ret) {
@@ -414,7 +414,7 @@ int ret=0;
 		ShowLog(5,"%s sth=%d,%s",__FUNCTION__,bulk->sth,stmt);
 	}
 	bulk->prows=0;
-//·ÖÅäbulk¿Õ¼ä   
+//åˆ†é…bulkç©ºé—´
 	if(bulk->bind_rows != bind_rows) {
 		if(bulk->bind_rows) bind_rows_free(bulk);
 		bulk->bind_rows=bind_rows;
@@ -423,14 +423,14 @@ int ret=0;
 		ShowLog(1,"%s malloc bulk fail %d !",__FUNCTION__,ret);
 		return MEMERR;
 	}
-//define ½á¹û¼¯
+//define ç»“æœé›†
 	int cc=define(bulk);
 if(cc<0) {
 	ShowLog(1,"%s:define fault cc=%d",__FUNCTION__,cc);
 	return -1;
 }
 	ret=(bind_rows>0) ?
-//bind ²éÑ¯Ìõ¼ş
+//bind æŸ¥è¯¢æ¡ä»¶
 		BB_Tree_Scan(bulk->bind_tree,bind_proc),
 		sqlo_execute1(bulk->sth,0,bulk->bind_rows):
 		sqlo_execute(bulk->sth,0);
@@ -447,7 +447,7 @@ ShowLog(5,"%s:prows=%d",__FUNCTION__,sqlo_prows(bulk->sth));
 	return ret;
 }
 
-static int bind_data(BULK *bulk)   //nullºÍ¸½¼ÓÁĞ´¦Àí 
+static int bind_data(BULK *bulk)   //nullå’Œé™„åŠ åˆ—å¤„ç†
 {
 T_PkgType *tp=bulk->srm->tp;
 char *p,*bindp;
@@ -467,11 +467,11 @@ short *indp;
 		indp=cb->ind;
 
     		switch(tp->type) {
-		case CH_CLOB://ÔİÊ±²»´¦ÀíCLOB
+		case CH_CLOB://æš‚æ—¶ä¸å¤„ç†CLOB
 			n++;
 			cb++;
 			continue;
-   //ÀàĞÍÓëORACLE²»·û£¬Ğè±ä»»
+   //ç±»å‹ä¸ORACLEä¸ç¬¦ï¼Œéœ€å˜æ¢
        		 case CH_JUL:
        		 case CH_CJUL:
        		 case CH_MINUTS:
@@ -487,7 +487,7 @@ short *indp;
 				p += BULK_A_COL_LEN;
 			}
        			break;
-        	default: 
+        	default:
 			for(ret=0;ret<bulk->rows;ret++,indp++) {
 				if(*indp<0) put_str_one(bindp,"",tp,0);
 				bindp += reclen;
@@ -536,5 +536,3 @@ char *p;
 	p+=pkg_pack(buf,bulk->recs + bulk->reclen*n,bulk->srm->tp,delimit);
 	return p;
 }
-
-

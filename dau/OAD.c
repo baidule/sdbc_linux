@@ -8,7 +8,7 @@ extern int do_regexp(char *stmt,regmatch_t *match);
 extern char * mark_subst(char *vp,T_PkgType *typ,int *bindnum);
 extern void set_dbo(char *buf,char *DBOWN);
 static int OAD_alloc(OAD *oad);
-static int bind_proc(void *content);   //bind´¦Àí
+static int bind_proc(void *content);   //bindå¤„ç†
 
 void OAD_init(OAD *oad,DAU *DP,void *recs,int max_rows_of_batch)
 {
@@ -26,7 +26,7 @@ int i;
 	oad->bind_tree=0;
 	oad->begin=0;
 	oad->a_col_flg=0;
-    } else {//´Î¼¶³õÊ¼»¯
+    } else {//æ¬¡çº§åˆå§‹åŒ–
 	if(oad->max_rows_of_batch < max_rows_of_batch) {
 	    if(oad->cb) {
 	    col_bag *colp=oad->cb;
@@ -41,7 +41,7 @@ int i;
 	    }
 	    oad->max_rows_of_batch=max_rows_of_batch;
 	    OAD_alloc(oad);
-	} else oad->max_rows_of_batch=max_rows_of_batch; 
+	} else oad->max_rows_of_batch=max_rows_of_batch;
 	BB_Tree_Scan(oad->bind_tree,bind_proc);
     }
 }
@@ -78,15 +78,15 @@ int i,error=0;
 	oad->SQL_Connect=NULL;
 }
 
-//ÕâÀï¶¨ÒåbindÊ÷µÄÊı¾İ½á¹¹ºÍ»Øµ÷º¯Êı
-struct bindnod {  //»Øµ÷º¯Êı²»ÄÜÈ¡µÃÍâ²¿×ÊÔ´£¬ËùÓĞ×ÊÔ´±ØĞë¶¨ÒåÔÚ½ÚµãÀï
+//è¿™é‡Œå®šä¹‰bindæ ‘çš„æ•°æ®ç»“æ„å’Œå›è°ƒå‡½æ•°
+struct bindnod {  //å›è°ƒå‡½æ•°ä¸èƒ½å–å¾—å¤–éƒ¨èµ„æºï¼Œæ‰€æœ‰èµ„æºå¿…é¡»å®šä¹‰åœ¨èŠ‚ç‚¹é‡Œ
 	int bindnum;
 	T_PkgType *tp;
 	char *last_bindp;
 	short flg;
 	OAD *oad;
 };
-//±È½Ïº¯Êı
+//æ¯”è¾ƒå‡½æ•°
 static int bind_Cmp(void *rec1,void *rec2,int len)
 {
 register struct bindnod *dap1,*dap2;
@@ -100,7 +100,7 @@ int cc;
         return 0;
 }
 
-static int bind_proc(void *content)   //bind´¦Àí
+static int bind_proc(void *content)   //bindå¤„ç†
 {
 register struct bindnod *bp=(struct bindnod *)content;
 T_PkgType *tp=bp->tp;
@@ -146,7 +146,7 @@ col_bag *cb;
         case CH_DATE:
             ret=sqlo_bind_by_pos(oad->sth, bp->bindnum, SQLOT_STR, bindp, tp->len, ind, reclen);
                 break;
-        default:    //ÀàĞÍÓëORACLE²»·û£¬Ğè±ä»»
+        default:    //ç±»å‹ä¸ORACLEä¸ç¬¦ï¼Œéœ€å˜æ¢
 //ShowLog(5,"%s name=%s",__FUNCTION__,tp->name);
 			if(!cb->a_col) cb->a_col=(char *)calloc(oad->max_rows_of_batch,A_COL_LEN);
 			bindp=cb->a_col;
@@ -161,7 +161,7 @@ if(ret) ShowLog(1,"bind_proc:ret=%d sth=%d,%s:%d",ret,oad->sth,tp->name,bp->bind
     return 0;
 }
 
-static int bind_data(void *content)   //nullºÍ¸½¼ÓÁĞ´¦Àí 
+static int bind_data(void *content)   //nullå’Œé™„åŠ åˆ—å¤„ç†
 {
 struct bindnod *bp=(struct bindnod *)content;
 T_PkgType *tp=bp->tp;
@@ -202,7 +202,7 @@ col_bag *cb;
         case CH_CNUM:
         case CH_DATE:
                 break;
-        default:    //ÀàĞÍÓëORACLE²»·û£¬Ğè±ä»»
+        default:    //ç±»å‹ä¸ORACLEä¸ç¬¦ï¼Œéœ€å˜æ¢
 			oad->a_col_flg |= 1;
 			bindp=cb->a_col;
 			p=oad->recs;
@@ -217,7 +217,7 @@ col_bag *cb;
     return 0;
 }
 
-static int get_ret(void *content)	//get_returning ´¦Àí
+static int get_ret(void *content)	//get_returning å¤„ç†
 {
 struct bindnod *bp=(struct bindnod *)content;
 T_PkgType *tp=bp->tp;
@@ -237,7 +237,7 @@ OAD *oad=bp->oad;
 	return 0;
 }
 
-//Õ¼Î»·ûÌæ»»Îªbind POS,²¢¹¹½¨bindÊ÷   
+//å ä½ç¬¦æ›¿æ¢ä¸ºbind POS,å¹¶æ„å»ºbindæ ‘
 static char *mk_col_bind(char *values, OAD *oad,struct bindnod *bnode)
 {
 T_PkgType *typ;
@@ -299,7 +299,7 @@ T_PkgType *tp;
 	colnum=abs(oad->srm->Aflg);
 	into=strcasestr(stmt," INTO :");
 	while(*(ep=stptok(ep,0,0,"$:\'"))) {
-		if(*ep=='\'') {	//ÌŞ³ıÒıºÅÀïµÄÕ¼Î»·û
+		if(*ep=='\'') {	//å‰”é™¤å¼•å·é‡Œçš„å ä½ç¬¦
 			ep++;
 			ep=stptok(ep,0,0,"\'");
 			if(*ep=='\'') {
@@ -312,26 +312,26 @@ T_PkgType *tp;
 			ep++;
 			continue;
 		}
-		if(!do_regexp(ep,match)) { //²éÕÒÕ¼Î»·û
+		if(!do_regexp(ep,match)) { //æŸ¥æ‰¾å ä½ç¬¦
 			rep=ep+match[0].rm_so;
 			bindp=ep+match[1].rm_so;
 			ep+=match[0].rm_eo;
 			c=*ep;
-			*ep=0;	//ÁÙÊ±¸øÎ²0
+			*ep=0;	//ä¸´æ—¶ç»™å°¾0
 			n=index_col(oad->srm->colidx,colnum,bindp,oad->srm->tp);
 			tp=&oad->srm->tp[n];
 			*ep=c;
-			if(*rep=='$') {   //Î±ÁĞÃûÌæ»»³ÉÕæÁĞÃû 
+			if(*rep=='$') {   //ä¼ªåˆ—åæ›¿æ¢æˆçœŸåˆ—å
 			char *trup;
-				if(n<0) continue;		//Èç¹ûÃ»ÓĞ¸ÃÁĞÃû£¬²»Ìæ»» 
+				if(n<0) continue;		//å¦‚æœæ²¡æœ‰è¯¥åˆ—åï¼Œä¸æ›¿æ¢
 				trup=(char *)tp->name;
 				strtcpy(buf,&trup,' ');
 //ShowLog(5,"pre_bind:aft pkg_getType %s type=%d,name=%s,buf=%s",bindp,tp->type,tp->name,buf);
-				ep=strsubst(rep,(int)(ep-rep),buf);//Ìæ»»³É ÕæÁĞÃû
+				ep=strsubst(rep,(int)(ep-rep),buf);//æ›¿æ¢æˆ çœŸåˆ—å
 				continue;
-			} 
+			}
 			if(n<0) {
-				sprintf(oad->SQL_Connect->ErrMsg," :pre_bind:%.*s ÎŞĞ§ÁĞÃû",(int)(ep-bindp),bindp);
+				sprintf(oad->SQL_Connect->ErrMsg," :pre_bind:%.*s æ— æ•ˆåˆ—å",(int)(ep-bindp),bindp);
 				oad->SQL_Connect->Errno=FORMATERR;
 				BB_Tree_Free(&oad->bind_tree,0);
 				return FORMATERR;
@@ -340,18 +340,18 @@ T_PkgType *tp;
 				 mark_subst(buf,tp,&oad->cols);
 			else sprintf(buf,":%d",oad->cols+1);
 			bindp--;
-			ep=strsubst(bindp,(int)(ep-bindp),buf);//Ìæ»»³ÉÊı×Ö
+			ep=strsubst(bindp,(int)(ep-bindp),buf);//æ›¿æ¢æˆæ•°å­—
 			bnode->bindnum = ++oad->cols;
 			bnode->tp=tp;
-			oad->bind_tree=BB_Tree_Add(oad->bind_tree,bnode,sizeof(struct bindnod),bind_Cmp,0); //±£´æbind²ÎÊı
+			oad->bind_tree=BB_Tree_Add(oad->bind_tree,bnode,sizeof(struct bindnod),bind_Cmp,0); //ä¿å­˜bindå‚æ•°
 		} else ep++;
 	}
-	
+
 //	BB_Tree_Free(&oad->bind_tree,0);
-	return 0; 
+	return 0;
 }
-//·ÖÅäoad¿Õ¼ä   
-static int OAD_alloc(OAD *oad) 
+//åˆ†é…oadç©ºé—´
+static int OAD_alloc(OAD *oad)
 {
 int n;
 col_bag *colp;
@@ -386,14 +386,14 @@ struct bindnod bnode;
 
 	if(oad->sth < 0) {
 	char *returning=0;
-		if(*p) { //ÓĞ RETURNING ×Ó¾ä 
+		if(*p) { //æœ‰ RETURNING å­å¥
 			returning=strdup(p);
 		}
 		bnode.bindnum=0;
 		bnode.flg=0;
 		bnode.last_bindp=0;
 		bnode.oad=oad;
-//ÖÆÔìÓï¾ä
+//åˆ¶é€ è¯­å¥
         	if(oad->srm->befor) {
             		p=stpcpy(p,oad->srm->befor);
             		*p++ = ' ';
@@ -413,7 +413,7 @@ struct bindnod bnode;
             		*p=0;
         	}
         	p=stpcpy(mkset(stpcpy(stpcpy(p,oad->srm->tabname)," ("),oad->srm->tp),") VALUES (");
-//Éú³ÉÕ¼Î»·û
+//ç”Ÿæˆå ä½ç¬¦
         	p=stpcpy(mk_col_bind(p,oad,&bnode),")");
         	if(returning) {
         		char *  p1=p;
@@ -429,7 +429,7 @@ struct bindnod bnode;
 			}
             		returning=0;
         	}
-//·ÖÅäoad¿Õ¼ä   
+//åˆ†é…oadç©ºé—´
 		if(0!=(ret=OAD_alloc(oad))) {
 			ShowLog(1,"%s malloc cb fail %d !",__FUNCTION__,ret);
 			return MEMERR;
@@ -479,7 +479,7 @@ char *save_where=NULL;
 			free(save_where);
 			save_where=NULL;
 		}
-	} 
+	}
 	oadp->srm->hint=0;
 	set_dbo(where,oadp->SQL_Connect->DBOWN);
        	ret=pre_bind_array(oadp,p,&bnode);
@@ -487,13 +487,13 @@ char *save_where=NULL;
 		BB_Tree_Free(&oadp->bind_tree,0);
 		return ret;
 	}
-//·ÖÅäoad¿Õ¼ä   
+//åˆ†é…oadç©ºé—´
 	if(0!=(ret=OAD_alloc(oadp))) {
 		ShowLog(1,"%s:malloc cb fail %d !",__FUNCTION__,ret);
 		return MEMERR;
 	}
 
-       	oadp->sth=sqlo_prepare(oadp->SQL_Connect->dbh, (CONST char *)where); 
+       	oadp->sth=sqlo_prepare(oadp->SQL_Connect->dbh, (CONST char *)where);
        	if(oadp->sth<0) {
 	        ___SQL_GetError(oadp->SQL_Connect);
 	        sprintf(p+strlen(p)," %s:sqlo_prepare=%d,err=%d,%s",__FUNCTION__,oadp->sth,
@@ -527,13 +527,13 @@ struct bindnod bnode;
 		BB_Tree_Free(&oadp->bind_tree,0);
 		return ret;
 	}
-//·ÖÅäoad¿Õ¼ä   
+//åˆ†é…oadç©ºé—´
 	if(0!=(ret=OAD_alloc(oadp))) {
 		ShowLog(1,"%s:malloc cb fail %d !",__FUNCTION__,ret);
 		return MEMERR;
 	}
 
-       	oadp->sth=sqlo_prepare(oadp->SQL_Connect->dbh, (CONST char *)where); 
+       	oadp->sth=sqlo_prepare(oadp->SQL_Connect->dbh, (CONST char *)where);
        	if(oadp->sth<0) {
 	        ___SQL_GetError(oadp->SQL_Connect);
 	        sprintf(where+strlen(where)," %s:sqlo_prepare=%d,err=%d,%s",__FUNCTION__,oadp->sth,
@@ -552,12 +552,12 @@ int ret;
 
 	oad->begin=begin;
 	oad->rows=(n<=(oad->max_rows_of_batch-begin))?n:oad->max_rows_of_batch-begin;
-	if(!begin) { //Ö»ÓĞÔ­Ê¼µÄÖ´ĞĞÈç´Ë  
+	if(!begin) { //åªæœ‰åŸå§‹çš„æ‰§è¡Œå¦‚æ­¤
 //ShowLog(5,"%s:tabname=%s",__FUNCTION__,oad->srm->tabname);
 		BB_Tree_Scan(oad->bind_tree,bind_data);
 	}
 	ret=sqlo_execute1(oad->sth,oad->begin,n);
-	if(oad->a_col_flg) BB_Tree_Scan(oad->bind_tree,get_ret); //Èç¹ûÓĞRETURNING±äÁ¿£¬È¡»Ø¡£
+	if(oad->a_col_flg) BB_Tree_Scan(oad->bind_tree,get_ret); //å¦‚æœæœ‰RETURNINGå˜é‡ï¼Œå–å›ã€‚
 	if(ret) {
 		if(ret>0) {
 			ret=sqlo_prows(oad->sth);
@@ -585,5 +585,3 @@ char *p;
 	p+=pkg_pack(buf,oad->recs + oad->reclen*n,oad->srm->tp,delimit);
 	return p;
 }
-
-

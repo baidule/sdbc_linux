@@ -2,7 +2,7 @@
 #include <SRM_json.h>
 #include <BB_tree.h>
 
-//Õë¶Ô±íÃûµÄÀÖ¹ÛËø±í
+//é’ˆå¯¹è¡¨åçš„ä¹è§‚é”è¡¨
 typedef struct {
 	char tabname[128];
 	INT64 timestamp;
@@ -47,40 +47,40 @@ INT64 now;
 	DAU_init(DP,NULL,NULL,NULL,NULL);
 	DP->SQL_Connect=SQL_Connect;
 	stptok(tabname,node.tabname,sizeof(node.tabname),NULL);
-	
-	while(SRM_mk(&DP->srm,tabname)) { //ÏÈ´ÓÄ£°å¿âÕÒ
+
+	while(SRM_mk(&DP->srm,tabname)) { //å…ˆä»æ¨¡æ¿åº“æ‰¾
 		node.timestamp=now_usec();
 		node.stat=0;
 		pthread_mutex_lock(&tab_mux);
-		treep=BB_Tree_Find(tab_list,&node,sizeof(node),tab_cmp);//¼ì²éÀÖ¹ÛËø
-		if(!treep) {//Ã»ÓĞËø
+		treep=BB_Tree_Find(tab_list,&node,sizeof(node),tab_cmp);//æ£€æŸ¥ä¹è§‚é”
+		if(!treep) {//æ²¡æœ‰é”
 			node.timestamp=now_usec();
 			node.stat=0;
-			tab_list=BB_Tree_Add(tab_list,&node,sizeof(node),tab_cmp,NULL);//¼ÓÀÖ¹ÛËø
-ShowLog(5,"%s:tab %s ¼ÓÈëÀÖ¹ÛËø",__FUNCTION__,node.tabname);
+			tab_list=BB_Tree_Add(tab_list,&node,sizeof(node),tab_cmp,NULL);//åŠ ä¹è§‚é”
+ShowLog(5,"%s:tab %s åŠ å…¥ä¹è§‚é”",__FUNCTION__,node.tabname);
 again:
 			pthread_mutex_unlock(&tab_mux);
-			ret=mkDauFromDB(DP,tabname);//¶ÁÊı¾İ¿âÉú³ÉÄ£°å
-			if(ret) {//Ê§°Ü
+			ret=mkDauFromDB(DP,tabname);//è¯»æ•°æ®åº“ç”Ÿæˆæ¨¡æ¿
+			if(ret) {//å¤±è´¥
 				treep=BB_Tree_Find(tab_list,&node,sizeof(node),tab_cmp);
 				np=(tab_node *)treep->Content;
-				np->stat=-1;//±ê¼Ç£¬ÒÔºóÒ²²»ÒªÔÙÕÒÕâ¸ö±íÁË
+				np->stat=-1;//æ ‡è®°ï¼Œä»¥åä¹Ÿä¸è¦å†æ‰¾è¿™ä¸ªè¡¨äº†
 				np->timestamp=now_usec();
 				ret=-1;
-			} else {//³É¹¦ÁË
-				ret=tpl_to_lib(DP->srm.tp,tabname); //¼ÓÈëµ½Ä£°å¿â
+			} else {//æˆåŠŸäº†
+				ret=tpl_to_lib(DP->srm.tp,tabname); //åŠ å…¥åˆ°æ¨¡æ¿åº“
 				pthread_mutex_lock(&tab_mux);
-				tab_list=BB_Tree_Del(tab_list,&node,sizeof(node),tab_cmp,NULL,&ret);//½âËø
+				tab_list=BB_Tree_Del(tab_list,&node,sizeof(node),tab_cmp,NULL,&ret);//è§£é”
 				pthread_mutex_unlock(&tab_mux);
 				ret=0;
 			}
-			pthread_cond_broadcast(&tab_cond);//Í¨ÖªËùÓĞµÈ´Ë±íÕß
+			pthread_cond_broadcast(&tab_cond);//é€šçŸ¥æ‰€æœ‰ç­‰æ­¤è¡¨è€…
 			break;
 		} else {
 			np=(tab_node *)treep->Content;
-			if(np->stat==-1) {//Ê§°ÜµÄ±í
+			if(np->stat==-1) {//å¤±è´¥çš„è¡¨
 				now=now_usec();
-				if((now-np->timestamp)>300000000) {//³¬¹ıÒ»¶¨Ê±¼ä£¬¿ÉÒÔÔÙÊÔÊÔ
+				if((now-np->timestamp)>300000000) {//è¶…è¿‡ä¸€å®šæ—¶é—´ï¼Œå¯ä»¥å†è¯•è¯•
 ShowLog(5,"%s:reread tab %s ",__FUNCTION__,node.tabname);
 					np->timestamp=now;
 					goto again;
@@ -88,8 +88,8 @@ ShowLog(5,"%s:reread tab %s ",__FUNCTION__,node.tabname);
 					ret=-1;
 					pthread_mutex_unlock(&tab_mux);
 					break;
-				} 
-			} else { //ÓĞÈËÕıÔÚ¼ÓÔØ£¬µÈÒ»»á
+				}
+			} else { //æœ‰äººæ­£åœ¨åŠ è½½ï¼Œç­‰ä¸€ä¼š
 				pthread_cond_wait(&tab_cond,&tab_mux);
 				pthread_mutex_unlock(&tab_mux);
 			}
