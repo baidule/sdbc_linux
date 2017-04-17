@@ -14,7 +14,7 @@ void quit(int n)
 
 void srv_check()
 {
-//Ã¿30Ãë±»Ö´ĞĞÒ»´Î£¬¿ÉÒÔ°ÑµÍ¾«¶È¶¨Ê±ÈÎÎñÅÅÁĞÔÚ´Ë
+//æ¯30ç§’è¢«æ‰§è¡Œä¸€æ¬¡ï¼Œå¯ä»¥æŠŠä½ç²¾åº¦å®šæ—¶ä»»åŠ¡æ’åˆ—åœ¨æ­¤
         dbpool_check();
         ctx_check();
 }
@@ -36,9 +36,9 @@ GDA *gp=(GDA *)srvp->var;
 	gp->ctx.ctx_id=0;
 	*gp->ctx.DEVID=0;
         peeraddr(conn->Socket,cp);;
-        ShowLog(0,"tid %lX Á¬½Ó:%s ",pthread_self(),cp);
-/* ÔÚ´ËÉèÖÃÊÂ¼ş´¦Àí */
-//      connect->Event_proc=ÊÂ¼şÉèÖÃº¯Êı;
+        ShowLog(0,"tid %lX è¿æ¥:%s ",pthread_self(),cp);
+/* åœ¨æ­¤è®¾ç½®äº‹ä»¶å¤„ç† */
+//      connect->Event_proc=äº‹ä»¶è®¾ç½®å‡½æ•°;
 
 }
 
@@ -58,13 +58,13 @@ int ret;
 struct rlimit sLimit;
 char *p;
 
-//ÉèÖÃ¿ÉÒÔcore dumpped 
-	sLimit.rlim_cur = -1; 
-        sLimit.rlim_max = -1; 
+//è®¾ç½®å¯ä»¥core dumpped
+	sLimit.rlim_cur = -1;
+        sLimit.rlim_max = -1;
         ret=setrlimit(RLIMIT_CORE,(const struct rlimit *)&sLimit);
 
 	if(argc>1) ret=envcfg(argv[1]);
-//Éú³ÉÄ£°åÊ±£¬ÁĞÃû±äĞ¡Ğ´
+//ç”Ÿæˆæ¨¡æ¿æ—¶ï¼Œåˆ—åå˜å°å†™
 	p=getenv("COL_TO_LOWER");
         if(p && isdigit(*p)) col_to_lower=atoi(p);
 
@@ -82,7 +82,7 @@ ShowLog(5,"set STACK ret=%d",ret);
 	ShowLog(5,"%s:%d,get NOFILE ret=%d,cur=%d,max=%d",argv[0],getpid(),
 		sLimit.rlim_cur,sLimit.rlim_max);
 /*****************************************
-ĞèÒªĞŞ¸Ä£º/etc/security/limits.conf£º
+éœ€è¦ä¿®æ”¹ï¼š/etc/security/limits.confï¼š
 sdbc    soft    nofile  1024
 sdbc    hard    nofile  16384
 	p=getenv("MAXFILNUM");
@@ -101,6 +101,6 @@ ShowLog(5,"FILENUM ret=%d,num=%d",ret,sLimit.rlim_cur);
 		ShowLog(1,"DB_pool_init:fail");
 		return 1;
 	}
-	TPC_srv(sc_init,quit,srv_check,sizeof(GDA));//GDA,¸æËüÒ»¸ö³ß´ç£¬ÄÚ²¿×Ô¼º·ÖÅä 
+	TPC_srv(sc_init,quit,srv_check,sizeof(GDA));//GDA,å‘Šå®ƒä¸€ä¸ªå°ºå¯¸ï¼Œå†…éƒ¨è‡ªå·±åˆ†é…
 	return 0;
 }

@@ -10,7 +10,7 @@ int ret;
 		ret=get_DB_connect(&srvp->SQL_Connect,srvp->poolno);
 		if(ret) {
 		char msg[200];
-			sprintf(msg,"È¡Á¬½Ó³ØÊ§°Ü£¡,DBpool[%d],ret=%d",srvp->poolno,ret);
+			sprintf(msg,"å–è¿æ¥æ± å¤±è´¥ï¼,DBpool[%d],ret=%d",srvp->poolno,ret);
 			nethead->ERRNO1=-200;
 			nethead->ERRNO2=PACK_NOANSER;
 			conn->status=0;
@@ -18,18 +18,18 @@ int ret;
         		ShowLog(1,"%s:%s",__FUNCTION__,msg);
 			return 0;
 		}
-		CTX_stu *ctxp=get_ctx(nethead->O_NODE);// ÔİÊ±²»ÓÃÊı¾İ¿â
+		CTX_stu *ctxp=get_ctx(nethead->O_NODE);// æš‚æ—¶ä¸ç”¨æ•°æ®åº“
 		if(!ctxp&&nethead->ERRNO2!=PACK_NOANSER) {
 		char msg[200];
 			release_DB_connect(&srvp->SQL_Connect,srvp->poolno);
-       	        	sprintf(msg,"È¡CTXÊ§°Ü£¡PROTO=%d,ctx_id=%u",nethead->PROTO_NUM,nethead->O_NODE);
+       	        	sprintf(msg,"å–CTXå¤±è´¥ï¼PROTO=%d,ctx_id=%u",nethead->PROTO_NUM,nethead->O_NODE);
        	        	nethead->ERRNO1=-198;
        	        	nethead->ERRNO2=PACK_NOANSER;
        	        	return_error(conn,nethead,msg);
        	        	ShowLog(1,"%s:%s",__FUNCTION__,msg);
                 	return 0;
 		}
-		if(conn->status) conn->timeout=75;//×´Ì¬·şÎñ£¬×î¶à75ÃëµÄ³¬Ê±
+		if(conn->status) conn->timeout=75;//çŠ¶æ€æœåŠ¡ï¼Œæœ€å¤š75ç§’çš„è¶…æ—¶
 		gp->ctx=*ctxp;
         	sprintf(gp->ShowID,"%s:%lX",gp->ctx.DEVID,srvp->tid);
 	}
@@ -40,7 +40,7 @@ int ret;
 		conn->status=0;
 		gp->ctx.ctx_id=0;
 		*gp->ctx.DEVID=0;
-		conn->timeout=srvp->o_timeout;//»Ö¸´Ô­ÓĞµÄ³¬Ê±Öµ
+		conn->timeout=srvp->o_timeout;//æ¢å¤åŸæœ‰çš„è¶…æ—¶å€¼
         	sprintf(gp->ShowID,"%s:%lX",gp->devid,srvp->tid);
 	}
 	return ret;
@@ -62,9 +62,9 @@ T_SRV_Var *sp=(T_SRV_Var *)conn->Var;
 int ret=0;
 char msg[200];
 	if(nethead->ERRNO2!=PACK_STATUS) {
-//Á¬½Ó³ØÒªÊÍ·ÅÂğ£¿
+//è¿æ¥æ± è¦é‡Šæ”¾å—ï¼Ÿ
 		release_DB_connect(&sp->SQL_Connect,sp->poolno);
-		sprintf(msg,"È±ÉÙ×´Ì¬±êÖ¾");
+		sprintf(msg,"ç¼ºå°‘çŠ¶æ€æ ‡å¿—");
 		nethead->ERRNO1=-199;
 		nethead->ERRNO2=-1;
 		conn->timeout=sp->o_timeout;
@@ -91,7 +91,7 @@ T_SRV_Var *srvp=(T_SRV_Var *)conn->Var;
 int ret=0;
 	if(!srvp->SQL_Connect) {
 	char msg[200];
-		strcpy(msg,"Êı¾İ¿âÁ¬½Ó³Ø¶ªÊ§£¡");
+		strcpy(msg,"æ•°æ®åº“è¿æ¥æ± ä¸¢å¤±ï¼");
 		conn->status=0;
        		nethead->ERRNO1=-1;
        		nethead->ERRNO2=PACK_NOANSER;
@@ -111,9 +111,9 @@ char msg[200];
 	if(nethead->ERRNO1 == TRANBEGIN) {
 		if(nethead->ERRNO2 != PACK_STATUS) {
 			release_DB_connect(&sp->SQL_Connect,sp->poolno);
-       		        sprintf(msg,"È±ÉÙ×´Ì¬±êÖ¾");
+       		        sprintf(msg,"ç¼ºå°‘çŠ¶æ€æ ‡å¿—");
        	         	nethead->ERRNO1=-199;
-			nethead->ERRNO2=PACK_NOANSER;//½áÊø×´Ì¬
+			nethead->ERRNO2=PACK_NOANSER;//ç»“æŸçŠ¶æ€
 			conn->status=0;
 			conn->timeout=sp->o_timeout;
 			return_error(conn,nethead,msg);
@@ -122,8 +122,8 @@ char msg[200];
 		}
 	} else if(!sp->SQL_Connect) {
 		nethead->ERRNO1=-200;
-		sprintf(msg,"Êı¾İ¿âÁ¬½Ó¶ªÊ§");
-		nethead->ERRNO2=PACK_NOANSER;//½áÊø×´Ì¬
+		sprintf(msg,"æ•°æ®åº“è¿æ¥ä¸¢å¤±");
+		nethead->ERRNO2=PACK_NOANSER;//ç»“æŸçŠ¶æ€
 		return_error(conn,nethead,msg);
 		ShowLog(1,"%s:%s",__FUNCTION__,msg);
 		return 0;
@@ -144,7 +144,7 @@ GDA *gp=(GDA*)srvp->var;
 int ret;
 char tmp[204];
     if(head->PKG_REC_NUM==-1) {
-        strcpy(tmp,"ÎŞĞ§µÄctx_id -1");
+        strcpy(tmp,"æ— æ•ˆçš„ctx_id -1");
         head->ERRNO1=-198;
         head->ERRNO2=-1;
         return_error(conn,head,tmp);
@@ -153,7 +153,7 @@ char tmp[204];
     }
 /*
     if(gp->ctx.ctx_id && gp->ctx.ctx_id != head->PKG_REC_NUM) {
-	sprintf(tmp,"ÒÑ¾­µÇÂ¼¹ı£¬²»ÄÜÔÙµÇÂ¼");
+	sprintf(tmp,"å·²ç»ç™»å½•è¿‡ï¼Œä¸èƒ½å†ç™»å½•");
 	if(head->ERRNO2 != PACK_NOANSER) {
             head->ERRNO1=-198;
             head->ERRNO2=PACK_NOANSER;;
@@ -163,13 +163,13 @@ char tmp[204];
         return 0;
     }
 */
-//ÑéÖ¤CA£¿Ğè¼ÇÂ¼Ä¿±êDEVID¼°ÆäÃÜÔ¿
+//éªŒè¯CAï¼Ÿéœ€è®°å½•ç›®æ ‡DEVIDåŠå…¶å¯†é’¥
 
-    //È¡Êı¾İ¿âÁ¬½Ó³Ø
+    //å–æ•°æ®åº“è¿æ¥æ± 
 	ret=get_DB_connect(&srvp->SQL_Connect,srvp->poolno);
         if(ret) {
 
-		sprintf(tmp,"Êı¾İ¿âÁ¬½ÓÊ§°Ü");
+		sprintf(tmp,"æ•°æ®åº“è¿æ¥å¤±è´¥");
 		head->ERRNO1=-200;
 		head->ERRNO2=-1;
 		return_error(conn,head,tmp);
@@ -191,7 +191,7 @@ GDA *gp=(GDA *)srvp->var;
 char msg[200];
 CTX_stu *ctxp;
 
-        ctxp=get_ctx(head->O_NODE);// ÔİÊ±²»ÓÃÊı¾İ¿â
+        ctxp=get_ctx(head->O_NODE);// æš‚æ—¶ä¸ç”¨æ•°æ®åº“
         if(srvp->SQL_Connect) {
                 srvp->SQL_Connect->Errno=DBFAULT;
                 release_DB_connect(&srvp->SQL_Connect,srvp->poolno);
@@ -202,7 +202,7 @@ CTX_stu *ctxp;
 		}
         }
         if(!ctxp) {
-                sprintf(msg,"È¡CTX %u Ê§°Ü£¡",head->O_NODE);
+                sprintf(msg,"å–CTX %u å¤±è´¥ï¼",head->O_NODE);
                 if(head->ERRNO2 != PACK_NOANSER) {
                         head->ERRNO1=-198;
                         head->ERRNO2=PACK_NOANSER;
@@ -225,4 +225,3 @@ CTX_stu *ctxp;
         sprintf(gp->ShowID,"%s:%lX",gp->devid,srvp->tid);
         return 0;
 }
-

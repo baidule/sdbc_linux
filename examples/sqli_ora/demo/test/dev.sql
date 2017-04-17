@@ -1,3 +1,3 @@
 delete tuxdev where devid='SP0102002';
-insert into tuxdev values('SP0102002','ÊÛÆ±²âÊÔÖÕ¶Ë2',3,null,1001,480,1140,'',0,0,0,0,0,0,0,0,0,null,0);
+insert into tuxdev values('SP0102002','å”®ç¥¨æµ‹è¯•ç»ˆç«¯2',3,null,1001,480,1140,'',0,0,0,0,0,0,0,0,0,null,0);
 commit;

@@ -141,27 +141,27 @@ struct linger so_linger;
 //设置线程堆栈保护区 16K
 	ret=pthread_attr_setguardsize(&attr,(size_t)(1024 * 16));
 //设置用户栈空间
-        p=getenv("USERSTACKSZ");
-        if(p && isdigit(*p)) {
+  p=getenv("USERSTACKSZ");
+  if(p && isdigit(*p)) {
 size_t sz;
 char c;
-                ret=sscanf(p,"%ld%c",&sz,&c);
-                if(ret>1) {
-                        switch(toupper(c)) {
-                        case 'K':
-                                sz *= 1024;
-                                break;
-                        case 'M':
-                                sz*=1024*1024;
-                                break;
-                        default:break;
-                        }
-                }
-                if(sz>0) {
-                        sz+=PTHREAD_STACK_MIN;
-                        ret = pthread_attr_setstacksize(&attr, sz);
-                }
-        }
+  	ret=sscanf(p,"%ld%c",&sz,&c);
+    if(ret>1) {
+    	switch(toupper(c)) {
+	      case 'K':
+        	sz *= 1024;
+          break;
+        case 'M':
+          sz*=1024*1024;
+          break;
+          default:break;
+      }
+    }
+    if(sz>0) {
+      sz+=PTHREAD_STACK_MIN;
+      ret = pthread_attr_setstacksize(&attr, sz);
+    }
+  }
 
 	SRVFUNC=Function;
 
@@ -198,8 +198,8 @@ char c;
 		sin.sin_port=htons((u_short)atoi(p));
 	} else {
 		if((sp=getservbyname(p,"tcp"))==NULL){
-        		ShowLog(1,"getsrvbyname %s error",p);
-        		quit(3);
+    	ShowLog(1,"getsrvbyname %s error",p);
+      quit(3);
 		}
 		sin.sin_port=(u_short)sp->s_port;
 	}
@@ -216,19 +216,18 @@ char c;
 	setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&leng,sizeof(leng));
 
 	leng=sizeof(cin);
-	int repeat=0;
-		ShowLog(0,"work start!main sock=%d",sock);
+int repeat=0;
+	ShowLog(0,"work start!main sock=%d",sock);
 
 	p=getenv("SENDSIZE");
-        if(p && isdigit(*p)) {
-                Conn.MTU=atoi(p);
-        } else Conn.MTU=0;
+  if(p && isdigit(*p)) {
+  	Conn.MTU=atoi(p);
+  } else Conn.MTU=0;
 //避免 TIME_WAIT
-          so_linger.l_onoff=1;
-          so_linger.l_linger=0;
-          ret=setsockopt(sock, SOL_SOCKET, SO_LINGER, &so_linger, sizeof so_linger);
-          if(ret) ShowLog(1,"set SO_LINGER err=%d,%s",errno,strerror(errno));
-
+  so_linger.l_onoff=1;
+  so_linger.l_linger=0;
+  ret=setsockopt(sock, SOL_SOCKET, SO_LINGER, &so_linger, sizeof so_linger);
+  if(ret) ShowLog(1,"set SO_LINGER err=%d,%s",errno,strerror(errno));
 
 	listen(sock,1000);// 以后用配置
 	while(1) {

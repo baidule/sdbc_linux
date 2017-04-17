@@ -4,13 +4,13 @@ CFLAGS= -Wall -g -I$(SDBCDIR)/include  -I$(SRVCOMM)
 LFLAGS= -m64 -L$(SDBCDIR)/lib -L$(ORACLE_HOME)/lib
 CC=gcc
 
-#Í¨ÓÃ¶àÏß³Ì´øÁ¬½Ó³ØSQL·şÎñÆ÷ 
+#é€šç”¨å¤šçº¿ç¨‹å¸¦è¿æ¥æ± SQLæœåŠ¡å™¨
 SRVOBJS= login.o ctx_login.o tpc_svc.o \
 	$(SRVCOMM)/net_showlog.o $(SRVCOMM)/newfiles.o $(SRVCOMM)/ctxlib.o
 
 #usage: tpcsrv sql.cfg &
 tpcsrv:tpcsrv.o $(SRVOBJS)
-	$(CC) -o tpcsrv tpcsrv.o $(SRVOBJS) $(LFLAGS) -lsdbc -lsqli -lsc -lscbase -ljson -lclntsh -lpthread 
+	$(CC) -o tpcsrv tpcsrv.o $(SRVOBJS) $(LFLAGS) -lsdbc -lsqli -lsc -lscbase -ljson -lclntsh -lpthread
 tpcsrv.o $(SRVOBJS):tpcsrv.h userfunc.c
 
 install:tpcsrv
